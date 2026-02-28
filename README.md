@@ -7,8 +7,10 @@ A clean, minimal blog for sharing insights and reflections from the Cambridge AI
 ### 1. Create a Supabase project
 
 1. Go to [supabase.com](https://supabase.com) and create a new project.
-2. Open the **SQL Editor** in your Supabase dashboard.
-3. Paste the contents of `schema.sql` and run it. This creates the `posts` and `comments` tables with the necessary policies.
+2. In **Authentication → Settings**, make sure email confirmations are disabled (for instant signup) or configure your email provider.
+3. Open the **SQL Editor** in your Supabase dashboard.
+4. If upgrading from v1, run: `drop table if exists comments; drop table if exists posts;`
+5. Paste the contents of `schema.sql` and run it. This creates the `profiles`, `posts`, and `comments` tables along with RLS policies and the auto-profile trigger.
 
 ### 2. Configure environment variables
 
@@ -19,7 +21,8 @@ A clean, minimal blog for sharing insights and reflections from the Cambridge AI
 2. Fill in your values:
    - `NEXT_PUBLIC_SUPABASE_URL` — found in Supabase → Settings → API → Project URL
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — found in Supabase → Settings → API → anon/public key
-   - `ADMIN_PASSWORD` — choose a strong password for the admin page
+   - `ATTENDEE_CODE` — access code you share with programme attendees
+   - `OBSERVER_CODE` — access code you share with observers
 
 ### 3. Install and run
 
@@ -30,28 +33,28 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Authentication & Roles
+
+All pages require login except `/login` and `/signup`.
+
+| Role | How to get it | Permissions |
+|------|--------------|-------------|
+| **Admin** | Hardcoded to `rizwan.mzi@gmail.com` | Full access — post articles and comment |
+| **Attendee** | Sign up with the attendee access code | Post articles and comment |
+| **Observer** | Sign up with the observer access code | Comment only |
+
+Usernames and role badges are displayed on all posts and comments.
+
 ## Pages
 
 | Route | Description |
 |-------|-------------|
 | `/` | Homepage — all posts in reverse chronological order |
 | `/post/[id]` | Individual post with comments |
-| `/admin` | Password-protected post editor (link in footer) |
+| `/new-post` | Post editor (Admin and Attendee only) |
 | `/about` | About the author and programme |
-
-## Posting
-
-1. Click the **Admin** link in the footer.
-2. Enter the admin password.
-3. Fill in the title, choose a category, write your post in Markdown, and hit **Publish**.
-4. Works on mobile — post from your phone during sessions.
-
-## Categories
-
-- **Live Insight** — quick observations during sessions
-- **Formal Notes** — structured summaries of concepts
-- **Key Takeaway** — ideas that stick
-- **Reflection** — personal reflections on leadership
+| `/login` | Sign in |
+| `/signup` | Create account with access code |
 
 ## Deployment
 
@@ -66,5 +69,5 @@ Deploy to [Vercel](https://vercel.com):
 
 - **Next.js 14** (App Router)
 - **Tailwind CSS**
-- **Supabase** (PostgreSQL database)
+- **Supabase** (PostgreSQL + Auth)
 - **React Markdown** (post rendering)

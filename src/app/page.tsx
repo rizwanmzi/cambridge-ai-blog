@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import RoleBadge from "@/components/RoleBadge";
 
 const categoryColors: Record<string, string> = {
   "Live Insight": "bg-blue-100 text-blue-800",
@@ -14,6 +15,10 @@ interface Post {
   body: string;
   category: string;
   created_at: string;
+  profiles: {
+    username: string;
+    role: string;
+  };
 }
 
 export const revalidate = 0;
@@ -21,7 +26,7 @@ export const revalidate = 0;
 export default async function Home() {
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("*")
+    .select("*, profiles(username, role)")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -77,7 +82,7 @@ export default async function Home() {
             className="block group"
           >
             <article className="border border-navy-100 rounded-lg p-6 hover:border-navy-300 hover:shadow-sm transition-all">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
                 <span
                   className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                     categoryColors[post.category] ||
@@ -93,6 +98,12 @@ export default async function Home() {
                     year: "numeric",
                   })}
                 </time>
+                {post.profiles && (
+                  <span className="flex items-center gap-1.5 text-sm text-navy-500">
+                    <span>{post.profiles.username}</span>
+                    <RoleBadge role={post.profiles.role} />
+                  </span>
+                )}
               </div>
               <h2 className="text-xl font-semibold text-navy-900 group-hover:text-navy-600 transition-colors mb-2">
                 {post.title}

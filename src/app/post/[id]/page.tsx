@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import PostContent from "./PostContent";
 import CommentSection from "./CommentSection";
+import RoleBadge from "@/components/RoleBadge";
 
 const categoryColors: Record<string, string> = {
   "Live Insight": "bg-blue-100 text-blue-800",
@@ -20,7 +21,7 @@ export default async function PostPage({
 }) {
   const { data: post, error } = await supabase
     .from("posts")
-    .select("*")
+    .select("*, profiles(username, role)")
     .eq("id", params.id)
     .single();
 
@@ -30,7 +31,7 @@ export default async function PostPage({
 
   const { data: comments } = await supabase
     .from("comments")
-    .select("*")
+    .select("*, profiles(username, role)")
     .eq("post_id", post.id)
     .order("created_at", { ascending: true });
 
@@ -58,7 +59,7 @@ export default async function PostPage({
 
       <article>
         <header className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                 categoryColors[post.category] || "bg-navy-100 text-navy-700"
@@ -73,6 +74,12 @@ export default async function PostPage({
                 year: "numeric",
               })}
             </time>
+            {post.profiles && (
+              <span className="flex items-center gap-1.5 text-sm text-navy-500">
+                <span>{post.profiles.username}</span>
+                <RoleBadge role={post.profiles.role} />
+              </span>
+            )}
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 leading-tight">
             {post.title}

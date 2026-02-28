@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
+import { canPost } from "@/lib/roles";
+import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
   "Live Insight",
@@ -9,12 +12,10 @@ const CATEGORIES = [
   "Reflection",
 ];
 
-export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [storedPassword, setStoredPassword] = useState("");
+export default function NewPostPage() {
+  const { profile, loading } = useAuth();
+  const router = useRouter();
 
-  // Post form state
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [body, setBody] = useState("");
@@ -24,13 +25,25 @@ export default function AdminPage() {
     text: string;
   } | null>(null);
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    // We store the password client-side and send it with each publish request.
-    // The server-side API route validates it against the env var.
-    setStoredPassword(password);
-    setAuthenticated(true);
-    setPassword("");
+  if (loading) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-navy-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!profile || !canPost(profile.role)) {
+    return (
+      <div className="text-center py-16">
+        <h1 className="text-2xl font-bold text-navy-900 mb-4">
+          Access Denied
+        </h1>
+        <p className="text-navy-500">
+          Only Admins and Attendees can create posts.
+        </p>
+      </div>
+    );
   }
 
   async function handlePublish(e: React.FormEvent) {
@@ -46,25 +59,22 @@ export default function AdminPage() {
           title: title.trim(),
           body: body.trim(),
           category,
-          password: storedPassword,
         }),
       });
-
-      if (res.status === 401) {
-        setAuthenticated(false);
-        setMessage({ type: "error", text: "Invalid password. Please log in again." });
-        return;
-      }
 
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Failed to publish");
       }
 
-      setMessage({ type: "success", text: "Post published successfully!" });
+      const post = await res.json();
+      setMessage({ type: "success", text: "Post published!" });
       setTitle("");
       setBody("");
       setCategory(CATEGORIES[0]);
+
+      // Redirect to the new post after a brief moment
+      setTimeout(() => router.push(`/post/${post.id}`), 800);
     } catch (err) {
       setMessage({
         type: "error",
@@ -75,41 +85,6 @@ export default function AdminPage() {
     }
   }
 
-  // Password gate
-  if (!authenticated) {
-    return (
-      <div className="max-w-sm mx-auto mt-16">
-        <h1 className="text-2xl font-bold text-navy-900 mb-2 text-center">
-          Admin Access
-        </h1>
-        <p className="text-navy-400 text-sm text-center mb-8">
-          Enter the admin password to continue.
-        </p>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoFocus
-            className="w-full px-4 py-3 border border-navy-200 rounded-lg text-navy-900 placeholder-navy-300 focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent"
-          />
-          {message?.type === "error" && (
-            <p className="text-red-600 text-sm">{message.text}</p>
-          )}
-          <button
-            type="submit"
-            className="w-full bg-navy-800 text-white py-3 rounded-lg font-medium hover:bg-navy-700 transition-colors"
-          >
-            Log In
-          </button>
-        </form>
-      </div>
-    );
-  }
-
-  // Post editor
   return (
     <div>
       <h1 className="text-2xl font-bold text-navy-900 mb-1">New Post</h1>
@@ -163,7 +138,9 @@ export default function AdminPage() {
             className="block text-sm font-medium text-navy-700 mb-1.5"
           >
             Body{" "}
-            <span className="font-normal text-navy-400">(Markdown supported)</span>
+            <span className="font-normal text-navy-400">
+              (Markdown supported)
+            </span>
           </label>
           <textarea
             id="body"
