@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Markdown content styling */
+.prose h1 {
+  @apply text-2xl font-bold mt-8 mb-4 text-navy-900;
+}
+.prose h2 {
+  @apply text-xl font-semibold mt-6 mb-3 text-navy-900;
+}
+.prose h3 {
+  @apply text-lg font-semibold mt-5 mb-2 text-navy-900;
+}
+.prose p {
+  @apply mb-4 leading-relaxed text-navy-800;
+}
+.prose ul {
+  @apply list-disc pl-6 mb-4 space-y-1 text-navy-800;
+}
+.prose ol {
+  @apply list-decimal pl-6 mb-4 space-y-1 text-navy-800;
+}
+.prose blockquote {
+  @apply border-l-4 border-navy-300 pl-4 italic my-4 text-navy-600;
+}
+.prose code {
+  @apply bg-navy-100 text-navy-800 px-1.5 py-0.5 rounded text-sm;
+}
+.prose pre {
+  @apply bg-navy-900 text-navy-100 p-4 rounded-lg overflow-x-auto my-4;
+}
+.prose pre code {
+  @apply bg-transparent text-inherit p-0;
+}
+.prose a {
+  @apply text-navy-500 underline hover:text-navy-700;
+}
+.prose strong {
+  @apply font-semibold text-navy-900;
+}
+.prose hr {
+  @apply my-8 border-navy-200;
+}
