@@ -19,7 +19,7 @@ body {
 
 /* === Selection === */
 ::selection {
-  background: rgba(59, 130, 246, 0.3);
+  background: rgba(148, 163, 184, 0.3);
   color: #f1f5f9;
 }
 
@@ -51,36 +51,36 @@ a, button, input, textarea, select {
 
 /* === AI Glow cards === */
 .ai-card {
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 0 10px rgba(148, 163, 184, 0.06);
   animation: ai-glow-pulse 2s ease-in-out infinite;
 }
 
 .ai-card-loading {
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 0 10px rgba(148, 163, 184, 0.1);
   animation: ai-glow-loading 1.2s ease-in-out infinite;
 }
 
 @keyframes ai-glow-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
-  50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); }
+  0%, 100% { box-shadow: 0 0 10px rgba(148, 163, 184, 0.06); }
+  50% { box-shadow: 0 0 18px rgba(148, 163, 184, 0.12); }
 }
 
 @keyframes ai-glow-loading {
-  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-  50% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.5); }
+  0%, 100% { box-shadow: 0 0 10px rgba(148, 163, 184, 0.1); }
+  50% { box-shadow: 0 0 25px rgba(148, 163, 184, 0.2); }
 }
 
 /* === Markdown content (dark mode) === */
 .prose h1 {
-  @apply text-2xl font-bold mt-8 mb-4 text-txt-primary;
+  @apply text-2xl font-bold mt-8 mb-4 text-white;
 }
 .prose h2 {
-  @apply text-xl font-semibold mt-6 mb-3 text-txt-primary;
+  @apply text-xl font-semibold mt-6 mb-3 text-white;
 }
 .prose h3 {
-  @apply text-lg font-semibold mt-5 mb-2 text-txt-primary;
+  @apply text-lg font-semibold mt-5 mb-2 text-white;
 }
 .prose p {
   @apply mb-4 leading-relaxed text-txt-secondary;
@@ -107,7 +107,7 @@ a, button, input, textarea, select {
   @apply text-accent underline hover:text-accent-hover;
 }
 .prose strong {
-  @apply font-semibold text-txt-primary;
+  @apply font-semibold text-white;
 }
 .prose hr {
   @apply my-8 border-dark-border;
@@ -133,7 +133,7 @@ a, button, input, textarea, select {
 .card-hover:hover {
   transform: scale(1.01);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 /* === Print styles === */

@@ -11,14 +11,14 @@ const config: Config = {
       colors: {
         dark: {
           bg: "#0a0f1c",
-          surface: "#111827",
+          surface: "#0f1520",
           hover: "#1e293b",
           border: "#1e293b",
         },
         accent: {
           DEFAULT: "#3b82f6",
           hover: "#60a5fa",
-          glow: "rgba(59, 130, 246, 0.15)",
+          glow: "rgba(148, 163, 184, 0.08)",
         },
         txt: {
           primary: "#f1f5f9",
@@ -57,18 +57,18 @@ const config: Config = {
       keyframes: {
         "ai-glow-pulse": {
           "0%, 100%": {
-            boxShadow: "0 0 15px rgba(59, 130, 246, 0.15)",
+            boxShadow: "0 0 10px rgba(148, 163, 184, 0.06)",
           },
           "50%": {
-            boxShadow: "0 0 25px rgba(59, 130, 246, 0.3)",
+            boxShadow: "0 0 18px rgba(148, 163, 184, 0.12)",
           },
         },
         "ai-glow-loading": {
           "0%, 100%": {
-            boxShadow: "0 0 15px rgba(59, 130, 246, 0.2)",
+            boxShadow: "0 0 10px rgba(148, 163, 184, 0.1)",
           },
           "50%": {
-            boxShadow: "0 0 35px rgba(59, 130, 246, 0.5)",
+            boxShadow: "0 0 25px rgba(148, 163, 184, 0.2)",
           },
         },
       },

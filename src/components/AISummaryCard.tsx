@@ -25,10 +25,10 @@ export default function AISummaryCard({
   return (
     <div className="ai-card bg-dark-surface rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-dark-border flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-[rgba(255,255,255,0.06)] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <SparkleIcon className="w-4 h-4 text-accent" />
-          <span className="text-xs font-mono font-medium text-accent/80">AI-generated summary</span>
+          <SparkleIcon className="w-4 h-4 text-txt-secondary" />
+          <span className="text-xs font-mono font-medium text-txt-secondary">AI-generated summary</span>
           {generatedAt && (
             <span className="text-xs font-mono text-txt-secondary/60 ml-2">
               {new Date(generatedAt).toLocaleDateString("en-GB", {

@@ -73,10 +73,10 @@ export default function DigestContent() {
 
       {/* Leaderboard */}
       {leaderboard && (
-        <div className="bg-dark-surface rounded-xl border border-dark-border overflow-hidden">
-          <div className="px-6 py-4 border-b border-dark-border">
-            <h2 className="text-lg font-heading font-semibold text-txt-primary flex items-center gap-2">
-              <SparkleIcon className="w-4 h-4 text-accent" />
+        <div className="bg-dark-surface rounded-xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[rgba(255,255,255,0.06)]">
+            <h2 className="text-lg font-heading font-semibold text-white flex items-center gap-2">
+              <SparkleIcon className="w-4 h-4 text-txt-secondary" />
               Programme Leaderboard
             </h2>
           </div>

@@ -51,19 +51,19 @@ export default function QuickPostBar({ sessionId }: { sessionId: number }) {
       {!expanded ? (
         <button
           onClick={() => setExpanded(true)}
-          className="w-full text-left px-4 py-3 bg-dark-surface border border-dark-border rounded-xl text-txt-secondary/60 hover:border-accent/30 hover:text-txt-secondary transition-all"
+          className="w-full text-left px-4 py-3 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl text-txt-secondary/60 hover:border-[rgba(255,255,255,0.12)] hover:text-txt-secondary transition-all"
         >
           Share an insight from this session...
         </button>
       ) : (
-        <div className="bg-dark-surface border border-dark-border rounded-xl p-4">
+        <div className="bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl p-4">
           <textarea
             autoFocus
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder="Share an insight from this session..."
             rows={4}
-            className="w-full bg-dark-bg border border-dark-border rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y font-mono leading-relaxed"
+            className="w-full bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y font-mono leading-relaxed"
           />
           {message && (
             <p className={`text-sm mt-2 ${message.type === "success" ? "text-green-400" : "text-red-400"}`}>
@@ -77,7 +77,7 @@ export default function QuickPostBar({ sessionId }: { sessionId: number }) {
             <div className="flex gap-2">
               <button
                 onClick={() => { setExpanded(false); setBody(""); setMessage(null); }}
-                className="px-4 py-2 text-sm text-txt-secondary border border-dark-border rounded-lg hover:border-txt-secondary/50 transition-colors"
+                className="px-4 py-2 text-sm text-txt-secondary border border-[rgba(255,255,255,0.06)] rounded-lg hover:border-txt-secondary/50 transition-colors"
               >
                 Cancel
               </button>

@@ -70,7 +70,7 @@ function SessionCommentItem({
   }
 
   return (
-    <div className="bg-dark-surface rounded-xl p-4 border border-dark-border">
+    <div className="bg-dark-surface rounded-xl p-4 border border-[rgba(255,255,255,0.06)]">
       <div className="flex items-center gap-2 mb-2">
         <span className="font-medium text-txt-primary text-sm">
           {comment.profiles?.username ?? "Unknown"}
@@ -118,7 +118,7 @@ function SessionCommentItem({
             value={editBody}
             onChange={(e) => setEditBody(e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
+            className="w-full px-3 py-2 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-sm text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
           />
           <div className="flex gap-2">
             <button
@@ -133,7 +133,7 @@ function SessionCommentItem({
                 setEditing(false);
                 setEditBody(comment.body);
               }}
-              className="text-xs text-txt-secondary px-3 py-1.5 rounded-lg border border-dark-border hover:border-txt-secondary/50 transition-colors"
+              className="text-xs text-txt-secondary px-3 py-1.5 rounded-lg border border-[rgba(255,255,255,0.06)] hover:border-txt-secondary/50 transition-colors"
             >
               Cancel
             </button>
@@ -239,7 +239,7 @@ export default function SessionComments({
             onChange={(e) => setBody(e.target.value)}
             required
             rows={3}
-            className="w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
+            className="w-full px-4 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
           />
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <button

@@ -35,13 +35,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-dark-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="font-heading text-3xl font-bold text-txt-primary mb-2">Welcome back</h1>
+          <h1 className="font-heading text-3xl font-bold text-white mb-2">Welcome back</h1>
           <p className="text-txt-secondary text-sm">
             Cambridge AI Leadership Programme
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="bg-dark-surface rounded-xl border border-dark-border p-6 space-y-4 shadow-[0_0_30px_rgba(59,130,246,0.08)]">
+        <form onSubmit={handleLogin} className="bg-dark-surface rounded-xl border border-[rgba(255,255,255,0.06)] p-6 space-y-4">
           <div>
             <label
               htmlFor="email"
@@ -57,7 +57,7 @@ export default function LoginPage() {
               required
               autoFocus
               placeholder="you@example.com"
-              className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             />
           </div>
 
@@ -75,7 +75,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Your password"
-              className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             />
           </div>
 

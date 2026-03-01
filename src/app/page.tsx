@@ -68,11 +68,11 @@ export default async function Home() {
   return (
     <div>
       <div className="mb-10">
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-txt-primary mb-3">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-3">
           Programme Agenda
         </h1>
-        <p className="text-txt-secondary text-lg">
-          Cambridge AI Leadership Programme — Live Learning Blog
+        <p className="text-[#e2e8f0] text-lg">
+          Cambridge AI Leadership Programme &mdash; Cohort 2
         </p>
       </div>
 

@@ -84,7 +84,7 @@ export default function AskInterface() {
       <div className="flex-1 space-y-4 mb-6">
         {messages.length === 0 && (
           <div className="text-center py-12">
-            <SparkleIcon className="w-10 h-10 text-accent/30 mx-auto mb-4" />
+            <SparkleIcon className="w-10 h-10 text-txt-secondary/30 mx-auto mb-4" />
             <p className="text-txt-secondary mb-6">
               Ask me anything about the programme. I&apos;ll answer based on what participants posted.
             </p>
@@ -110,19 +110,19 @@ export default function AskInterface() {
             <div
               className={`max-w-[80%] rounded-xl px-4 py-3 ${
                 msg.role === "user"
-                  ? "bg-dark-hover text-txt-primary border border-dark-border"
+                  ? "bg-dark-hover text-txt-primary border border-[rgba(255,255,255,0.06)]"
                   : "ai-card bg-dark-surface"
               }`}
             >
               {msg.role === "assistant" && (
                 <div className="flex items-center gap-1.5 mb-2">
-                  <SparkleIcon className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-xs font-mono font-medium text-accent/80">AI</span>
+                  <SparkleIcon className="w-3.5 h-3.5 text-txt-secondary" />
+                  <span className="text-xs font-mono font-medium text-txt-secondary">AI</span>
                 </div>
               )}
               <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
               {msg.sources && msg.sources.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-dark-border">
+                <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
                   <p className="text-xs font-medium text-txt-secondary/60 mb-1.5">Sources:</p>
                   <div className="space-y-1">
                     {msg.sources.map((src, j) => (
@@ -149,8 +149,8 @@ export default function AskInterface() {
           <div className="flex justify-start">
             <div className="ai-card-loading bg-dark-surface rounded-xl px-4 py-3">
               <div className="flex items-center gap-2">
-                <SparkleIcon className="w-3.5 h-3.5 text-accent animate-pulse" />
-                <span className="text-sm font-mono text-accent animate-pulse">Thinking...</span>
+                <SparkleIcon className="w-3.5 h-3.5 text-txt-secondary animate-pulse" />
+                <span className="text-sm font-mono text-txt-secondary animate-pulse">Thinking...</span>
               </div>
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function AskInterface() {
           e.preventDefault();
           handleSubmit(input);
         }}
-        className="sticky bottom-0 bg-dark-bg pt-4 border-t border-dark-border"
+        className="sticky bottom-0 bg-dark-bg pt-4 border-t border-[rgba(255,255,255,0.06)]"
       >
         <div className="flex gap-3">
           <input
@@ -173,7 +173,7 @@ export default function AskInterface() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask a question about the programme..."
-            className="flex-1 bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="flex-1 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             disabled={loading}
           />
           <button

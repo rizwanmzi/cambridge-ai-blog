@@ -65,7 +65,7 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
   return (
     <div>
       {/* Tab buttons */}
-      <div className="flex border-b border-dark-border mb-6">
+      <div className="flex border-b border-[rgba(255,255,255,0.06)] mb-6">
         <button
           onClick={() => handleTabSwitch("posts")}
           className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${

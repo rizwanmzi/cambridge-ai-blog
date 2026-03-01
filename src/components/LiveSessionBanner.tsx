@@ -101,7 +101,7 @@ export default function LiveSessionBanner({
 
   if (now < programmeStart) {
     return (
-      <div className="mb-8 p-5 rounded-xl border border-dark-border bg-dark-surface">
+      <div className="mb-8 p-5 rounded-xl border border-[rgba(255,255,255,0.06)] bg-dark-surface">
         <p className="text-txt-secondary text-center">
           Programme begins Sunday 1 March at 5pm
         </p>
@@ -111,7 +111,7 @@ export default function LiveSessionBanner({
 
   if (now > programmeEnd && !liveSession) {
     return (
-      <div className="mb-8 p-5 rounded-xl border border-dark-border bg-dark-surface">
+      <div className="mb-8 p-5 rounded-xl border border-[rgba(255,255,255,0.06)] bg-dark-surface">
         <p className="text-txt-secondary text-center">Programme complete</p>
       </div>
     );

@@ -60,10 +60,10 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className="bg-dark-bg/95 backdrop-blur border-b border-dark-border sticky top-0 z-40">
+      <nav className="bg-dark-bg/95 backdrop-blur border-b border-[rgba(255,255,255,0.06)] sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="group">
-            <span className="text-lg sm:text-xl font-heading font-semibold tracking-tight text-txt-primary">
+            <span className="text-lg sm:text-xl font-heading font-semibold tracking-tight text-white">
               Cambridge AI
             </span>
             <span className="text-txt-secondary text-sm sm:text-base ml-2 font-light hidden sm:inline">
@@ -99,7 +99,7 @@ export default function NavBar() {
       {mobileMenuOpen && (
         <>
           <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileMenuOpen(false)} />
-          <div className="fixed top-0 right-0 h-full w-64 bg-dark-surface border-l border-dark-border z-50 md:hidden p-6 pt-20 flex flex-col gap-5 text-sm font-medium">
+          <div className="fixed top-0 right-0 h-full w-64 bg-dark-surface border-l border-[rgba(255,255,255,0.06)] z-50 md:hidden p-6 pt-20 flex flex-col gap-5 text-sm font-medium">
             {navLinks}
           </div>
         </>

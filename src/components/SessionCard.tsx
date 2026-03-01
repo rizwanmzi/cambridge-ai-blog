@@ -34,12 +34,12 @@ export default function SessionCard({
       <div
         className={`rounded-xl p-4 transition-all duration-150 ${
           session.is_social
-            ? "border border-dashed border-dark-border bg-dark-surface/50 hover:border-txt-secondary/30"
+            ? "border border-dashed border-[rgba(255,255,255,0.06)] bg-dark-surface/50 hover:border-[rgba(255,255,255,0.12)]"
             : isLive
             ? "border-2 border-red-500/50 bg-dark-surface hover:border-red-500/70 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
             : isCompleted
-            ? "border border-dark-border bg-dark-surface/60 opacity-70 hover:opacity-100 hover:border-accent/30"
-            : "border border-dark-border bg-dark-surface card-hover"
+            ? "border border-[rgba(255,255,255,0.06)] bg-dark-surface/60 opacity-70 hover:opacity-100 hover:border-[rgba(255,255,255,0.12)]"
+            : "border border-[rgba(255,255,255,0.06)] bg-dark-surface card-hover"
         }`}
       >
         <div className="flex items-start justify-between gap-3">

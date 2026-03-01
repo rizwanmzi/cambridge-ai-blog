@@ -72,13 +72,13 @@ export default function SignupPage() {
     }
   }
 
-  const inputClasses = "w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+  const inputClasses = "w-full px-4 py-3 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
 
   return (
     <div className="min-h-screen bg-dark-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="font-heading text-3xl font-bold text-txt-primary mb-2">
+          <h1 className="font-heading text-3xl font-bold text-white mb-2">
             Join the programme
           </h1>
           <p className="text-txt-secondary text-sm">
@@ -86,7 +86,7 @@ export default function SignupPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSignup} className="bg-dark-surface rounded-xl border border-dark-border p-6 space-y-4 shadow-[0_0_30px_rgba(59,130,246,0.08)]">
+        <form onSubmit={handleSignup} className="bg-dark-surface rounded-xl border border-[rgba(255,255,255,0.06)] p-6 space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-txt-secondary mb-1.5">
               Email

@@ -73,20 +73,20 @@ export default function PostActions({
 
   if (editing) {
     return (
-      <div className="mb-8 bg-dark-surface border border-dark-border rounded-xl p-6">
+      <div className="mb-8 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl p-6">
         <h3 className="text-sm font-medium text-txt-secondary mb-4">Edit Post</h3>
         <div className="space-y-4">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2.5 bg-dark-bg border border-dark-border rounded-lg text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full px-4 py-2.5 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={10}
-            className="w-full px-4 py-2.5 bg-dark-bg border border-dark-border rounded-lg text-txt-primary font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
+            className="w-full px-4 py-2.5 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
           />
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <div className="flex gap-3">
@@ -104,7 +104,7 @@ export default function PostActions({
                 setBody(initialBody);
                 setError("");
               }}
-              className="px-5 py-2 rounded-lg text-sm font-medium text-txt-secondary border border-dark-border hover:border-txt-secondary/50 transition-colors"
+              className="px-5 py-2 rounded-lg text-sm font-medium text-txt-secondary border border-[rgba(255,255,255,0.06)] hover:border-txt-secondary/50 transition-colors"
             >
               Cancel
             </button>

@@ -5,7 +5,7 @@ import NavBar from "@/components/NavBar";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 
 export const metadata: Metadata = {
-  title: "Cambridge AI Leadership Programme — Live Learning Blog",
+  title: "Cambridge AI Leadership Programme — Cohort 2",
   description:
     "Insights, reflections, and key takeaways from the Cambridge AI Leadership Programme.",
 };
@@ -28,7 +28,7 @@ export default function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="border-t border-dark-border">
+          <footer className="border-t border-[rgba(255,255,255,0.06)]">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 text-center text-sm text-txt-secondary">
               <p>
                 &copy; {new Date().getFullYear()} Cambridge AI Leadership

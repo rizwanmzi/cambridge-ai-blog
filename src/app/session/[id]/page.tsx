@@ -17,10 +17,10 @@ interface PostWithProfile {
 }
 
 const categoryColors: Record<string, string> = {
-  "Live Insight": "bg-green-500/20 text-green-400 border-green-500/40",
-  "Formal Notes": "bg-blue-500/20 text-blue-400 border-blue-500/40",
-  "Key Takeaway": "bg-amber-500/20 text-amber-400 border-amber-500/40",
-  Reflection: "bg-purple-500/20 text-purple-400 border-purple-500/40",
+  "Live Insight": "border-green-500/30 text-green-400",
+  "Formal Notes": "border-blue-500/30 text-blue-400",
+  "Key Takeaway": "border-amber-500/30 text-amber-400",
+  Reflection: "border-purple-500/30 text-purple-400",
 };
 
 function formatTime(t: string) {
@@ -100,7 +100,7 @@ export default async function SessionPage({
             {formatTime(session.start_time)}–{formatTime(session.end_time)}
           </span>
         </div>
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-txt-primary leading-tight mb-2">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-white leading-tight mb-2">
           {session.title}
         </h1>
         {session.faculty && (
@@ -143,12 +143,12 @@ export default async function SessionPage({
                       href={`/post/${post.id}`}
                       className="block group"
                     >
-                      <article className="bg-dark-surface border border-dark-border rounded-xl p-5 hover:border-accent/30 hover:bg-dark-hover hover:-translate-y-0.5 transition-all">
+                      <article className="bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl p-5 hover:border-[rgba(255,255,255,0.12)] hover:bg-dark-hover hover:-translate-y-0.5 transition-all">
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
                           <span
                             className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
                               categoryColors[post.category] ||
-                              "bg-dark-hover text-txt-secondary border-dark-border"
+                              "bg-dark-hover text-txt-secondary border-[rgba(255,255,255,0.06)]"
                             }`}
                           >
                             {post.category}
@@ -173,7 +173,7 @@ export default async function SessionPage({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 border-2 border-dashed border-dark-border rounded-xl">
+                <div className="text-center py-10 border-2 border-dashed border-[rgba(255,255,255,0.06)] rounded-xl">
                   <p className="text-txt-secondary">No posts yet for this session.</p>
                 </div>
               )}
@@ -183,7 +183,7 @@ export default async function SessionPage({
       </section>
 
       {/* Session comments */}
-      <hr className="border-dark-border mb-8" />
+      <hr className="border-[rgba(255,255,255,0.06)] mb-8" />
       <SessionComments
         sessionId={session.id}
         initialComments={comments || []}

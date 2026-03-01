@@ -135,12 +135,12 @@ export default function NewPostForm() {
     }
   }
 
-  const inputClasses = "w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
-  const selectClasses = "w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+  const inputClasses = "w-full px-4 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+  const selectClasses = "w-full px-4 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-txt-primary mb-1">New Post</h1>
+      <h1 className="font-heading text-2xl font-bold text-white mb-1">New Post</h1>
       <p className="text-txt-secondary text-sm mb-8">
         Write in Markdown. AI will automatically categorise your post.
       </p>
@@ -207,7 +207,7 @@ export default function NewPostForm() {
       </form>
 
       {/* Mobile sticky button */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/90 backdrop-blur border-t border-dark-border p-4">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/90 backdrop-blur border-t border-[rgba(255,255,255,0.06)] p-4">
         <button
           type="button"
           onClick={() => {

@@ -29,7 +29,7 @@ export default function ParticleBackground() {
 
     function initParticles() {
       const isMobile = window.innerWidth < 768;
-      const count = isMobile ? 30 : 60;
+      const count = isMobile ? 18 : 36;
       particles = [];
       for (let i = 0; i < count; i++) {
         particles.push({
@@ -37,7 +37,7 @@ export default function ParticleBackground() {
           y: Math.random() * canvas!.height,
           vx: (Math.random() - 0.5) * 0.3,
           vy: (Math.random() - 0.5) * 0.3,
-          size: Math.random() * 2 + 1,
+          size: Math.random() * 1.5 + 0.5,
         });
       }
     }
@@ -53,7 +53,7 @@ export default function ParticleBackground() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 150) {
             ctx!.beginPath();
-            ctx!.strokeStyle = `rgba(59, 130, 246, ${0.08 * (1 - dist / 150)})`;
+            ctx!.strokeStyle = `rgba(255, 255, 255, ${0.05 * (1 - dist / 150)})`;
             ctx!.lineWidth = 0.5;
             ctx!.moveTo(particles[i].x, particles[i].y);
             ctx!.lineTo(particles[j].x, particles[j].y);
@@ -66,7 +66,7 @@ export default function ParticleBackground() {
       for (const p of particles) {
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx!.fillStyle = "rgba(59, 130, 246, 0.4)";
+        ctx!.fillStyle = "rgba(255, 255, 255, 0.15)";
         ctx!.fill();
 
         // Update position

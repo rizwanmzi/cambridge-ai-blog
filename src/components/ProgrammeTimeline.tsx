@@ -67,7 +67,7 @@ export default function ProgrammeTimeline({
           .sort(([a], [b]) => Number(a) - Number(b))
           .map(([day, daySessions]) => (
             <section key={day} className="scroll-fade-in">
-              <h2 className="font-heading text-lg font-semibold text-txt-primary mb-4 pb-2 border-b border-dark-border sticky top-[65px] bg-dark-bg/95 backdrop-blur z-20 py-3 -mx-4 px-4 sm:-mx-6 sm:px-6">
+              <h2 className="font-heading text-lg font-semibold text-[#e2e8f0] mb-4 pb-2 border-b border-[rgba(255,255,255,0.06)] sticky top-[65px] bg-dark-bg/95 backdrop-blur z-20 py-3 -mx-4 px-4 sm:-mx-6 sm:px-6">
                 {dayLabels[Number(day)] || `Day ${day}`}
               </h2>
               <div className="space-y-4">

@@ -4,8 +4,8 @@ export default function AILoadingState() {
   return (
     <div className="ai-card-loading bg-dark-surface rounded-xl p-8">
       <div className="flex items-center gap-2 mb-6">
-        <SparkleIcon className="w-5 h-5 text-accent animate-pulse" />
-        <span className="text-sm font-mono font-medium text-accent animate-pulse">
+        <SparkleIcon className="w-5 h-5 text-txt-secondary animate-pulse" />
+        <span className="text-sm font-mono font-medium text-txt-secondary animate-pulse">
           AI is thinking...
         </span>
       </div>

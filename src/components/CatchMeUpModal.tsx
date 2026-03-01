@@ -55,12 +55,12 @@ export default function CatchMeUpModal({ open, onClose }: CatchMeUpModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="relative bg-dark-surface rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[85vh] flex flex-col border border-dark-border">
+      <div className="relative bg-dark-surface rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[85vh] flex flex-col border border-[rgba(255,255,255,0.06)]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-dark-border flex items-center justify-between shrink-0">
+        <div className="px-6 py-4 border-b border-[rgba(255,255,255,0.06)] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <SparkleIcon className="w-5 h-5 text-accent" />
-            <h2 className="text-lg font-heading font-semibold text-txt-primary">Catch Me Up</h2>
+            <SparkleIcon className="w-5 h-5 text-txt-secondary" />
+            <h2 className="text-lg font-heading font-semibold text-white">Catch Me Up</h2>
           </div>
           <button
             onClick={onClose}
@@ -85,8 +85,8 @@ export default function CatchMeUpModal({ open, onClose }: CatchMeUpModalProps) {
                 onClick={() => setSelectedDay(d)}
                 className={`px-4 py-2 text-sm rounded-lg font-medium transition-all ${
                   selectedDay === d
-                    ? "bg-accent text-white shadow-[0_0_15px_rgba(59,130,246,0.2)]"
-                    : "bg-dark-hover text-txt-secondary hover:text-txt-primary border border-dark-border"
+                    ? "bg-accent text-white"
+                    : "bg-dark-hover text-txt-secondary hover:text-txt-primary border border-[rgba(255,255,255,0.06)]"
                 }`}
               >
                 Day {d}
