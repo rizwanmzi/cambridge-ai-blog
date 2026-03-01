@@ -7,6 +7,8 @@ import { canPost } from "@/lib/roles";
 export default function NavBar() {
   const { user, profile, loading, signOut } = useAuth();
 
+  console.log("[NavBar] render:", { loading, user: !!user, profile: profile?.role ?? null });
+
   return (
     <nav className="bg-navy-900 text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">

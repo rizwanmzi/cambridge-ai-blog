@@ -68,11 +68,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log(`[AuthProvider] handleSession (${source}):`, {
         hasSession: !!session,
         userId: session?.user?.id?.substring(0, 8),
+        mounted,
       });
 
-      if (!mounted) return;
+      if (!mounted) {
+        console.warn(`[AuthProvider] handleSession SKIPPED (mounted=false) source=${source}`);
+        return;
+      }
 
       const currentUser = session?.user ?? null;
+      console.log(`[AuthProvider] CALLING setUser, user:`, !!currentUser);
       setUser(currentUser);
 
       if (currentUser) {
@@ -81,7 +86,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
       }
 
-      if (mounted) setLoading(false);
+      if (mounted) {
+        console.log("[AuthProvider] CALLING setLoading(false)");
+        setLoading(false);
+      } else {
+        console.warn("[AuthProvider] setLoading SKIPPED (mounted became false during fetchProfile)");
+      }
     }
 
     // 1) Explicitly read the session from cookie storage
