@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { canPost } from "@/lib/roles";
 
 export default function NavBar() {
-  const { profile, loading, signOut } = useAuth();
+  const { user, profile, loading, signOut } = useAuth();
 
   return (
     <nav className="bg-navy-900 text-white">
@@ -39,7 +39,7 @@ export default function NavBar() {
               New Post
             </Link>
           )}
-          {!loading && profile && (
+          {!loading && user && (
             <button
               onClick={signOut}
               className="text-navy-400 hover:text-white transition-colors"
