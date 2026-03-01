@@ -57,11 +57,32 @@ export default async function SessionPage({
     .eq("session_id", session.id)
     .order("created_at", { ascending: false });
 
-  const { data: comments } = await supabase
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: rawComments } = await supabase
     .from("comments")
     .select("*, profiles(username, role)")
     .eq("session_id", session.id)
     .order("created_at", { ascending: true });
+
+  let likedCommentIds = new Set<number>();
+  if (user && rawComments && rawComments.length > 0) {
+    const commentIds = rawComments.map((c: { id: number }) => c.id);
+    const { data: likes } = await supabase
+      .from("comment_likes")
+      .select("comment_id")
+      .eq("user_id", user.id)
+      .in("comment_id", commentIds);
+    if (likes) {
+      likedCommentIds = new Set(likes.map((l: { comment_id: number }) => l.comment_id));
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const comments = (rawComments || []).map((c: any) => ({
+    ...c,
+    user_has_liked: likedCommentIds.has(c.id),
+  }));
 
   const dayLabels: Record<number, string> = {
     0: "Sunday 1 March", 1: "Monday 2 March", 2: "Tuesday 3 March",

@@ -2,95 +2,9 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import RoleBadge from "@/components/RoleBadge";
-import TimeAgo from "@/components/TimeAgo";
-
-interface Comment {
-  id: number;
-  post_id: number;
-  user_id: string;
-  body: string;
-  created_at: string;
-  profiles: { username: string; role: string };
-}
-
-function CommentItem({
-  comment, userId, isAdmin, onUpdate, onDelete,
-}: {
-  comment: Comment; userId: string | undefined; isAdmin: boolean;
-  onUpdate: (id: number, body: string) => void; onDelete: (id: number) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const [editBody, setEditBody] = useState(comment.body);
-  const [saving, setSaving] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const canEdit = userId === comment.user_id || isAdmin;
-
-  async function handleSave() {
-    setSaving(true);
-    try {
-      const res = await fetch(`/api/comments/${comment.id}`, {
-        method: "PUT", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: editBody.trim() }),
-      });
-      if (!res.ok) throw new Error();
-      const updated = await res.json();
-      onUpdate(comment.id, updated.body);
-      setEditing(false);
-    } catch { /* keep editing */ } finally { setSaving(false); }
-  }
-
-  async function handleDelete() {
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/comments/${comment.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
-      onDelete(comment.id);
-    } catch { setDeleting(false); setShowDelete(false); }
-  }
-
-  return (
-    <div
-      className="border-l-2 border-[rgba(255,255,255,0.06)] pl-3 py-2"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-1">
-        <span>{comment.profiles?.username ?? "Unknown"}</span>
-        {comment.profiles && <RoleBadge role={comment.profiles.role} />}
-        <span>&middot;</span>
-        <TimeAgo date={comment.created_at} />
-        {canEdit && hovered && !editing && (
-          <span className="ml-auto flex gap-2">
-            <button onClick={() => setEditing(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary">Edit</button>
-            {!showDelete ? (
-              <button onClick={() => setShowDelete(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary">Delete</button>
-            ) : (
-              <>
-                <button onClick={handleDelete} disabled={deleting} className="text-[12px] text-txt-tertiary hover:text-white">{deleting ? "..." : "Confirm"}</button>
-                <button onClick={() => setShowDelete(false)} className="text-[12px] text-txt-tertiary">Cancel</button>
-              </>
-            )}
-          </span>
-        )}
-      </div>
-      {editing ? (
-        <div className="space-y-2">
-          <textarea id="edit-comment" name="edit-comment" value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3}
-            className="w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y" />
-          <div className="flex gap-2">
-            <button onClick={handleSave} disabled={saving} className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1 rounded-md disabled:opacity-40">{saving ? "..." : "Save"}</button>
-            <button onClick={() => { setEditing(false); setEditBody(comment.body); }} className="text-[13px] text-txt-tertiary px-3 py-1">Cancel</button>
-          </div>
-        </div>
-      ) : (
-        <p className="text-sm text-[rgba(255,255,255,0.7)] leading-relaxed">{comment.body}</p>
-      )}
-    </div>
-  );
-}
+import CommentItem from "@/components/CommentItem";
+import { buildCommentTree } from "@/lib/comment-tree";
+import type { Comment } from "@/lib/comment-types";
 
 export default function CommentSection({ postId, initialComments }: { postId: number; initialComments: Comment[] }) {
   const { user, profile } = useAuth();
@@ -100,8 +14,43 @@ export default function CommentSection({ postId, initialComments }: { postId: nu
   const [error, setError] = useState("");
   const isAdmin = profile?.role === "Admin";
 
-  function handleUpdate(id: number, newBody: string) { setComments((p) => p.map((c) => c.id === id ? { ...c, body: newBody } : c)); }
-  function handleDelete(id: number) { setComments((p) => p.filter((c) => c.id !== id)); }
+  const tree = buildCommentTree(comments);
+
+  function handleUpdate(id: number, newBody: string) {
+    setComments((p) => p.map((c) => c.id === id ? { ...c, body: newBody } : c));
+  }
+
+  function handleDelete(id: number) {
+    setComments((p) => p.filter((c) => c.id !== id && c.parent_id !== id));
+  }
+
+  async function handleLikeToggle(commentId: number) {
+    try {
+      const res = await fetch(`/api/comments/${commentId}/like`, { method: "POST" });
+      if (!res.ok) throw new Error("Like failed");
+      const data = await res.json();
+      setComments((p) =>
+        p.map((c) =>
+          c.id === commentId
+            ? { ...c, like_count: data.like_count, user_has_liked: data.liked }
+            : c
+        )
+      );
+    } catch {
+      // CommentItem handles optimistic revert
+    }
+  }
+
+  async function handleReply(parentId: number, replyBody: string) {
+    const res = await fetch("/api/comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ post_id: postId, parent_id: parentId, body: replyBody }),
+    });
+    if (!res.ok) throw new Error("Reply failed");
+    const nc = await res.json();
+    setComments((p) => [...p, { ...nc, user_has_liked: false, like_count: nc.like_count ?? 0, parent_id: nc.parent_id ?? null }]);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -114,7 +63,7 @@ export default function CommentSection({ postId, initialComments }: { postId: nu
       });
       if (!res.ok) { const data = await res.json(); throw new Error(data.error || "Failed"); }
       const nc = await res.json();
-      setComments((p) => [...p, nc]);
+      setComments((p) => [...p, { ...nc, user_has_liked: false, like_count: nc.like_count ?? 0, parent_id: null }]);
       setBody("");
     } catch (err) { setError(err instanceof Error ? err.message : "Something went wrong. Try again."); }
     finally { setSubmitting(false); }
@@ -125,10 +74,21 @@ export default function CommentSection({ postId, initialComments }: { postId: nu
       <h2 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-4">
         Comments {comments.length > 0 && `(${comments.length})`}
       </h2>
-      {comments.length > 0 ? (
+      {tree.length > 0 ? (
         <div className="space-y-1 mb-6">
-          {comments.map((c) => (
-            <CommentItem key={c.id} comment={c} userId={user?.id} isAdmin={isAdmin} onUpdate={handleUpdate} onDelete={handleDelete} />
+          {tree.map((node) => (
+            <CommentItem
+              key={node.id}
+              comment={node}
+              userId={user?.id}
+              isAdmin={isAdmin}
+              depth={0}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+              onLikeToggle={handleLikeToggle}
+              onReply={handleReply}
+              variant="post"
+            />
           ))}
         </div>
       ) : (

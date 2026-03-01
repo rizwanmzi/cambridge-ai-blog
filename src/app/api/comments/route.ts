@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { post_id, session_id, body: commentBody } = body;
+  const { post_id, session_id, body: commentBody, parent_id } = body;
 
   if (!commentBody) {
     return NextResponse.json({ error: "Body is required" }, { status: 400 });
@@ -54,9 +54,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Validate parent_id if provided
+  if (parent_id) {
+    const { data: parentComment } = await supabase
+      .from("comments")
+      .select("id, post_id, session_id")
+      .eq("id", parent_id)
+      .single();
+
+    if (!parentComment) {
+      return NextResponse.json({ error: "Parent comment not found" }, { status: 404 });
+    }
+    if (post_id && parentComment.post_id !== post_id) {
+      return NextResponse.json({ error: "Parent comment belongs to different post" }, { status: 400 });
+    }
+    if (session_id && parentComment.session_id !== session_id) {
+      return NextResponse.json({ error: "Parent comment belongs to different session" }, { status: 400 });
+    }
+  }
+
   const insertData: Record<string, unknown> = { user_id: user.id, body: commentBody };
   if (post_id) insertData.post_id = post_id;
   if (session_id) insertData.session_id = session_id;
+  if (parent_id) insertData.parent_id = parent_id;
 
   const { data, error } = await supabase
     .from("comments")
