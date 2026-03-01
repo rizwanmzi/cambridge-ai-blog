@@ -10,6 +10,9 @@ interface Session {
   id: number;
   day_number: number;
   title: string;
+  start_time: string;
+  end_time: string;
+  session_date: string;
 }
 
 export default function NewPostForm() {
@@ -33,14 +36,46 @@ export default function NewPostForm() {
       const supabase = createSupabaseBrowser();
       const { data } = await supabase
         .from("sessions")
-        .select("id, day_number, title")
+        .select("id, day_number, title, start_time, end_time, session_date")
         .eq("is_social", false)
         .order("day_number")
         .order("start_time");
-      if (data) setSessions(data);
+      if (data) {
+        setSessions(data);
+        // Auto-select live or next upcoming session if no preselected
+        if (!preselectedSession && data.length > 0) {
+          const now = new Date();
+          const londonStr = now.toLocaleString("en-GB", { timeZone: "Europe/London" });
+          const [datePart, timePart] = londonStr.split(", ");
+          const [day, month, year] = datePart.split("/");
+          const londonNow = new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${timePart}+00:00`);
+
+          // Find live session
+          const live = data.find((s) => {
+            const start = new Date(`${s.session_date}T${s.start_time}+00:00`);
+            const end = new Date(`${s.session_date}T${s.end_time}+00:00`);
+            return londonNow >= start && londonNow <= end;
+          });
+          if (live) {
+            setSessionId(String(live.id));
+            return;
+          }
+
+          // Find next upcoming
+          const upcoming = data
+            .filter((s) => new Date(`${s.session_date}T${s.start_time}+00:00`) > londonNow)
+            .sort((a, b) =>
+              new Date(`${a.session_date}T${a.start_time}+00:00`).getTime() -
+              new Date(`${b.session_date}T${b.start_time}+00:00`).getTime()
+            );
+          if (upcoming.length > 0) {
+            setSessionId(String(upcoming[0].id));
+          }
+        }
+      }
     }
     loadSessions();
-  }, []);
+  }, [preselectedSession]);
 
   if (loading) {
     return (
@@ -127,9 +162,10 @@ export default function NewPostForm() {
 
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-txt-secondary mb-1.5">
-            Title
+            Title{" "}
+            <span className="font-normal text-txt-secondary/60">(optional — auto-generated if blank)</span>
           </label>
-          <input id="title" type="text" placeholder="Post title" value={title} onChange={(e) => setTitle(e.target.value)} required className={inputClasses} />
+          <input id="title" type="text" placeholder="Post title" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClasses} />
         </div>
 
         <div>
@@ -160,14 +196,33 @@ export default function NewPostForm() {
           </div>
         )}
 
+        {/* Desktop button */}
         <button
           type="submit"
           disabled={publishing}
-          className="w-full sm:w-auto bg-accent text-white px-8 py-3 rounded-lg font-medium hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
+          className="hidden sm:inline-block bg-accent text-white px-8 py-3 rounded-lg font-medium hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
         >
           {publishing ? "Publishing..." : "Publish Post"}
         </button>
       </form>
+
+      {/* Mobile sticky button */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/90 backdrop-blur border-t border-dark-border p-4">
+        <button
+          type="button"
+          onClick={() => {
+            const form = document.querySelector("form");
+            if (form) form.requestSubmit();
+          }}
+          disabled={publishing}
+          className="w-full bg-accent text-white py-3.5 rounded-lg font-medium hover:bg-accent-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
+        >
+          {publishing ? "Publishing..." : "Publish Post"}
+        </button>
+      </div>
+
+      {/* Spacer for mobile sticky button */}
+      <div className="sm:hidden h-20" />
     </div>
   );
 }

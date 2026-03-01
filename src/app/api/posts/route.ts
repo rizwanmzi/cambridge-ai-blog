@@ -55,14 +55,19 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { session_id, title, body: postBody } = body;
+  const { session_id, title: rawTitle, body: postBody } = body;
 
-  if (!session_id || !title || !postBody) {
+  if (!session_id || !postBody) {
     return NextResponse.json(
-      { error: "Session, title, and body are required" },
+      { error: "Session and body are required" },
       { status: 400 }
     );
   }
+
+  // Auto-generate title if not provided
+  const title = rawTitle?.trim()
+    || (postBody.replace(/[#*_`>\-\[\]()]/g, "").trim().slice(0, 60) + (postBody.length > 60 ? "..." : ""))
+    || "Quick insight";
 
   // Auto-classify the post via AI
   let category = "Live Insight"; // fallback

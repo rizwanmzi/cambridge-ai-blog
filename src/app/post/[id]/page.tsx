@@ -5,6 +5,7 @@ import PostContent from "./PostContent";
 import CommentSection from "./CommentSection";
 import RoleBadge from "@/components/RoleBadge";
 import PostActions from "@/components/PostActions";
+import TimeAgo from "@/components/TimeAgo";
 
 const categoryColors: Record<string, string> = {
   "Live Insight": "bg-green-500/20 text-green-400 border-green-500/40",
@@ -72,13 +73,7 @@ export default async function PostPage({
             >
               {post.category}
             </span>
-            <time className="text-sm text-txt-secondary">
-              {new Date(post.created_at).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </time>
+            <TimeAgo date={post.created_at} />
             {post.profiles && (
               <span className="flex items-center gap-1.5 text-sm text-txt-secondary">
                 <span>{post.profiles.username}</span>

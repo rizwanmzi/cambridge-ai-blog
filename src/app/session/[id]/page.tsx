@@ -4,6 +4,8 @@ import Link from "next/link";
 import RoleBadge from "@/components/RoleBadge";
 import SessionComments from "./SessionComments";
 import SessionTabs from "./SessionTabs";
+import QuickPostBar from "@/components/QuickPostBar";
+import TimeAgo from "@/components/TimeAgo";
 
 interface PostWithProfile {
   id: number;
@@ -112,6 +114,9 @@ export default async function SessionPage({
         )}
       </header>
 
+      {/* Quick post bar */}
+      <QuickPostBar sessionId={session.id} />
+
       {/* Posts + AI Summary tabs */}
       <section className="mb-12">
         <SessionTabs
@@ -148,13 +153,7 @@ export default async function SessionPage({
                           >
                             {post.category}
                           </span>
-                          <time className="text-sm text-txt-secondary">
-                            {new Date(post.created_at).toLocaleDateString("en-GB", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
-                          </time>
+                          <TimeAgo date={post.created_at} />
                           {post.profiles && (
                             <span className="flex items-center gap-1.5 text-sm text-txt-secondary">
                               <span>{post.profiles.username}</span>

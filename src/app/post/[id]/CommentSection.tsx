@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import RoleBadge from "@/components/RoleBadge";
+import TimeAgo from "@/components/TimeAgo";
 
 interface Comment {
   id: number;
@@ -75,13 +76,7 @@ function CommentItem({
           {comment.profiles?.username ?? "Unknown"}
         </span>
         {comment.profiles && <RoleBadge role={comment.profiles.role} />}
-        <span className="text-txt-secondary/60 text-xs">
-          {new Date(comment.created_at).toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
-        </span>
+        <span className="text-xs"><TimeAgo date={comment.created_at} /></span>
         {canEdit && !editing && (
           <span className="ml-auto flex items-center gap-2">
             <button
