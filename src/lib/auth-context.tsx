@@ -50,18 +50,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     async function fetchProfile(userId: string) {
-      try {
+      for (let attempt = 0; attempt < 2; attempt++) {
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", userId)
           .single();
-        console.log("[AuthProvider] fetchProfile:", { data: !!data, error: error?.message });
-        if (mounted) setProfile(data);
-      } catch (err) {
-        console.warn("[AuthProvider] fetchProfile exception:", err);
-        if (mounted) setProfile(null);
+        console.log("[AuthProvider] fetchProfile attempt", attempt, { data: !!data, error: error?.message });
+        if (data && !error) {
+          if (mounted) setProfile(data);
+          return;
+        }
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 1000));
       }
+      if (mounted) setProfile(null);
     }
 
     async function handleSession(session: Session | null, source: string) {
