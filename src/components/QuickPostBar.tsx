@@ -52,6 +52,8 @@ export default function QuickPostBar({ sessionId }: { sessionId: number }) {
       ) : (
         <div>
           <textarea
+            id="quick-post"
+            name="quick-post"
             autoFocus
             value={body}
             onChange={(e) => setBody(e.target.value)}

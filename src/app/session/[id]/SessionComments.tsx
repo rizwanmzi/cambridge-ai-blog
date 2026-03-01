@@ -87,6 +87,8 @@ function CommentItem({
       {editing ? (
         <div className="space-y-2">
           <textarea
+            id="edit-session-comment"
+            name="edit-session-comment"
             value={editBody}
             onChange={(e) => setEditBody(e.target.value)}
             rows={3}
@@ -166,6 +168,8 @@ export default function SessionComments({
       {user && (
         <form onSubmit={handleSubmit} className="flex gap-2 items-start">
           <input
+            id="new-session-comment"
+            name="new-session-comment"
             type="text"
             placeholder="Add a comment..."
             value={body}

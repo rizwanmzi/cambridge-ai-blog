@@ -51,9 +51,9 @@ export default function PostActions({ postId, authorId, initialTitle, initialBod
   if (editing) {
     return (
       <div className="mb-6 space-y-3">
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+        <input id="edit-post-title" name="edit-post-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)}
           className="w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.25)]" />
-        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={10}
+        <textarea id="edit-post-body" name="edit-post-body" value={body} onChange={(e) => setBody(e.target.value)} rows={10}
           className="w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary font-mono focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y" />
         {error && <p className="text-sm text-txt-tertiary">{error}</p>}
         <div className="flex gap-2">

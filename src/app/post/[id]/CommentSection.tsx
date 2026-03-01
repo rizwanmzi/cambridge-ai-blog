@@ -78,7 +78,7 @@ function CommentItem({
       </div>
       {editing ? (
         <div className="space-y-2">
-          <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3}
+          <textarea id="edit-comment" name="edit-comment" value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3}
             className="w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y" />
           <div className="flex gap-2">
             <button onClick={handleSave} disabled={saving} className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1 rounded-md disabled:opacity-40">{saving ? "..." : "Save"}</button>
@@ -136,7 +136,7 @@ export default function CommentSection({ postId, initialComments }: { postId: nu
       )}
       {user && (
         <form onSubmit={handleSubmit} className="flex gap-2 items-start">
-          <input type="text" placeholder="Add a comment..." value={body} onChange={(e) => setBody(e.target.value)} required
+          <input id="new-comment" name="new-comment" type="text" placeholder="Add a comment..." value={body} onChange={(e) => setBody(e.target.value)} required
             className="flex-1 bg-transparent border-b border-dark-border focus:border-[rgba(255,255,255,0.25)] py-2 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none" />
           <button type="submit" disabled={submitting || !body.trim()}
             className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1.5 rounded-md hover:bg-[rgba(255,255,255,0.15)] disabled:opacity-40 shrink-0">

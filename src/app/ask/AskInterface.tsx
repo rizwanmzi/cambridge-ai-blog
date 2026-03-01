@@ -164,6 +164,8 @@ export default function AskInterface() {
       >
         <div className="flex gap-2">
           <input
+            id="ask-question"
+            name="ask-question"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
