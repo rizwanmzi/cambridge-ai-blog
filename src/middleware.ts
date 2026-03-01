@@ -6,6 +6,8 @@ export async function middleware(request: NextRequest) {
 
   // Allow public routes
   if (
+    pathname === "/" ||
+    pathname === "/about" ||
     pathname === "/login" ||
     pathname === "/signup" ||
     pathname.startsWith("/api/") ||

@@ -19,7 +19,7 @@ export default function NavBar() {
   const navLinks = (
     <>
       <Link href="/" className={linkClasses} onClick={() => setMobileMenuOpen(false)}>
-        Home
+        Live Blog
       </Link>
       <Link href="/about" className={linkClasses} onClick={() => setMobileMenuOpen(false)}>
         About

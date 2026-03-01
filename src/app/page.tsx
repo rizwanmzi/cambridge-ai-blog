@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import ActivityPulse from "@/components/ActivityPulse";
 import DaySummaryAccordion from "@/components/DaySummaryAccordion";
+import LandingPage from "@/components/LandingPage";
 
 interface Session {
   id: number;
@@ -34,6 +35,15 @@ export const revalidate = 0;
 export default async function Home() {
   const supabase = createSupabaseServer();
 
+  // Check if user is logged in
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Not logged in → show landing page
+  if (!user) {
+    return <LandingPage />;
+  }
+
+  // Logged in → show programme agenda
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select("*")
