@@ -67,7 +67,7 @@ export default function SignupPage() {
         return;
       }
 
-      router.push("/");
+      window.location.href = "/";
     } catch {
       setError("Something went wrong. Please try again.");
       setLoading(false);
