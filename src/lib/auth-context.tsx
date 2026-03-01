@@ -38,6 +38,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const supabase = createSupabaseBrowser();
     let mounted = true;
 
+    // Debug: log all cookie names that look like Supabase auth cookies
+    const sbCookies = document.cookie
+      .split(";")
+      .map((c) => c.trim())
+      .filter((c) => c.startsWith("sb-"));
+    console.log(
+      "[AuthProvider] mount – sb-* cookies found:",
+      sbCookies.length,
+      sbCookies.map((c) => c.substring(0, 60))
+    );
+
     async function fetchProfile(userId: string) {
       try {
         const { data, error } = await supabase
@@ -45,35 +56,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .select("*")
           .eq("id", userId)
           .single();
-        if (error) {
-          console.warn("Failed to fetch profile:", error.message);
-        }
+        console.log("[AuthProvider] fetchProfile:", { data: !!data, error: error?.message });
         if (mounted) setProfile(data);
       } catch (err) {
-        console.warn("Profile fetch error:", err);
+        console.warn("[AuthProvider] fetchProfile exception:", err);
         if (mounted) setProfile(null);
       }
     }
 
-    // onAuthStateChange fires INITIAL_SESSION immediately on subscribe,
-    // which gives us the current session from cookies. No separate
-    // getSession() call needed – this avoids the race condition.
+    async function handleSession(session: Session | null, source: string) {
+      console.log(`[AuthProvider] handleSession (${source}):`, {
+        hasSession: !!session,
+        userId: session?.user?.id?.substring(0, 8),
+      });
+
+      if (!mounted) return;
+
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        await fetchProfile(currentUser.id);
+      } else {
+        setProfile(null);
+      }
+
+      if (mounted) setLoading(false);
+    }
+
+    // 1) Explicitly read the session from cookie storage
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log("[AuthProvider] getSession:", {
+        hasSession: !!session,
+        error: error?.message,
+      });
+      handleSession(session, "getSession");
+    });
+
+    // 2) Subscribe to auth changes (also fires INITIAL_SESSION)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
       async (_event: string, session: Session | null) => {
-        if (!mounted) return;
-
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-
-        if (currentUser) {
-          await fetchProfile(currentUser.id);
-        } else {
-          setProfile(null);
-        }
-
-        if (mounted) setLoading(false);
+        console.log("[AuthProvider] onAuthStateChange:", _event, "session:", !!session);
+        // Skip INITIAL_SESSION since getSession above handles initial state.
+        // Process all other events (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED, etc.)
+        if (_event === "INITIAL_SESSION") return;
+        await handleSession(session, `onAuthStateChange:${_event}`);
       }
     );
 

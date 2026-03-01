@@ -16,7 +16,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
@@ -26,6 +26,16 @@ export default function LoginPage() {
       setLoading(false);
       return;
     }
+
+    // Debug: log what signIn returned and cookie state
+    console.log("[Login] signIn succeeded, session:", !!data.session);
+    console.log(
+      "[Login] sb-* cookies after signIn:",
+      document.cookie
+        .split(";")
+        .filter((c) => c.trim().startsWith("sb-"))
+        .map((c) => c.trim().substring(0, 60))
+    );
 
     // Hard redirect so middleware sees the fresh cookies
     window.location.href = "/";

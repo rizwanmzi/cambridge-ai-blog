@@ -70,6 +70,16 @@ export default function SignupPage() {
         return;
       }
 
+      // Debug: verify cookies were written
+      console.log("[Signup] signIn succeeded");
+      console.log(
+        "[Signup] sb-* cookies:",
+        document.cookie
+          .split(";")
+          .filter((c) => c.trim().startsWith("sb-"))
+          .map((c) => c.trim().substring(0, 60))
+      );
+
       // Step 4: Hard redirect to ensure middleware picks up the new cookies
       window.location.href = "/";
     } catch {
