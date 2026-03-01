@@ -9,22 +9,27 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const supabase = createSupabaseBrowser();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-    if (error) {
-      setError(error.message);
+    try {
+      const supabase = createSupabaseBrowser();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      window.location.href = "/";
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
       setLoading(false);
-      return;
     }
-    window.location.href = "/";
   }
 
   const inputClass = "w-full px-3 py-2.5 sm:py-3 bg-dark-surface border border-[rgba(255,255,255,0.1)] rounded-md text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none focus:border-[rgba(255,255,255,0.25)]";

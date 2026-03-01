@@ -11,7 +11,6 @@ export default function SignupPage() {
   const [accessCode, setAccessCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const supabase = createSupabaseBrowser();
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +25,7 @@ export default function SignupPage() {
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Invalid access code"); setLoading(false); return; }
       const { role } = data;
+      const supabase = createSupabaseBrowser();
       const { error: signUpError } = await supabase.auth.signUp({
         email: email.trim(), password,
         options: { data: { username: username.trim(), role } },
