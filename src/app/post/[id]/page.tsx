@@ -21,7 +21,7 @@ export default async function PostPage({
 }) {
   const { data: post, error } = await supabase
     .from("posts")
-    .select("*, profiles(username, role)")
+    .select("*, profiles(username, role), sessions(id, title, day_number)")
     .eq("id", params.id)
     .single();
 
@@ -38,7 +38,7 @@ export default async function PostPage({
   return (
     <div>
       <Link
-        href="/"
+        href={post.sessions ? `/session/${post.sessions.id}` : "/"}
         className="inline-flex items-center text-sm text-navy-400 hover:text-navy-600 transition-colors mb-8"
       >
         <svg
@@ -54,7 +54,9 @@ export default async function PostPage({
             d="M15 19l-7-7 7-7"
           />
         </svg>
-        Back to all posts
+        {post.sessions
+          ? `Back to ${post.sessions.title}`
+          : "Back to agenda"}
       </Link>
 
       <article>
@@ -84,6 +86,17 @@ export default async function PostPage({
           <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 leading-tight">
             {post.title}
           </h1>
+          {post.sessions && (
+            <p className="text-sm text-navy-400 mt-3">
+              Session:{" "}
+              <Link
+                href={`/session/${post.sessions.id}`}
+                className="text-navy-500 hover:underline"
+              >
+                {post.sessions.title}
+              </Link>
+            </p>
+          )}
         </header>
 
         <div className="prose max-w-none mb-12">

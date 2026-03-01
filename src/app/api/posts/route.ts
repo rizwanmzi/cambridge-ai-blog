@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check role — only Admin and Attendee can post
+  // Check role
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
@@ -52,18 +52,24 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { title, body: postBody, category } = body;
+  const { session_id, title, body: postBody, category } = body;
 
-  if (!title || !postBody || !category) {
+  if (!session_id || !title || !postBody || !category) {
     return NextResponse.json(
-      { error: "Title, body, and category are required" },
+      { error: "Session, title, body, and category are required" },
       { status: 400 }
     );
   }
 
   const { data, error } = await supabase
     .from("posts")
-    .insert({ title, body: postBody, category, author_id: user.id })
+    .insert({
+      session_id,
+      title,
+      body: postBody,
+      category,
+      author_id: user.id,
+    })
     .select("*, profiles(username, role)")
     .single();
 

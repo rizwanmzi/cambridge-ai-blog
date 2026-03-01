@@ -38,18 +38,27 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { post_id, body: commentBody } = body;
+  const { post_id, session_id, body: commentBody } = body;
 
-  if (!post_id || !commentBody) {
+  if (!commentBody) {
+    return NextResponse.json({ error: "Body is required" }, { status: 400 });
+  }
+
+  // Must have exactly one target
+  if ((!post_id && !session_id) || (post_id && session_id)) {
     return NextResponse.json(
-      { error: "post_id and body are required" },
+      { error: "Provide either post_id or session_id, not both" },
       { status: 400 }
     );
   }
 
+  const insertData: Record<string, unknown> = { user_id: user.id, body: commentBody };
+  if (post_id) insertData.post_id = post_id;
+  if (session_id) insertData.session_id = session_id;
+
   const { data, error } = await supabase
     .from("comments")
-    .insert({ post_id, user_id: user.id, body: commentBody })
+    .insert(insertData)
     .select("*, profiles(username, role)")
     .single();
 

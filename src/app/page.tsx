@@ -1,120 +1,149 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import RoleBadge from "@/components/RoleBadge";
 
-const categoryColors: Record<string, string> = {
-  "Live Insight": "bg-blue-100 text-blue-800",
-  "Formal Notes": "bg-navy-100 text-navy-700",
-  "Key Takeaway": "bg-amber-100 text-amber-800",
-  Reflection: "bg-emerald-100 text-emerald-800",
+interface Session {
+  id: number;
+  day_number: number;
+  title: string;
+  faculty: string | null;
+  start_time: string;
+  end_time: string;
+  session_date: string;
+  location: string | null;
+  is_social: boolean;
+  post_count: number;
+}
+
+const dayLabels: Record<number, string> = {
+  0: "Day 0 — Sunday 1 March",
+  1: "Day 1 — Monday 2 March",
+  2: "Day 2 — Tuesday 3 March",
+  3: "Day 3 — Wednesday 4 March",
+  4: "Day 4 — Thursday 5 March",
+  5: "Day 5 — Friday 6 March",
 };
 
-interface Post {
-  id: number;
-  title: string;
-  body: string;
-  category: string;
-  created_at: string;
-  profiles: {
-    username: string;
-    role: string;
-  };
+function formatTime(t: string) {
+  return t.slice(0, 5);
 }
 
 export const revalidate = 0;
 
 export default async function Home() {
-  const { data: posts, error } = await supabase
-    .from("posts")
-    .select("*, profiles(username, role)")
-    .order("created_at", { ascending: false });
+  // Fetch sessions
+  const { data: sessions, error } = await supabase
+    .from("sessions")
+    .select("*")
+    .order("day_number")
+    .order("start_time");
 
-  if (error) {
+  // Fetch post counts per session
+  const { data: postCounts } = await supabase
+    .from("posts")
+    .select("session_id");
+
+  const countMap: Record<number, number> = {};
+  if (postCounts) {
+    for (const p of postCounts) {
+      countMap[p.session_id] = (countMap[p.session_id] || 0) + 1;
+    }
+  }
+
+  if (error || !sessions) {
     return (
       <div className="text-center py-16">
         <h1 className="text-2xl font-bold text-navy-900 mb-4">
           Cambridge AI Leadership Programme
         </h1>
         <p className="text-navy-500">
-          Unable to load posts. Please check your Supabase configuration.
+          Unable to load programme. Please check your Supabase configuration.
         </p>
       </div>
     );
   }
 
-  if (!posts || posts.length === 0) {
-    return (
-      <div>
-        <div className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3">
-            Live Learning Blog
-          </h1>
-          <p className="text-navy-500 text-lg">
-            Insights and reflections from the Cambridge AI Leadership Programme.
-          </p>
-        </div>
-        <div className="text-center py-16 border-2 border-dashed border-navy-200 rounded-lg">
-          <p className="text-navy-400 text-lg">No posts yet.</p>
-          <p className="text-navy-300 text-sm mt-2">
-            Posts will appear here once published.
-          </p>
-        </div>
-      </div>
-    );
+  // Group by day
+  const days: Record<number, Session[]> = {};
+  for (const s of sessions) {
+    const session: Session = { ...s, post_count: countMap[s.id] || 0 };
+    if (!days[session.day_number]) days[session.day_number] = [];
+    days[session.day_number].push(session);
   }
 
   return (
     <div>
       <div className="mb-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3">
-          Live Learning Blog
+          Programme Agenda
         </h1>
         <p className="text-navy-500 text-lg">
-          Insights and reflections from the Cambridge AI Leadership Programme.
+          Cambridge AI Leadership Programme — Live Learning Blog
         </p>
       </div>
 
-      <div className="space-y-6">
-        {(posts as Post[]).map((post) => (
-          <Link
-            key={post.id}
-            href={`/post/${post.id}`}
-            className="block group"
-          >
-            <article className="border border-navy-100 rounded-lg p-6 hover:border-navy-300 hover:shadow-sm transition-all">
-              <div className="flex items-center gap-3 mb-3 flex-wrap">
-                <span
-                  className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                    categoryColors[post.category] ||
-                    "bg-navy-100 text-navy-700"
-                  }`}
-                >
-                  {post.category}
-                </span>
-                <time className="text-sm text-navy-400">
-                  {new Date(post.created_at).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </time>
-                {post.profiles && (
-                  <span className="flex items-center gap-1.5 text-sm text-navy-500">
-                    <span>{post.profiles.username}</span>
-                    <RoleBadge role={post.profiles.role} />
-                  </span>
-                )}
-              </div>
-              <h2 className="text-xl font-semibold text-navy-900 group-hover:text-navy-600 transition-colors mb-2">
-                {post.title}
+      <div className="space-y-10">
+        {Object.entries(days)
+          .sort(([a], [b]) => Number(a) - Number(b))
+          .map(([day, daySessions]) => (
+            <section key={day}>
+              <h2 className="text-lg font-semibold text-navy-900 mb-4 pb-2 border-b border-navy-100">
+                {dayLabels[Number(day)] || `Day ${day}`}
               </h2>
-              <p className="text-navy-500 leading-relaxed">
-                {post.body.replace(/[#*_`>\-\[\]()]/g, "").slice(0, 150)}
-                {post.body.length > 150 ? "..." : ""}
-              </p>
-            </article>
-          </Link>
-        ))}
+              <div className="space-y-3">
+                {daySessions.map((session) => (
+                  <Link
+                    key={session.id}
+                    href={`/session/${session.id}`}
+                    className="block group"
+                  >
+                    <div
+                      className={`border rounded-lg p-4 transition-all ${
+                        session.is_social
+                          ? "border-navy-100 bg-navy-50/50 hover:border-navy-200"
+                          : "border-navy-100 hover:border-navy-300 hover:shadow-sm"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <span className="text-sm text-navy-400 font-mono shrink-0">
+                              {formatTime(session.start_time)}–
+                              {formatTime(session.end_time)}
+                            </span>
+                            {session.post_count > 0 && (
+                              <span className="text-xs font-medium bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full">
+                                {session.post_count}{" "}
+                                {session.post_count === 1 ? "post" : "posts"}
+                              </span>
+                            )}
+                          </div>
+                          <h3
+                            className={`font-medium group-hover:text-navy-600 transition-colors ${
+                              session.is_social
+                                ? "text-navy-500 italic"
+                                : "text-navy-900"
+                            }`}
+                          >
+                            {session.title}
+                          </h3>
+                          {session.faculty && (
+                            <p className="text-sm text-navy-400 mt-0.5">
+                              {session.faculty}
+                            </p>
+                          )}
+                          {session.location && (
+                            <p className="text-xs text-navy-300 mt-0.5">
+                              {session.location}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
       </div>
     </div>
   );
