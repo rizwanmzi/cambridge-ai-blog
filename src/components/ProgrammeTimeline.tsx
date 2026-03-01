@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LiveSessionBanner from "./LiveSessionBanner";
-import SessionCard from "./SessionCard";
-import DaySummaryAccordion from "./DaySummaryAccordion";
-import { getSessionStatus } from "./LiveSessionBanner";
+import Link from "next/link";
 
 interface Session {
   id: number;
@@ -20,38 +17,52 @@ interface Session {
 }
 
 const dayLabels: Record<number, string> = {
-  0: "Day 0 \u2014 Sunday 1 March",
-  1: "Day 1 \u2014 Monday 2 March",
-  2: "Day 2 \u2014 Tuesday 3 March",
-  3: "Day 3 \u2014 Wednesday 4 March",
-  4: "Day 4 \u2014 Thursday 5 March",
-  5: "Day 5 \u2014 Friday 6 March",
+  0: "DAY 0 — SUNDAY 1 MARCH",
+  1: "DAY 1 — MONDAY 2 MARCH",
+  2: "DAY 2 — TUESDAY 3 MARCH",
+  3: "DAY 3 — WEDNESDAY 4 MARCH",
+  4: "DAY 4 — THURSDAY 5 MARCH",
+  5: "DAY 5 — FRIDAY 6 MARCH",
 };
+
+type SessionStatus = "live" | "up-next" | "completed" | "upcoming";
+
+function getSessionDatetime(sessionDate: string, time: string): Date {
+  return new Date(`${sessionDate}T${time}+00:00`);
+}
 
 function getNowInLondon(): Date {
   const now = new Date();
   const londonStr = now.toLocaleString("en-GB", { timeZone: "Europe/London" });
   const [datePart, timePart] = londonStr.split(", ");
   const [day, month, year] = datePart.split("/");
-  const isoStr = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${timePart}+00:00`;
-  return new Date(isoStr);
+  return new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${timePart}+00:00`);
 }
 
-export default function ProgrammeTimeline({
-  sessions,
-}: {
-  sessions: Session[];
-}) {
+function getSessionStatus(session: Session, allSessions: Session[], now: Date): SessionStatus {
+  const start = getSessionDatetime(session.session_date, session.start_time);
+  const end = getSessionDatetime(session.session_date, session.end_time);
+  if (now >= start && now <= end) return "live";
+  if (now > end) return "completed";
+  const future = allSessions
+    .filter((s) => getSessionDatetime(s.session_date, s.start_time) > now)
+    .sort((a, b) => getSessionDatetime(a.session_date, a.start_time).getTime() - getSessionDatetime(b.session_date, b.start_time).getTime());
+  if (future.length > 0 && future[0].id === session.id) return "up-next";
+  return "upcoming";
+}
+
+function formatTime(t: string) {
+  return t.slice(0, 5);
+}
+
+export default function ProgrammeTimeline({ sessions }: { sessions: Session[] }) {
   const [now, setNow] = useState<Date>(getNowInLondon());
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(getNowInLondon());
-    }, 30000);
+    const interval = setInterval(() => setNow(getNowInLondon()), 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // Group by day
   const days: Record<number, Session[]> = {};
   for (const s of sessions) {
     if (!days[s.day_number]) days[s.day_number] = [];
@@ -59,30 +70,68 @@ export default function ProgrammeTimeline({
   }
 
   return (
-    <>
-      <LiveSessionBanner sessions={sessions} />
-
-      <div className="space-y-10">
-        {Object.entries(days)
-          .sort(([a], [b]) => Number(a) - Number(b))
-          .map(([day, daySessions]) => (
-            <section key={day} className="scroll-fade-in">
-              <h2 className="font-heading text-lg font-semibold text-[#e2e8f0] mb-4 pb-2 border-b border-[rgba(255,255,255,0.06)] sticky top-[65px] bg-dark-bg/95 backdrop-blur z-20 py-3 -mx-4 px-4 sm:-mx-6 sm:px-6">
-                {dayLabels[Number(day)] || `Day ${day}`}
-              </h2>
-              <div className="space-y-4">
-                {daySessions.map((session) => (
-                  <SessionCard
+    <div>
+      {Object.entries(days)
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([day, daySessions]) => (
+          <section key={day}>
+            <h2 className="text-[12px] uppercase tracking-wider text-[rgba(255,255,255,0.4)] mt-8 mb-3 first:mt-0">
+              {dayLabels[Number(day)] || `DAY ${day}`}
+            </h2>
+            <div>
+              {daySessions.map((session) => {
+                const status = getSessionStatus(session, sessions, now);
+                const isLive = status === "live";
+                const isUpNext = status === "up-next";
+                return (
+                  <Link
                     key={session.id}
-                    session={session}
-                    status={getSessionStatus(session, sessions, now)}
-                  />
-                ))}
-              </div>
-              <DaySummaryAccordion dayNumber={Number(day)} />
-            </section>
-          ))}
-      </div>
-    </>
+                    href={`/session/${session.id}`}
+                    className="flex items-center gap-4 py-2.5 border-b border-dark-border hover:bg-dark-hover transition-colors group"
+                  >
+                    {/* Time */}
+                    <span className="font-mono text-[13px] text-txt-tertiary shrink-0 w-[100px] hidden sm:block">
+                      {formatTime(session.start_time)}–{formatTime(session.end_time)}
+                    </span>
+                    <span className="font-mono text-[12px] text-txt-tertiary shrink-0 sm:hidden">
+                      {formatTime(session.start_time)}
+                    </span>
+
+                    {/* Activity dot + Live dot */}
+                    <span className="shrink-0 w-[6px]">
+                      {isLive ? (
+                        <span className="block w-1.5 h-1.5 rounded-full bg-green-400 live-dot" />
+                      ) : session.post_count >= 3 ? (
+                        <span className="block w-1.5 h-1.5 rounded-full bg-green-400" />
+                      ) : session.post_count >= 1 ? (
+                        <span className="block w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      ) : null}
+                    </span>
+
+                    {/* Title */}
+                    <span className={`text-sm flex-1 min-w-0 truncate ${
+                      session.is_social
+                        ? "italic text-[rgba(255,255,255,0.4)]"
+                        : "text-[rgba(255,255,255,0.85)] group-hover:text-white"
+                    }`}>
+                      {session.title}
+                      {isUpNext && (
+                        <span className="text-[12px] text-txt-tertiary ml-2 font-normal not-italic">Up Next</span>
+                      )}
+                    </span>
+
+                    {/* Mobile: line 2 info hidden, faculty on desktop */}
+                    {session.faculty && (
+                      <span className="text-[13px] text-txt-tertiary shrink-0 hidden sm:block truncate max-w-[200px]">
+                        {session.faculty}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+    </div>
   );
 }

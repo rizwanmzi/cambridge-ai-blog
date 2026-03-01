@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, ReactNode } from "react";
-import SparkleIcon from "@/components/SparkleIcon";
 import AISummaryCard from "@/components/AISummaryCard";
 import AILoadingState from "@/components/AILoadingState";
 import { useAuth } from "@/lib/auth-context";
@@ -24,11 +23,8 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
   const isAdmin = profile?.role === "Admin";
 
   const loadSummary = async (forceRegenerate = false) => {
-    if (forceRegenerate) {
-      setRegenerating(true);
-    } else {
-      setLoading(true);
-    }
+    if (forceRegenerate) setRegenerating(true);
+    else setLoading(true);
     setError(null);
     try {
       if (forceRegenerate) {
@@ -57,48 +53,43 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
 
   const handleTabSwitch = (tab: "posts" | "ai") => {
     setActiveTab(tab);
-    if (tab === "ai" && !loaded && !loading) {
-      loadSummary();
-    }
+    if (tab === "ai" && !loaded && !loading) loadSummary();
   };
 
   return (
     <div>
-      {/* Tab buttons */}
-      <div className="flex border-b border-[rgba(255,255,255,0.06)] mb-6">
+      <div className="flex border-b border-dark-border mb-4">
         <button
           onClick={() => handleTabSwitch("posts")}
-          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-3 py-2.5 text-[13px] border-b-2 transition-colors ${
             activeTab === "posts"
-              ? "border-txt-primary text-txt-primary"
-              : "border-transparent text-txt-secondary hover:text-txt-primary"
+              ? "border-white text-white"
+              : "border-transparent text-txt-tertiary hover:text-txt-secondary"
           }`}
         >
           Posts
         </button>
         <button
           onClick={() => handleTabSwitch("ai")}
-          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+          className={`px-3 py-2.5 text-[13px] border-b-2 transition-colors ${
             activeTab === "ai"
-              ? "border-accent text-accent"
-              : "border-transparent text-txt-secondary hover:text-accent"
+              ? "border-white text-white"
+              : "border-transparent text-txt-tertiary hover:text-txt-secondary"
           }`}
         >
-          <SparkleIcon className="w-3.5 h-3.5" />
           AI Summary
         </button>
       </div>
 
-      {/* Tab content */}
       {activeTab === "posts" && postsContent}
 
       {activeTab === "ai" && (
         <div>
           {loading && <AILoadingState />}
           {error && (
-            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-              {error}
-            </div>
+            <p className="text-sm text-txt-tertiary py-6">
+              Couldn&apos;t generate summary — <button onClick={() => loadSummary()} className="underline hover:text-txt-secondary">try again</button>
+            </p>
           )}
           {summary && !loading && (
             <AISummaryCard

@@ -7,11 +7,11 @@ import RoleBadge from "@/components/RoleBadge";
 import PostActions from "@/components/PostActions";
 import TimeAgo from "@/components/TimeAgo";
 
-const categoryColors: Record<string, string> = {
-  "Live Insight": "border-green-500/30 text-green-400",
-  "Formal Notes": "border-blue-500/30 text-blue-400",
-  "Key Takeaway": "border-amber-500/30 text-amber-400",
-  Reflection: "border-purple-500/30 text-purple-400",
+const categoryClass: Record<string, string> = {
+  "Live Insight": "cat-live-insight",
+  "Formal Notes": "cat-formal-notes",
+  "Key Takeaway": "cat-key-takeaway",
+  Reflection: "cat-reflection",
 };
 
 export const revalidate = 0;
@@ -22,16 +22,13 @@ export default async function PostPage({
   params: { id: string };
 }) {
   const supabase = createSupabaseServer();
-
   const { data: post, error } = await supabase
     .from("posts")
     .select("*, profiles(username, role), sessions(id, title, day_number)")
     .eq("id", params.id)
     .single();
 
-  if (error || !post) {
-    notFound();
-  }
+  if (error || !post) notFound();
 
   const { data: comments } = await supabase
     .from("comments")
@@ -40,61 +37,33 @@ export default async function PostPage({
     .order("created_at", { ascending: true });
 
   return (
-    <div>
+    <div className="max-w-[720px] mx-auto">
       <Link
         href={post.sessions ? `/session/${post.sessions.id}` : "/"}
-        className="inline-flex items-center text-sm text-txt-secondary hover:text-accent transition-colors mb-8"
+        className="inline-flex items-center text-[13px] text-txt-tertiary hover:text-txt-secondary transition-colors mb-6"
       >
-        <svg
-          className="w-4 h-4 mr-1"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        {post.sessions
-          ? `Back to ${post.sessions.title}`
-          : "Back to agenda"}
+        &larr; <span className="ml-1">{post.sessions ? post.sessions.title : "Programme Agenda"}</span>
       </Link>
 
-      <article className="max-w-3xl">
-        <header className="mb-8">
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <span
-              className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
-                categoryColors[post.category] || "bg-dark-hover text-txt-secondary border-[rgba(255,255,255,0.06)]"
-              }`}
-            >
-              {post.category}
+      <article>
+        <header className="mb-6">
+          <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-3 flex-wrap">
+            <span className={categoryClass[post.category] || "text-txt-tertiary"}>
+              ✦ {post.category}
             </span>
+            <span>&middot;</span>
             <TimeAgo date={post.created_at} />
             {post.profiles && (
-              <span className="flex items-center gap-1.5 text-sm text-txt-secondary">
+              <>
+                <span>&middot;</span>
                 <span>{post.profiles.username}</span>
                 <RoleBadge role={post.profiles.role} />
-              </span>
+              </>
             )}
           </div>
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-white leading-tight">
+          <h1 className="text-2xl font-semibold text-white leading-tight">
             {post.title}
           </h1>
-          {post.sessions && (
-            <p className="text-sm text-txt-secondary mt-3">
-              Session:{" "}
-              <Link
-                href={`/session/${post.sessions.id}`}
-                className="text-accent hover:text-accent-hover hover:underline"
-              >
-                {post.sessions.title}
-              </Link>
-            </p>
-          )}
         </header>
 
         <PostActions
@@ -104,14 +73,14 @@ export default async function PostPage({
           initialBody={post.body}
         />
 
-        <div className="prose max-w-none mb-12">
+        <div className="prose max-w-none mb-10">
           <PostContent content={post.body} />
         </div>
       </article>
 
-      <hr className="border-[rgba(255,255,255,0.06)] mb-8" />
-
-      <CommentSection postId={post.id} initialComments={comments || []} />
+      <div className="border-t border-dark-border pt-6">
+        <CommentSection postId={post.id} initialComments={comments || []} />
+      </div>
     </div>
   );
 }

@@ -11,102 +11,66 @@ interface Comment {
   user_id: string;
   body: string;
   created_at: string;
-  profiles: {
-    username: string;
-    role: string;
-  };
+  profiles: { username: string; role: string };
 }
 
 function CommentItem({
-  comment,
-  userId,
-  isAdmin,
-  onUpdate,
-  onDelete,
+  comment, userId, isAdmin, onUpdate, onDelete,
 }: {
-  comment: Comment;
-  userId: string | undefined;
-  isAdmin: boolean;
-  onUpdate: (id: number, body: string) => void;
-  onDelete: (id: number) => void;
+  comment: Comment; userId: string | undefined; isAdmin: boolean;
+  onUpdate: (id: number, body: string) => void; onDelete: (id: number) => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [editBody, setEditBody] = useState(comment.body);
   const [saving, setSaving] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
+  const [hovered, setHovered] = useState(false);
   const canEdit = userId === comment.user_id || isAdmin;
 
   async function handleSave() {
     setSaving(true);
     try {
       const res = await fetch(`/api/comments/${comment.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method: "PUT", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ body: editBody.trim() }),
       });
-      if (!res.ok) throw new Error("Failed to update");
+      if (!res.ok) throw new Error();
       const updated = await res.json();
       onUpdate(comment.id, updated.body);
       setEditing(false);
-    } catch {
-      // keep editing open
-    } finally {
-      setSaving(false);
-    }
+    } catch { /* keep editing */ } finally { setSaving(false); }
   }
 
   async function handleDelete() {
     setDeleting(true);
     try {
       const res = await fetch(`/api/comments/${comment.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete");
+      if (!res.ok) throw new Error();
       onDelete(comment.id);
-    } catch {
-      setDeleting(false);
-      setShowDeleteConfirm(false);
-    }
+    } catch { setDeleting(false); setShowDelete(false); }
   }
 
   return (
-    <div className="bg-dark-surface rounded-xl p-4 border border-[rgba(255,255,255,0.06)]">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="font-medium text-txt-primary text-sm">
-          {comment.profiles?.username ?? "Unknown"}
-        </span>
+    <div
+      className="border-l-2 border-[rgba(255,255,255,0.06)] pl-3 py-2"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-1">
+        <span>{comment.profiles?.username ?? "Unknown"}</span>
         {comment.profiles && <RoleBadge role={comment.profiles.role} />}
-        <span className="text-xs"><TimeAgo date={comment.created_at} /></span>
-        {canEdit && !editing && (
-          <span className="ml-auto flex items-center gap-2">
-            <button
-              onClick={() => setEditing(true)}
-              className="text-xs text-txt-secondary/60 hover:text-accent transition-colors"
-            >
-              Edit
-            </button>
-            {!showDeleteConfirm ? (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="text-xs text-txt-secondary/60 hover:text-red-400 transition-colors"
-              >
-                Delete
-              </button>
+        <span>&middot;</span>
+        <TimeAgo date={comment.created_at} />
+        {canEdit && hovered && !editing && (
+          <span className="ml-auto flex gap-2">
+            <button onClick={() => setEditing(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary">Edit</button>
+            {!showDelete ? (
+              <button onClick={() => setShowDelete(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary">Delete</button>
             ) : (
               <>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="text-xs text-red-400 font-medium hover:text-red-300 disabled:opacity-50"
-                >
-                  {deleting ? "..." : "Confirm"}
-                </button>
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="text-xs text-txt-secondary/60 hover:text-txt-primary"
-                >
-                  Cancel
-                </button>
+                <button onClick={handleDelete} disabled={deleting} className="text-[12px] text-txt-tertiary hover:text-white">{deleting ? "..." : "Confirm"}</button>
+                <button onClick={() => setShowDelete(false)} className="text-[12px] text-txt-tertiary">Cancel</button>
               </>
             )}
           </span>
@@ -114,143 +78,72 @@ function CommentItem({
       </div>
       {editing ? (
         <div className="space-y-2">
-          <textarea
-            value={editBody}
-            onChange={(e) => setEditBody(e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg text-sm text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
-          />
+          <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3}
+            className="w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y" />
           <div className="flex gap-2">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="text-xs bg-accent text-white px-3 py-1.5 rounded-lg font-medium hover:bg-accent-hover transition-colors disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Save"}
-            </button>
-            <button
-              onClick={() => {
-                setEditing(false);
-                setEditBody(comment.body);
-              }}
-              className="text-xs text-txt-secondary px-3 py-1.5 rounded-lg border border-[rgba(255,255,255,0.06)] hover:border-txt-secondary/50 transition-colors"
-            >
-              Cancel
-            </button>
+            <button onClick={handleSave} disabled={saving} className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1 rounded-md disabled:opacity-40">{saving ? "..." : "Save"}</button>
+            <button onClick={() => { setEditing(false); setEditBody(comment.body); }} className="text-[13px] text-txt-tertiary px-3 py-1">Cancel</button>
           </div>
         </div>
       ) : (
-        <p className="text-txt-secondary text-sm leading-relaxed">{comment.body}</p>
+        <p className="text-sm text-[rgba(255,255,255,0.7)] leading-relaxed">{comment.body}</p>
       )}
     </div>
   );
 }
 
-export default function CommentSection({
-  postId,
-  initialComments,
-}: {
-  postId: number;
-  initialComments: Comment[];
-}) {
+export default function CommentSection({ postId, initialComments }: { postId: number; initialComments: Comment[] }) {
   const { user, profile } = useAuth();
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
   const isAdmin = profile?.role === "Admin";
 
-  function handleUpdate(id: number, newBody: string) {
-    setComments((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, body: newBody } : c))
-    );
-  }
-
-  function handleDelete(id: number) {
-    setComments((prev) => prev.filter((c) => c.id !== id));
-  }
+  function handleUpdate(id: number, newBody: string) { setComments((p) => p.map((c) => c.id === id ? { ...c, body: newBody } : c)); }
+  function handleDelete(id: number) { setComments((p) => p.filter((c) => c.id !== id)); }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
-    setSubmitting(true);
-    setError("");
-
+    setSubmitting(true); setError("");
     try {
       const res = await fetch("/api/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          post_id: postId,
-          body: body.trim(),
-        }),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: postId, body: body.trim() }),
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to post comment");
-      }
-
-      const newComment = await res.json();
-      setComments((prev) => [...prev, newComment]);
+      if (!res.ok) { const data = await res.json(); throw new Error(data.error || "Failed"); }
+      const nc = await res.json();
+      setComments((p) => [...p, nc]);
       setBody("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to post comment.");
-    } finally {
-      setSubmitting(false);
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : "Something went wrong. Try again."); }
+    finally { setSubmitting(false); }
   }
 
   return (
     <section>
-      <h2 className="text-xl font-semibold text-txt-primary mb-6">
+      <h2 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-4">
         Comments {comments.length > 0 && `(${comments.length})`}
       </h2>
-
       {comments.length > 0 ? (
-        <div className="space-y-4 mb-8">
-          {comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              userId={user?.id}
-              isAdmin={isAdmin}
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
-            />
+        <div className="space-y-1 mb-6">
+          {comments.map((c) => (
+            <CommentItem key={c.id} comment={c} userId={user?.id} isAdmin={isAdmin} onUpdate={handleUpdate} onDelete={handleDelete} />
           ))}
         </div>
       ) : (
-        <p className="text-txt-secondary text-sm mb-8">
-          No comments yet. Be the first to share your thoughts.
-        </p>
+        <p className="text-sm text-txt-tertiary mb-6">No comments yet.</p>
       )}
-
-      {user ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <h3 className="text-sm font-medium text-txt-secondary">
-            Leave a comment
-          </h3>
-          <textarea
-            placeholder="Your comment..."
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            required
-            rows={3}
-            className="w-full px-4 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
-          />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? "Posting..." : "Post Comment"}
+      {user && (
+        <form onSubmit={handleSubmit} className="flex gap-2 items-start">
+          <input type="text" placeholder="Add a comment..." value={body} onChange={(e) => setBody(e.target.value)} required
+            className="flex-1 bg-transparent border-b border-dark-border focus:border-[rgba(255,255,255,0.25)] py-2 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none" />
+          <button type="submit" disabled={submitting || !body.trim()}
+            className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1.5 rounded-md hover:bg-[rgba(255,255,255,0.15)] disabled:opacity-40 shrink-0">
+            {submitting ? "..." : "Post"}
           </button>
+          {error && <p className="text-sm text-txt-tertiary ml-2">{error}</p>}
         </form>
-      ) : (
-        <p className="text-txt-secondary text-sm">Sign in to leave a comment.</p>
       )}
     </section>
   );

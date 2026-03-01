@@ -2,34 +2,17 @@ import { createSupabaseServer } from "@/lib/supabase-server";
 import LandingPage from "@/components/LandingPage";
 import ProgrammeTimeline from "@/components/ProgrammeTimeline";
 
-interface Session {
-  id: number;
-  day_number: number;
-  title: string;
-  faculty: string | null;
-  start_time: string;
-  end_time: string;
-  session_date: string;
-  location: string | null;
-  is_social: boolean;
-  post_count: number;
-}
-
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
   const supabase = createSupabaseServer();
-
-  // Check if user is logged in
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Not logged in → show landing page
   if (!user) {
     return <LandingPage />;
   }
 
-  // Logged in → show programme agenda
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select("*")
@@ -49,33 +32,27 @@ export default async function Home() {
 
   if (error || !sessions) {
     return (
-      <div className="text-center py-16">
-        <h1 className="font-heading text-2xl font-bold text-txt-primary mb-4">
-          Cambridge AI Leadership Programme
-        </h1>
-        <p className="text-txt-secondary">
-          Unable to load programme. Please check your Supabase configuration.
+      <div className="max-w-[720px] mx-auto text-center py-16">
+        <p className="text-txt-secondary text-sm">
+          Unable to load programme. Please check your configuration.
         </p>
       </div>
     );
   }
 
-  const allSessions: Session[] = sessions.map((s) => ({
+  const allSessions = sessions.map((s) => ({
     ...s,
     post_count: countMap[s.id] || 0,
   }));
 
   return (
-    <div>
-      <div className="mb-10">
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-3">
-          Programme Agenda
-        </h1>
-        <p className="text-[#e2e8f0] text-lg">
-          Cambridge AI Leadership Programme &mdash; Cohort 2
+    <div className="max-w-[720px] mx-auto">
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold text-white">Programme Agenda</h1>
+        <p className="text-[13px] text-txt-secondary mt-1">
+          Cohort 2 — Live Learning AI Blog
         </p>
       </div>
-
       <ProgrammeTimeline sessions={allSessions} />
     </div>
   );

@@ -16,11 +16,11 @@ interface PostWithProfile {
   profiles: { username: string; role: string } | null;
 }
 
-const categoryColors: Record<string, string> = {
-  "Live Insight": "border-green-500/30 text-green-400",
-  "Formal Notes": "border-blue-500/30 text-blue-400",
-  "Key Takeaway": "border-amber-500/30 text-amber-400",
-  Reflection: "border-purple-500/30 text-purple-400",
+const categoryClass: Record<string, string> = {
+  "Live Insight": "cat-live-insight",
+  "Formal Notes": "cat-formal-notes",
+  "Key Takeaway": "cat-key-takeaway",
+  Reflection: "cat-reflection",
 };
 
 function formatTime(t: string) {
@@ -42,9 +42,7 @@ export default async function SessionPage({
     .eq("id", params.id)
     .single();
 
-  if (error || !session) {
-    notFound();
-  }
+  if (error || !session) notFound();
 
   const { data: posts } = await supabase
     .from("posts")
@@ -59,138 +57,86 @@ export default async function SessionPage({
     .order("created_at", { ascending: true });
 
   const dayLabels: Record<number, string> = {
-    0: "Sunday 1 March",
-    1: "Monday 2 March",
-    2: "Tuesday 3 March",
-    3: "Wednesday 4 March",
-    4: "Thursday 5 March",
-    5: "Friday 6 March",
+    0: "Sunday 1 March", 1: "Monday 2 March", 2: "Tuesday 3 March",
+    3: "Wednesday 4 March", 4: "Thursday 5 March", 5: "Friday 6 March",
   };
 
   return (
-    <div>
+    <div className="max-w-[720px] mx-auto">
       <Link
         href="/"
-        className="inline-flex items-center text-sm text-txt-secondary hover:text-accent transition-colors mb-8"
+        className="inline-flex items-center text-[13px] text-txt-tertiary hover:text-txt-secondary transition-colors mb-6"
       >
-        <svg
-          className="w-4 h-4 mr-1"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        Back to agenda
+        &larr; <span className="hidden sm:inline ml-1">Programme Agenda</span>
       </Link>
 
-      {/* Session header */}
-      <header className="mb-10">
-        <div className="flex items-center gap-3 mb-3 text-sm text-txt-secondary">
-          <span>Day {session.day_number}</span>
-          <span>&middot;</span>
-          <span>{dayLabels[session.day_number]}</span>
-          <span>&middot;</span>
-          <span className="font-mono">
-            {formatTime(session.start_time)}–{formatTime(session.end_time)}
-          </span>
-        </div>
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-white leading-tight mb-2">
+      <header className="mb-6">
+        <h1 className="text-2xl sm:text-2xl font-semibold text-white leading-tight">
           {session.title}
         </h1>
-        {session.faculty && (
-          <p className="text-txt-secondary text-lg">{session.faculty}</p>
-        )}
-        {session.location && (
-          <p className="text-txt-secondary/60 text-sm mt-1">{session.location}</p>
-        )}
+        <p className="text-[13px] text-txt-tertiary mt-2">
+          Day {session.day_number} &middot; {dayLabels[session.day_number]}
+          {" "}&middot; {formatTime(session.start_time)}–{formatTime(session.end_time)}
+          {session.faculty && <> &middot; {session.faculty}</>}
+        </p>
         {session.description && (
-          <p className="text-txt-secondary mt-4">{session.description}</p>
+          <p className="text-sm text-txt-secondary mt-3">{session.description}</p>
         )}
       </header>
 
-      {/* Quick post bar */}
       <QuickPostBar sessionId={session.id} />
 
-      {/* Posts + AI Summary tabs */}
-      <section className="mb-12">
+      <section className="mb-10">
         <SessionTabs
           sessionId={session.id}
           postsContent={
             <>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-txt-primary">
-                  Posts{" "}
-                  {posts && posts.length > 0 && (
-                    <span className="text-txt-secondary font-normal">
-                      ({posts.length})
-                    </span>
-                  )}
-                </h2>
-                <WritePostButton sessionId={session.id} />
-              </div>
-
               {posts && posts.length > 0 ? (
-                <div className="space-y-4">
+                <div>
                   {(posts as PostWithProfile[]).map((post) => (
                     <Link
                       key={post.id}
                       href={`/post/${post.id}`}
-                      className="block group"
+                      className="block py-3 border-b border-dark-border hover:bg-dark-hover transition-colors -mx-2 px-2 rounded-sm group"
                     >
-                      <article className="bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl p-5 hover:border-[rgba(255,255,255,0.12)] hover:bg-dark-hover hover:-translate-y-0.5 transition-all">
-                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                          <span
-                            className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
-                              categoryColors[post.category] ||
-                              "bg-dark-hover text-txt-secondary border-[rgba(255,255,255,0.06)]"
-                            }`}
-                          >
-                            {post.category}
-                          </span>
-                          <TimeAgo date={post.created_at} />
-                          {post.profiles && (
-                            <span className="flex items-center gap-1.5 text-sm text-txt-secondary">
-                              <span>{post.profiles.username}</span>
-                              <RoleBadge role={post.profiles.role} />
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="text-lg font-medium text-txt-primary group-hover:text-accent transition-colors mb-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm text-[rgba(255,255,255,0.85)] group-hover:text-white truncate">
                           {post.title}
-                        </h3>
-                        <p className="text-txt-secondary text-sm leading-relaxed">
-                          {post.body.replace(/[#*_`>\-\[\]()]/g, "").slice(0, 150)}
-                          {post.body.length > 150 ? "..." : ""}
-                        </p>
-                      </article>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[13px] text-txt-tertiary">
+                        <span className={`${categoryClass[post.category] || "text-txt-tertiary"}`}>
+                          ✦ {post.category}
+                        </span>
+                        <span>&middot;</span>
+                        {post.profiles && (
+                          <>
+                            <span className="text-txt-tertiary">{post.profiles.username}</span>
+                            <RoleBadge role={post.profiles.role} />
+                            <span>&middot;</span>
+                          </>
+                        )}
+                        <TimeAgo date={post.created_at} />
+                      </div>
                     </Link>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 border-2 border-dashed border-[rgba(255,255,255,0.06)] rounded-xl">
-                  <p className="text-txt-secondary">No posts yet for this session.</p>
-                </div>
+                <p className="text-center py-10 text-txt-tertiary text-sm">
+                  No posts yet. Be the first to share an insight.
+                </p>
               )}
             </>
           }
         />
       </section>
 
-      {/* Session comments */}
-      <hr className="border-[rgba(255,255,255,0.06)] mb-8" />
-      <SessionComments
-        sessionId={session.id}
-        initialComments={comments || []}
-      />
+      <div className="border-t border-dark-border pt-6">
+        <SessionComments
+          sessionId={session.id}
+          initialComments={comments || []}
+        />
+      </div>
     </div>
   );
 }
-
-// Client component for the write post button
-import { WritePostButton } from "./WritePostButton";

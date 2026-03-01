@@ -10,37 +10,25 @@ const config: Config = {
     extend: {
       colors: {
         dark: {
-          bg: "#0a0f1c",
-          surface: "#0f1520",
-          hover: "#1e293b",
-          border: "#1e293b",
+          bg: "#0A0A0A",
+          surface: "#111111",
+          hover: "rgba(255,255,255,0.03)",
+          border: "rgba(255,255,255,0.08)",
         },
         accent: {
-          DEFAULT: "#3b82f6",
-          hover: "#60a5fa",
-          glow: "rgba(148, 163, 184, 0.08)",
+          DEFAULT: "#ffffff",
+          blue: "#3b82f6",
+        },
+        ai: {
+          indigo: "rgba(99,102,241,0.5)",
         },
         txt: {
-          primary: "#f1f5f9",
-          secondary: "#94a3b8",
-        },
-        // Keep navy for backwards compat / any missed references
-        navy: {
-          50: "#f0f3f9",
-          100: "#d9e0ed",
-          200: "#b3c1db",
-          300: "#8da2c9",
-          400: "#6783b7",
-          500: "#4a6a9b",
-          600: "#3a5278",
-          700: "#2a3d5a",
-          800: "#1a2740",
-          900: "#0f1b2d",
-          950: "#080e18",
+          primary: "rgba(255,255,255,0.9)",
+          secondary: "rgba(255,255,255,0.5)",
+          tertiary: "rgba(255,255,255,0.3)",
         },
       },
       fontFamily: {
-        heading: ['"Playfair Display"', "Georgia", "serif"],
         sans: [
           "Inter",
           "-apple-system",
@@ -49,28 +37,6 @@ const config: Config = {
           "sans-serif",
         ],
         mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
-      },
-      animation: {
-        "ai-glow": "ai-glow-pulse 2s ease-in-out infinite",
-        "ai-glow-loading": "ai-glow-loading 1.2s ease-in-out infinite",
-      },
-      keyframes: {
-        "ai-glow-pulse": {
-          "0%, 100%": {
-            boxShadow: "0 0 10px rgba(148, 163, 184, 0.06)",
-          },
-          "50%": {
-            boxShadow: "0 0 18px rgba(148, 163, 184, 0.12)",
-          },
-        },
-        "ai-glow-loading": {
-          "0%, 100%": {
-            boxShadow: "0 0 10px rgba(148, 163, 184, 0.1)",
-          },
-          "50%": {
-            boxShadow: "0 0 25px rgba(148, 163, 184, 0.2)",
-          },
-        },
       },
     },
   },

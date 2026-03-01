@@ -42,7 +42,6 @@ export default function NewPostForm() {
         .order("start_time");
       if (data) {
         setSessions(data);
-        // Auto-select live or next upcoming session if no preselected
         if (!preselectedSession && data.length > 0) {
           const now = new Date();
           const londonStr = now.toLocaleString("en-GB", { timeZone: "Europe/London" });
@@ -50,7 +49,6 @@ export default function NewPostForm() {
           const [day, month, year] = datePart.split("/");
           const londonNow = new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${timePart}+00:00`);
 
-          // Find live session
           const live = data.find((s) => {
             const start = new Date(`${s.session_date}T${s.start_time}+00:00`);
             const end = new Date(`${s.session_date}T${s.end_time}+00:00`);
@@ -61,7 +59,6 @@ export default function NewPostForm() {
             return;
           }
 
-          // Find next upcoming
           const upcoming = data
             .filter((s) => new Date(`${s.session_date}T${s.start_time}+00:00`) > londonNow)
             .sort((a, b) =>
@@ -78,22 +75,14 @@ export default function NewPostForm() {
   }, [preselectedSession]);
 
   if (loading) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-txt-secondary">Loading...</p>
-      </div>
-    );
+    return <p className="text-sm text-txt-tertiary py-16 text-center">Loading...</p>;
   }
 
   if (!profile || !canPost(profile.role)) {
     return (
       <div className="text-center py-16">
-        <h1 className="font-heading text-2xl font-bold text-txt-primary mb-4">
-          Access Denied
-        </h1>
-        <p className="text-txt-secondary">
-          Only Admins and Attendees can create posts.
-        </p>
+        <h1 className="text-lg font-semibold text-white mb-2">Access Denied</h1>
+        <p className="text-sm text-txt-tertiary">Only Admins and Attendees can create posts.</p>
       </div>
     );
   }
@@ -135,22 +124,25 @@ export default function NewPostForm() {
     }
   }
 
-  const inputClasses = "w-full px-4 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
-  const selectClasses = "w-full px-4 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+  const inputClass = "w-full px-3 py-2.5 bg-dark-surface border border-[rgba(255,255,255,0.1)] rounded-md text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none focus:border-[rgba(255,255,255,0.25)]";
 
   return (
-    <div>
-      <h1 className="font-heading text-2xl font-bold text-white mb-1">New Post</h1>
-      <p className="text-txt-secondary text-sm mb-8">
-        Write in Markdown. AI will automatically categorise your post.
+    <div className="max-w-[720px] mx-auto">
+      <h1 className="text-lg font-semibold text-white mb-1">New Post</h1>
+      <p className="text-[13px] text-txt-tertiary mb-6">
+        Write in Markdown. AI will categorise your post automatically.
       </p>
 
-      <form onSubmit={handlePublish} className="space-y-5">
+      <form onSubmit={handlePublish} className="space-y-4">
         <div>
-          <label htmlFor="session" className="block text-sm font-medium text-txt-secondary mb-1.5">
-            Session
-          </label>
-          <select id="session" value={sessionId} onChange={(e) => setSessionId(e.target.value)} required className={selectClasses}>
+          <label htmlFor="session" className="block text-[13px] text-txt-secondary mb-1.5">Session</label>
+          <select
+            id="session"
+            value={sessionId}
+            onChange={(e) => setSessionId(e.target.value)}
+            required
+            className={inputClass}
+          >
             <option value="" disabled>Select a session...</option>
             {sessions.map((s) => (
               <option key={s.id} value={s.id}>
@@ -161,53 +153,52 @@ export default function NewPostForm() {
         </div>
 
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-txt-secondary mb-1.5">
-            Title{" "}
-            <span className="font-normal text-txt-secondary/60">(optional — auto-generated if blank)</span>
+          <label htmlFor="title" className="block text-[13px] text-txt-secondary mb-1.5">
+            Title <span className="text-txt-tertiary">(optional)</span>
           </label>
-          <input id="title" type="text" placeholder="Post title" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClasses} />
+          <input
+            id="title"
+            type="text"
+            placeholder="Auto-generated if blank"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className={inputClass}
+          />
         </div>
 
         <div>
-          <label htmlFor="body" className="block text-sm font-medium text-txt-secondary mb-1.5">
-            Body{" "}
-            <span className="font-normal text-txt-secondary/60">(Markdown supported)</span>
+          <label htmlFor="body" className="block text-[13px] text-txt-secondary mb-1.5">
+            Body <span className="text-txt-tertiary">(Markdown)</span>
           </label>
           <textarea
             id="body"
-            placeholder="Write your post here..."
+            placeholder="Write your post..."
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
             rows={12}
-            className={`${inputClasses} resize-y font-mono text-sm leading-relaxed`}
+            className={`${inputClass} resize-y font-mono leading-relaxed`}
           />
         </div>
 
         {message && (
-          <div
-            className={`p-3 rounded-lg text-sm border ${
-              message.type === "success"
-                ? "bg-green-500/10 text-green-400 border-green-500/20"
-                : "bg-red-500/10 text-red-400 border-red-500/20"
-            }`}
-          >
+          <p className={`text-sm ${message.type === "success" ? "text-green-400" : "text-txt-tertiary"}`}>
             {message.text}
-          </div>
+          </p>
         )}
 
-        {/* Desktop button */}
+        {/* Desktop */}
         <button
           type="submit"
           disabled={publishing}
-          className="hidden sm:inline-block bg-accent text-white px-8 py-3 rounded-lg font-medium hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
+          className="hidden sm:inline-block bg-white text-black px-6 py-2.5 rounded-md text-sm font-medium hover:bg-[rgba(255,255,255,0.9)] transition-colors disabled:opacity-50"
         >
           {publishing ? "Publishing..." : "Publish Post"}
         </button>
       </form>
 
-      {/* Mobile sticky button */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/90 backdrop-blur border-t border-[rgba(255,255,255,0.06)] p-4">
+      {/* Mobile sticky */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/95 backdrop-blur border-t border-[rgba(255,255,255,0.06)] p-4">
         <button
           type="button"
           onClick={() => {
@@ -215,13 +206,12 @@ export default function NewPostForm() {
             if (form) form.requestSubmit();
           }}
           disabled={publishing}
-          className="w-full bg-accent text-white py-3.5 rounded-lg font-medium hover:bg-accent-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
+          className="w-full bg-white text-black py-3 rounded-md text-sm font-medium hover:bg-[rgba(255,255,255,0.9)] transition-colors disabled:opacity-50"
         >
           {publishing ? "Publishing..." : "Publish Post"}
         </button>
       </div>
 
-      {/* Spacer for mobile sticky button */}
       <div className="sm:hidden h-20" />
     </div>
   );

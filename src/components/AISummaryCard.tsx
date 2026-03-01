@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import SparkleIcon from "./SparkleIcon";
 import RoleBadge from "./RoleBadge";
 import type { SummaryContent } from "@/lib/anthropic";
 
@@ -23,50 +22,44 @@ export default function AISummaryCard({
   const [narrativeExpanded, setNarrativeExpanded] = useState(false);
 
   return (
-    <div className="ai-card bg-dark-surface rounded-xl overflow-hidden">
+    <div className="border-l-2 border-ai-indigo pl-4">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-[rgba(255,255,255,0.06)] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <SparkleIcon className="w-4 h-4 text-txt-secondary" />
-          <span className="text-xs font-mono font-medium text-txt-secondary">AI-generated summary</span>
-          {generatedAt && (
-            <span className="text-xs font-mono text-txt-secondary/60 ml-2">
-              {new Date(generatedAt).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          )}
-        </div>
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-[11px] font-medium text-txt-tertiary">✦ AI Summary</span>
+        {generatedAt && (
+          <span className="text-[11px] text-txt-tertiary">
+            {new Date(generatedAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+        )}
         {showRegenerate && (
           <button
             onClick={onRegenerate}
             disabled={regenerating}
-            className="text-xs text-accent hover:text-accent-hover font-medium disabled:opacity-50"
+            className="text-[12px] text-txt-tertiary hover:text-txt-secondary ml-auto disabled:opacity-40"
           >
             {regenerating ? "Regenerating..." : "Regenerate"}
           </button>
         )}
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="space-y-5">
         {/* Themes */}
         {summary.themes.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
-              <span>🎯</span> Key Themes
-            </h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-2">Key Themes</h3>
+            <div className="space-y-1">
               {summary.themes.map((theme, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center bg-accent/10 text-accent text-xs font-medium px-3 py-1.5 rounded-full border border-accent/20 cursor-default"
-                  title={theme.description}
-                >
-                  {theme.title}
-                </span>
+                <div key={i}>
+                  <span className="text-sm text-txt-primary">{theme.title}</span>
+                  {theme.description && (
+                    <span className="text-sm text-txt-tertiary"> &mdash; {theme.description}</span>
+                  )}
+                </div>
               ))}
             </div>
           </section>
@@ -75,21 +68,15 @@ export default function AISummaryCard({
         {/* Quotes */}
         {summary.quotes.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
-              <span>💬</span> Notable Quotes
-            </h3>
-            <div className="space-y-3">
+            <h3 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-2">Notable Quotes</h3>
+            <div className="space-y-2">
               {summary.quotes.map((quote, i) => (
-                <blockquote
-                  key={i}
-                  className="border-l-2 border-accent/40 pl-4 py-1"
-                >
-                  <p className="text-sm text-txt-secondary italic">&ldquo;{quote.text}&rdquo;</p>
-                  <footer className="mt-1 flex items-center gap-1.5 text-xs text-txt-secondary/60">
-                    <span>— {quote.author}</span>
-                    <RoleBadge role={quote.role} />
-                  </footer>
-                </blockquote>
+                <div key={i} className="border-l border-[rgba(255,255,255,0.1)] pl-3">
+                  <p className="text-sm text-[rgba(255,255,255,0.7)] italic">&ldquo;{quote.text}&rdquo;</p>
+                  <p className="text-[12px] text-txt-tertiary mt-0.5 flex items-center gap-1">
+                    &mdash; {quote.author} <RoleBadge role={quote.role} />
+                  </p>
+                </div>
               ))}
             </div>
           </section>
@@ -98,15 +85,10 @@ export default function AISummaryCard({
         {/* Open Questions */}
         {summary.open_questions.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
-              <span>❓</span> Open Questions
-            </h3>
-            <ul className="space-y-2">
+            <h3 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-2">Open Questions</h3>
+            <ul className="space-y-1">
               {summary.open_questions.map((q, i) => (
-                <li key={i} className="text-sm text-txt-secondary flex items-start gap-2">
-                  <span className="text-txt-secondary/40 mt-0.5 shrink-0">•</span>
-                  <span>{q}</span>
-                </li>
+                <li key={i} className="text-sm text-[rgba(255,255,255,0.7)]">{q}</li>
               ))}
             </ul>
           </section>
@@ -115,15 +97,10 @@ export default function AISummaryCard({
         {/* Tensions */}
         {summary.tensions.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
-              <span>⚡</span> Tensions
-            </h3>
-            <ul className="space-y-2">
+            <h3 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-2">Tensions</h3>
+            <ul className="space-y-1">
               {summary.tensions.map((t, i) => (
-                <li key={i} className="text-sm text-txt-secondary flex items-start gap-2">
-                  <span className="text-amber-400 mt-0.5 shrink-0">↔</span>
-                  <span>{t.description}</span>
-                </li>
+                <li key={i} className="text-sm text-[rgba(255,255,255,0.7)]">{t.description}</li>
               ))}
             </ul>
           </section>
@@ -132,15 +109,10 @@ export default function AISummaryCard({
         {/* Real-World Connections */}
         {summary.real_world.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
-              <span>🔗</span> Real-World Connections
-            </h3>
-            <ul className="space-y-2">
+            <h3 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-2">Real-World Connections</h3>
+            <ul className="space-y-1">
               {summary.real_world.map((r, i) => (
-                <li key={i} className="text-sm text-txt-secondary flex items-start gap-2">
-                  <span className="text-green-400 mt-0.5 shrink-0">→</span>
-                  <span>{r.description}</span>
-                </li>
+                <li key={i} className="text-sm text-[rgba(255,255,255,0.7)]">{r.description}</li>
               ))}
             </ul>
           </section>
@@ -148,11 +120,9 @@ export default function AISummaryCard({
 
         {/* So What */}
         {summary.so_what && (
-          <section className="bg-accent/5 rounded-lg p-4 border border-accent/10">
-            <h3 className="text-sm font-semibold text-txt-primary mb-2 flex items-center gap-1.5">
-              <span>✅</span> So What?
-            </h3>
-            <p className="text-sm text-txt-secondary leading-relaxed">{summary.so_what}</p>
+          <section>
+            <h3 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-2">So What?</h3>
+            <p className="text-sm text-txt-primary leading-relaxed">{summary.so_what}</p>
           </section>
         )}
 
@@ -161,11 +131,11 @@ export default function AISummaryCard({
           <section>
             <button
               onClick={() => setNarrativeExpanded(!narrativeExpanded)}
-              className="text-sm font-semibold text-txt-primary flex items-center gap-1.5 hover:text-accent transition-colors"
+              className="text-[12px] uppercase tracking-wider text-txt-tertiary hover:text-txt-secondary transition-colors flex items-center gap-1"
             >
-              <span>📖</span> Full Narrative
+              Full Narrative
               <svg
-                className={`w-4 h-4 transition-transform ${narrativeExpanded ? "rotate-180" : ""}`}
+                className={`w-3 h-3 transition-transform ${narrativeExpanded ? "rotate-180" : ""}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -174,7 +144,7 @@ export default function AISummaryCard({
               </svg>
             </button>
             {narrativeExpanded && (
-              <div className="mt-3 text-sm text-txt-secondary leading-relaxed whitespace-pre-line">
+              <div className="mt-2 text-sm text-[rgba(255,255,255,0.7)] leading-relaxed whitespace-pre-line">
                 {summary.narrative}
               </div>
             )}

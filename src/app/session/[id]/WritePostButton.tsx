@@ -14,7 +14,7 @@ export function WritePostButton({ sessionId }: { sessionId: number }) {
   return (
     <Link
       href={`/new-post?session=${sessionId}`}
-      className="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-hover hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] transition-all"
+      className="text-[13px] text-txt-tertiary hover:text-txt-secondary transition-colors"
     >
       Write a Post
     </Link>

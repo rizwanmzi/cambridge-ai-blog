@@ -19,25 +19,19 @@ export default function QuickPostBar({ sessionId }: { sessionId: number }) {
     if (!body.trim()) return;
     setPosting(true);
     setMessage(null);
-
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: sessionId,
-          body: body.trim(),
-        }),
+        body: JSON.stringify({ session_id: sessionId, body: body.trim() }),
       });
-
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Failed to post");
       }
-
       setBody("");
       setExpanded(false);
-      setMessage({ type: "success", text: "Posted! Refreshing..." });
+      setMessage({ type: "success", text: "Posted!" });
       setTimeout(() => router.refresh(), 500);
     } catch (err) {
       setMessage({ type: "error", text: err instanceof Error ? err.message : "Failed to post" });
@@ -47,44 +41,42 @@ export default function QuickPostBar({ sessionId }: { sessionId: number }) {
   }
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 hidden sm:block">
       {!expanded ? (
         <button
           onClick={() => setExpanded(true)}
-          className="w-full text-left px-4 py-3 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl text-txt-secondary/60 hover:border-[rgba(255,255,255,0.12)] hover:text-txt-secondary transition-all"
+          className="w-full text-left py-2.5 text-sm text-txt-tertiary hover:text-txt-secondary transition-colors"
         >
-          Share an insight from this session...
+          Write something...
         </button>
       ) : (
-        <div className="bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-xl p-4">
+        <div>
           <textarea
             autoFocus
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Share an insight from this session..."
+            placeholder="Write something..."
             rows={4}
-            className="w-full bg-dark-bg border border-[rgba(255,255,255,0.06)] rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y font-mono leading-relaxed"
+            className="w-full bg-transparent border border-[rgba(255,255,255,0.15)] rounded-md px-3 py-2.5 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y font-mono leading-relaxed"
           />
           {message && (
-            <p className={`text-sm mt-2 ${message.type === "success" ? "text-green-400" : "text-red-400"}`}>
+            <p className={`text-[13px] mt-2 ${message.type === "success" ? "text-green-400/70" : "text-txt-tertiary"}`}>
               {message.text}
             </p>
           )}
-          <div className="flex items-center justify-between mt-3">
-            <p className="text-xs text-txt-secondary/50">
-              Title auto-generated. AI will categorise.
-            </p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-[11px] text-txt-tertiary">AI will categorise</p>
             <div className="flex gap-2">
               <button
                 onClick={() => { setExpanded(false); setBody(""); setMessage(null); }}
-                className="px-4 py-2 text-sm text-txt-secondary border border-[rgba(255,255,255,0.06)] rounded-lg hover:border-txt-secondary/50 transition-colors"
+                className="text-[13px] text-txt-tertiary hover:text-txt-secondary transition-colors px-3 py-1.5"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePost}
                 disabled={posting || !body.trim()}
-                className="bg-accent text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded-md transition-colors disabled:opacity-40"
               >
                 {posting ? "Posting..." : "Post"}
               </button>

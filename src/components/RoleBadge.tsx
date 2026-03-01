@@ -2,11 +2,7 @@ import { roleBadgeColors } from "@/lib/roles";
 
 export default function RoleBadge({ role }: { role: string }) {
   return (
-    <span
-      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${
-        roleBadgeColors[role] || "bg-gray-100 text-gray-600 border-gray-300"
-      }`}
-    >
+    <span className={`text-[11px] ${roleBadgeColors[role] || "text-[rgba(255,255,255,0.3)]"}`}>
       {role}
     </span>
   );

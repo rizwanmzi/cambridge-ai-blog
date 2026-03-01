@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import SparkleIcon from "@/components/SparkleIcon";
 import Link from "next/link";
 
 interface Source {
@@ -80,20 +79,18 @@ export default function AskInterface() {
 
   return (
     <div className="flex flex-col" style={{ minHeight: "60vh" }}>
-      {/* Messages area */}
-      <div className="flex-1 space-y-4 mb-6">
+      <div className="flex-1 space-y-3 mb-6">
         {messages.length === 0 && (
-          <div className="text-center py-12">
-            <SparkleIcon className="w-10 h-10 text-txt-secondary/30 mx-auto mb-4" />
-            <p className="text-txt-secondary mb-6">
+          <div className="py-12">
+            <p className="text-sm text-txt-tertiary mb-6">
               Ask me anything about the programme. I&apos;ll answer based on what participants posted.
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="space-y-2">
               {STARTER_QUESTIONS.map((q) => (
                 <button
                   key={q}
                   onClick={() => handleSubmit(q)}
-                  className="text-sm bg-transparent text-accent px-4 py-2 rounded-full border border-accent/30 hover:border-accent hover:bg-accent/5 transition-all"
+                  className="block text-sm text-txt-secondary hover:text-white transition-colors"
                 >
                   {q}
                 </button>
@@ -107,50 +104,49 @@ export default function AskInterface() {
             key={i}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
-            <div
-              className={`max-w-[80%] rounded-xl px-4 py-3 ${
-                msg.role === "user"
-                  ? "bg-dark-hover text-txt-primary border border-[rgba(255,255,255,0.06)]"
-                  : "ai-card bg-dark-surface"
-              }`}
-            >
-              {msg.role === "assistant" && (
-                <div className="flex items-center gap-1.5 mb-2">
-                  <SparkleIcon className="w-3.5 h-3.5 text-txt-secondary" />
-                  <span className="text-xs font-mono font-medium text-txt-secondary">AI</span>
+            {msg.role === "user" ? (
+              <div className="max-w-[80%] bg-[rgba(255,255,255,0.08)] rounded-md px-3 py-2">
+                <p className="text-sm text-txt-primary leading-relaxed">{msg.content}</p>
+              </div>
+            ) : (
+              <div className="max-w-[85%] border-l-2 border-ai-indigo pl-3 py-1">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="text-[11px] font-medium text-txt-tertiary">✦ AI</span>
                 </div>
-              )}
-              <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
-              {msg.sources && msg.sources.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
-                  <p className="text-xs font-medium text-txt-secondary/60 mb-1.5">Sources:</p>
-                  <div className="space-y-1">
-                    {msg.sources.map((src, j) => (
-                      <div key={j} className="flex items-center gap-1.5">
-                        <Link
-                          href={`/post/${src.post_id}`}
-                          className="text-xs text-accent hover:text-accent-hover hover:underline"
-                        >
-                          {src.title}
-                        </Link>
-                        <span className="text-xs text-txt-secondary/40">
-                          in {src.session_title}
-                        </span>
-                      </div>
-                    ))}
+                <p className="text-sm text-[rgba(255,255,255,0.7)] leading-relaxed whitespace-pre-line">
+                  {msg.content}
+                </p>
+                {msg.sources && msg.sources.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-[rgba(255,255,255,0.06)]">
+                    <p className="text-[11px] text-txt-tertiary mb-1">Sources</p>
+                    <div className="space-y-0.5">
+                      {msg.sources.map((src, j) => (
+                        <div key={j} className="flex items-center gap-1.5">
+                          <Link
+                            href={`/post/${src.post_id}`}
+                            className="text-[12px] text-white hover:underline"
+                          >
+                            {src.title}
+                          </Link>
+                          <span className="text-[11px] text-txt-tertiary">
+                            in {src.session_title}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         ))}
 
         {loading && (
           <div className="flex justify-start">
-            <div className="ai-card-loading bg-dark-surface rounded-xl px-4 py-3">
-              <div className="flex items-center gap-2">
-                <SparkleIcon className="w-3.5 h-3.5 text-txt-secondary animate-pulse" />
-                <span className="text-sm font-mono text-txt-secondary animate-pulse">Thinking...</span>
+            <div className="border-l-2 border-ai-indigo pl-3 py-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-txt-tertiary">✦ AI</span>
+                <span className="dot-pulse" />
               </div>
             </div>
           </div>
@@ -159,7 +155,6 @@ export default function AskInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -167,19 +162,19 @@ export default function AskInterface() {
         }}
         className="sticky bottom-0 bg-dark-bg pt-4 border-t border-[rgba(255,255,255,0.06)]"
       >
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask a question about the programme..."
-            className="flex-1 bg-dark-surface border border-[rgba(255,255,255,0.06)] rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+            placeholder="Ask a question..."
+            className="flex-1 bg-transparent border-b border-[rgba(255,255,255,0.1)] py-2 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none focus:border-[rgba(255,255,255,0.25)]"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50"
+            className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1.5 rounded-md hover:bg-[rgba(255,255,255,0.15)] disabled:opacity-40 shrink-0"
           >
             Ask
           </button>
