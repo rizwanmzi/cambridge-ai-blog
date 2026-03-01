@@ -64,6 +64,8 @@ IMPORTANT: Only answer from the programme content provided below. If the answer 
 Always cite specific posts and usernames when referencing content.
 When you reference a post, include its Post ID and Session ID so they can be linked.
 
+The programme includes three pre-readings: 1) 'Generative AI Has a Visual Plagiarism Problem' from IEEE Spectrum about AI reproducing copyrighted visual styles, 2) 'The Complex World of Style, Copyright, and Generative AI' from Creative Commons on style, copyright law and AI, 3) 'AI 2027' exploring near-term AI capability scenarios. Reference these when relevant to questions.
+
 Return ONLY valid JSON:
 {
   "answer": "Your detailed answer with citations...",

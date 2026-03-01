@@ -24,6 +24,9 @@ export default function NavBar() {
       <Link href="/about" className={linkClasses} onClick={() => setMobileMenuOpen(false)}>
         About
       </Link>
+      <Link href="/resources" className={linkClasses} onClick={() => setMobileMenuOpen(false)}>
+        Resources
+      </Link>
       <Link href="/digest" className={linkClasses} onClick={() => setMobileMenuOpen(false)}>
         Digest
       </Link>

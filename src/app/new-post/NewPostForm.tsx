@@ -6,13 +6,6 @@ import { canPost } from "@/lib/roles";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const CATEGORIES = [
-  "Live Insight",
-  "Formal Notes",
-  "Key Takeaway",
-  "Reflection",
-];
-
 interface Session {
   id: number;
   day_number: number;
@@ -28,7 +21,6 @@ export default function NewPostForm() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [sessionId, setSessionId] = useState(preselectedSession || "");
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]);
   const [body, setBody] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [message, setMessage] = useState<{
@@ -84,7 +76,6 @@ export default function NewPostForm() {
           session_id: Number(sessionId),
           title: title.trim(),
           body: body.trim(),
-          category,
         }),
       });
 
@@ -94,10 +85,9 @@ export default function NewPostForm() {
       }
 
       const post = await res.json();
-      setMessage({ type: "success", text: "Post published!" });
+      setMessage({ type: "success", text: "Post published! AI is categorising it..." });
       setTitle("");
       setBody("");
-      setCategory(CATEGORIES[0]);
 
       setTimeout(() => router.push(`/post/${post.id}`), 800);
     } catch (err) {
@@ -117,7 +107,7 @@ export default function NewPostForm() {
     <div>
       <h1 className="font-heading text-2xl font-bold text-txt-primary mb-1">New Post</h1>
       <p className="text-txt-secondary text-sm mb-8">
-        Write in Markdown. Publish from anywhere.
+        Write in Markdown. AI will automatically categorise your post.
       </p>
 
       <form onSubmit={handlePublish} className="space-y-5">
@@ -140,17 +130,6 @@ export default function NewPostForm() {
             Title
           </label>
           <input id="title" type="text" placeholder="Post title" value={title} onChange={(e) => setTitle(e.target.value)} required className={inputClasses} />
-        </div>
-
-        <div>
-          <label htmlFor="category" className="block text-sm font-medium text-txt-secondary mb-1.5">
-            Category
-          </label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} className={selectClasses}>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
         </div>
 
         <div>

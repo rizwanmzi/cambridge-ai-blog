@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase-service";
 import { markSummariesStale } from "@/lib/ai-helpers";
+import { classifyPost } from "@/lib/ai-classify";
 
 function getSupabase() {
   const cookieStore = cookies();
@@ -54,13 +55,21 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { session_id, title, body: postBody, category } = body;
+  const { session_id, title, body: postBody } = body;
 
-  if (!session_id || !title || !postBody || !category) {
+  if (!session_id || !title || !postBody) {
     return NextResponse.json(
-      { error: "Session, title, body, and category are required" },
+      { error: "Session, title, and body are required" },
       { status: 400 }
     );
+  }
+
+  // Auto-classify the post via AI
+  let category = "Live Insight"; // fallback
+  try {
+    category = await classifyPost(title, postBody);
+  } catch {
+    // Non-critical — use fallback
   }
 
   const { data, error } = await supabase

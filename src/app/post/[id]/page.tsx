@@ -4,6 +4,7 @@ import Link from "next/link";
 import PostContent from "./PostContent";
 import CommentSection from "./CommentSection";
 import RoleBadge from "@/components/RoleBadge";
+import PostActions from "@/components/PostActions";
 
 const categoryColors: Record<string, string> = {
   "Live Insight": "bg-green-500/20 text-green-400 border-green-500/40",
@@ -100,6 +101,13 @@ export default async function PostPage({
             </p>
           )}
         </header>
+
+        <PostActions
+          postId={post.id}
+          authorId={post.author_id}
+          initialTitle={post.title}
+          initialBody={post.body}
+        />
 
         <div className="prose max-w-none mb-12">
           <PostContent content={post.body} />

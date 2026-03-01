@@ -113,6 +113,29 @@ a, button, input, textarea, select {
   @apply my-8 border-dark-border;
 }
 
+/* === Scroll fade-in animation === */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+.scroll-fade-in.scroll-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === Card hover polish === */
+.card-hover {
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.card-hover:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
 /* === Print styles === */
 @media print {
   body {

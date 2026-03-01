@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import NavBar from "@/components/NavBar";
+import ScrollFadeIn from "@/components/ScrollFadeIn";
 
 export const metadata: Metadata = {
   title: "Cambridge AI Leadership Programme — Live Learning Blog",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className="bg-dark-bg text-txt-primary min-h-screen flex flex-col">
         <AuthProvider>
           <NavBar />
+          <ScrollFadeIn />
 
           {/* Main content */}
           <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12">
