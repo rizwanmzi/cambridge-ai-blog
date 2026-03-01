@@ -3,14 +3,12 @@
 import { useState } from "react";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const supabase = createSupabaseBrowser();
 
   async function handleLogin(e: React.FormEvent) {
@@ -29,8 +27,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
-    router.refresh();
+    // Hard redirect so middleware sees the fresh cookies
+    window.location.href = "/";
   }
 
   return (

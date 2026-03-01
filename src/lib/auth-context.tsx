@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { createSupabaseBrowser } from "./supabase-browser";
 import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
 
@@ -28,32 +34,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabaseRef = useRef(createSupabaseBrowser());
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    const supabase = createSupabaseBrowser();
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    setProfile(data);
+  }, []);
 
   useEffect(() => {
-    const supabase = supabaseRef.current;
-
-    async function fetchProfile(userId: string) {
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
-      setProfile(data);
-    }
+    const supabase = createSupabaseBrowser();
+    let mounted = true;
 
     async function init() {
-      // getSession reads from local storage — fast and reliable
+      // Try getSession first (reads from cookie storage, fast)
       const {
         data: { session },
       } = await supabase.auth.getSession();
+
+      if (!mounted) return;
 
       if (session?.user) {
         setUser(session.user);
         await fetchProfile(session.user.id);
       }
 
-      setLoading(false);
+      if (mounted) setLoading(false);
     }
 
     init();
@@ -61,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event: AuthChangeEvent, session: Session | null) => {
+      if (!mounted) return;
+
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
@@ -73,11 +84,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchProfile]);
 
   async function signOut() {
-    await supabaseRef.current.auth.signOut();
+    const supabase = createSupabaseBrowser();
+    await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
     window.location.href = "/login";

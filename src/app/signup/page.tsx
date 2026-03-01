@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -12,7 +11,6 @@ export default function SignupPage() {
   const [accessCode, setAccessCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const supabase = createSupabaseBrowser();
 
   async function handleSignup(e: React.FormEvent) {
@@ -20,42 +18,64 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
 
-    // Validate access code server-side and create account
-    const res = await fetch("/api/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    try {
+      // Step 1: Validate access code server-side and get role
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          accessCode: accessCode.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid access code");
+        setLoading(false);
+        return;
+      }
+
+      const { role } = data;
+
+      // Step 2: Sign up via browser client (sets cookies automatically)
+      const { error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
-        username: username.trim(),
-        accessCode: accessCode.trim(),
-      }),
-    });
+        options: {
+          data: {
+            username: username.trim(),
+            role,
+          },
+        },
+      });
 
-    const data = await res.json();
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
 
-    if (!res.ok) {
-      setError(data.error || "Signup failed");
+      // Step 3: Sign in immediately (in case email confirmation is enabled
+      // and signUp didn't auto-login)
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (signInError) {
+        // If sign-in fails (e.g. email confirmation required), redirect to login
+        window.location.href = "/login";
+        return;
+      }
+
+      // Step 4: Hard redirect to ensure middleware picks up the new cookies
+      window.location.href = "/";
+    } catch {
+      setError("Something went wrong. Please try again.");
       setLoading(false);
-      return;
     }
-
-    // Sign in immediately after signup
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-
-    if (signInError) {
-      setError(
-        "Account created but could not sign in automatically. Please go to the login page."
-      );
-      setLoading(false);
-      return;
-    }
-
-    router.push("/");
-    router.refresh();
   }
 
   return (

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow public routes, API routes, and static assets
+  // Allow public routes
   if (
     pathname === "/login" ||
     pathname === "/signup" ||
@@ -15,6 +15,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Create a response that we can modify
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
@@ -28,12 +29,15 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          // Update request cookies for downstream
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
+          // Recreate response with updated request headers
           response = NextResponse.next({
             request: { headers: request.headers },
           });
+          // Set cookies on the response so browser receives them
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           );
@@ -42,14 +46,22 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    // getUser() validates the token with Supabase server
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-  if (!user) {
+    if (error || !user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      return NextResponse.redirect(loginUrl);
+    }
+  } catch {
+    // If anything fails, redirect to login
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("redirectTo", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -58,12 +70,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all routes except:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico
-     */
-    "/((?!_next/static|_next/image|favicon\\.ico).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|api/).*)",
   ],
 };
