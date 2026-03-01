@@ -1,6 +1,7 @@
 import { createSupabaseServer } from "@/lib/supabase-server";
 import LandingPage from "@/components/LandingPage";
 import ProgrammeTimeline from "@/components/ProgrammeTimeline";
+import GuideBanner from "@/components/GuideBanner";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -53,6 +54,7 @@ export default async function Home() {
           Cohort 2 — Live Learning AI Blog
         </p>
       </div>
+      <GuideBanner />
       <ProgrammeTimeline sessions={allSessions} />
     </div>
   );

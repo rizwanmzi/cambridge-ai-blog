@@ -4,13 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { canPost } from "@/lib/roles";
 import CatchMeUpModal from "./CatchMeUpModal";
+import GuideModal from "./GuideModal";
 import KeyboardShortcuts from "./KeyboardShortcuts";
 
 export default function NavBar() {
-  const { user, profile, loading, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [catchMeUpOpen, setCatchMeUpOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const pathname = usePathname();
 
   const isActive = (href: string) => pathname === href;
@@ -32,14 +33,17 @@ export default function NavBar() {
               <Link href="/resources" className={linkClass("/resources")}>Resources</Link>
               <Link href="/digest" className={linkClass("/digest")}>Digest</Link>
               <Link href="/ask" className={linkClass("/ask")}>Ask</Link>
-              {profile && canPost(profile.role) && (
-                <Link href="/new-post" className={linkClass("/new-post")}>New Post</Link>
-              )}
               <button
                 onClick={() => setCatchMeUpOpen(true)}
                 className="text-[13px] text-[rgba(255,255,255,0.5)] hover:text-[rgba(255,255,255,0.9)] transition-colors"
               >
                 Catch Me Up
+              </button>
+              <button
+                onClick={() => setGuideOpen(true)}
+                className="text-[13px] text-[rgba(255,255,255,0.5)] hover:text-[rgba(255,255,255,0.9)] transition-colors"
+              >
+                Guide
               </button>
               <Link href="/about" className={linkClass("/about")}>About</Link>
               <button
@@ -54,6 +58,7 @@ export default function NavBar() {
       </nav>
 
       <CatchMeUpModal open={catchMeUpOpen} onClose={() => setCatchMeUpOpen(false)} />
+      <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} />
       <KeyboardShortcuts onOpenCatchMeUp={() => setCatchMeUpOpen(true)} />
     </>
   );

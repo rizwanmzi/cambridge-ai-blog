@@ -187,7 +187,14 @@ Return ONLY valid JSON.`;
   return content;
 }
 
-export async function generateProgrammeDigest(): Promise<SummaryContent> {
+export interface ProgrammeDigestResult {
+  summary: SummaryContent;
+  postCount: number;
+  commentCount: number;
+  sessionCount: number;
+}
+
+export async function generateProgrammeDigest(): Promise<ProgrammeDigestResult> {
   // Check cache
   const { data: cached } = await getServiceClient()
     .from("ai_summaries")
@@ -196,38 +203,141 @@ export async function generateProgrammeDigest(): Promise<SummaryContent> {
     .eq("is_stale", false)
     .single();
 
-  if (cached) return cached.content as SummaryContent;
+  if (cached) {
+    // Still need counts for the footer even when cached
+    const { count: postCount } = await getServiceClient()
+      .from("posts")
+      .select("id", { count: "exact", head: true });
+    const { count: commentCount } = await getServiceClient()
+      .from("comments")
+      .select("id", { count: "exact", head: true })
+      .not("post_id", "is", null);
+    const { data: sessionRows } = await getServiceClient()
+      .from("posts")
+      .select("session_id")
+      .not("session_id", "is", null);
+    const sessionCount = new Set((sessionRows || []).map((r: { session_id: number }) => r.session_id)).size;
 
-  // Generate/fetch day summaries for all days
-  const daySummaries: { day: number; summary: SummaryContent }[] = [];
-  for (let d = 0; d <= 5; d++) {
-    const summary = await generateDaySummary(d);
-    daySummaries.push({ day: d, summary });
+    return {
+      summary: cached.content as SummaryContent,
+      postCount: postCount ?? 0,
+      commentCount: commentCount ?? 0,
+      sessionCount,
+    };
   }
 
-  const daySummariesBlock = daySummaries
-    .map(
-      (d) =>
-        `Day ${d.day}:\nThemes: ${d.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${d.summary.so_what}\nNarrative: ${d.summary.narrative}\nSurprise: ${d.summary.surprise || "N/A"}`
-    )
-    .join("\n\n---\n\n");
+  // Fetch ALL posts with profiles and session info
+  const { data: posts } = await getServiceClient()
+    .from("posts")
+    .select("*, profiles(username, role), sessions(title, day_number, session_date)")
+    .order("created_at");
 
-  const systemPrompt = `${TONE_INSTRUCTION}
+  // Fetch ALL comments on posts with profiles
+  const { data: comments } = await getServiceClient()
+    .from("comments")
+    .select("*, profiles(username, role)")
+    .not("post_id", "is", null)
+    .order("created_at");
 
-You're writing the programme-wide digest for the Cambridge AI Leadership Programme. Below are the day-level summaries for the entire week.
+  const allPosts = posts || [];
+  const allComments = comments || [];
 
-${daySummariesBlock}
+  // If no posts, return empty result
+  if (allPosts.length === 0) {
+    return {
+      summary: {
+        themes: [],
+        quotes: [],
+        open_questions: [],
+        tensions: [],
+        action_items: [],
+        real_world: [],
+        so_what: "",
+        narrative: "",
+      },
+      postCount: 0,
+      commentCount: 0,
+      sessionCount: 0,
+    };
+  }
 
-Write a comprehensive programme synthesis.
+  // Group posts by session
+  const sessionMap = new Map<number, {
+    title: string;
+    dayNumber: number | null;
+    sessionDate: string | null;
+    posts: typeof allPosts;
+  }>();
+
+  for (const p of allPosts) {
+    const session = p.sessions as unknown as { title: string; day_number: number | null; session_date: string | null } | null;
+    const sid = p.session_id as number;
+    if (!sessionMap.has(sid)) {
+      sessionMap.set(sid, {
+        title: session?.title ?? "Unknown Session",
+        dayNumber: session?.day_number ?? null,
+        sessionDate: session?.session_date ?? null,
+        posts: [],
+      });
+    }
+    sessionMap.get(sid)!.posts.push(p);
+  }
+
+  // Build comment lookup by post_id
+  const commentsByPost = new Map<number, typeof allComments>();
+  for (const c of allComments) {
+    const pid = c.post_id as number;
+    if (!commentsByPost.has(pid)) commentsByPost.set(pid, []);
+    commentsByPost.get(pid)!.push(c);
+  }
+
+  // Build structured context
+  const contextParts: string[] = [];
+  for (const [, session] of Array.from(sessionMap.entries())) {
+    const dayLabel = session.dayNumber != null ? `Day ${session.dayNumber}` : "Pre-programme";
+    const dateLabel = session.sessionDate ?? "date unknown";
+    contextParts.push(`SESSION: ${session.title} (${dayLabel}, ${dateLabel})`);
+
+    for (const p of session.posts) {
+      const profile = p.profiles as unknown as { username: string; role: string } | null;
+      const author = profile?.username ?? "Unknown";
+      const category = p.category ?? "general";
+      const timestamp = p.created_at ? new Date(p.created_at).toISOString().slice(0, 16) : "";
+      contextParts.push(`  POST by ${author} (${category}, ${timestamp}):`);
+      contextParts.push(`  ${p.body}`);
+
+      const postComments = commentsByPost.get(p.id) || [];
+      for (const c of postComments) {
+        const cProfile = c.profiles as unknown as { username: string; role: string } | null;
+        const cAuthor = cProfile?.username ?? "Unknown";
+        const cTimestamp = c.created_at ? new Date(c.created_at).toISOString().slice(0, 16) : "";
+        contextParts.push(`    COMMENT by ${cAuthor} (${cTimestamp}): ${c.body}`);
+      }
+    }
+    contextParts.push(""); // blank line between sessions
+  }
+
+  const structuredContext = contextParts.join("\n");
+  const sessionCount = sessionMap.size;
+
+  const systemPrompt = `You are an AI analyst for the Cambridge AI Leadership Programme. Below is the complete set of posts and comments from programme participants. Synthesise this into a digest.
+
+Include: key themes emerging across sessions, notable insights from participants, areas of debate or disagreement in comments, and connections between sessions. Only reference content that actually exists in the data below. Do NOT invent or hallucinate any content. If there are no posts for a session, say so.
+
+${TONE_INSTRUCTION}
+
+DATA:
+${structuredContext}
 
 Return JSON:
 {
-  "executive_summary": "3-4 paragraphs. The story of the week. What did this group of leaders discover about AI that they didn't know on Day 0? How did the thinking evolve from Monday's ML foundations to Friday's futures workshop? What consensus emerged, and what remained unresolved?",
-  "top_insights": ["The 10 most important ideas from the week, ranked by impact. Each one sentence, specific, actionable."],
-  "themes": [{"title": "...", "description": "Major theme that ran through the week, 2-3 sentences"}],
-  "evolution": "How did the group's understanding of AI change over the week? What did they believe on Monday that they questioned by Friday?",
-  "unresolved": ["The big questions this cohort is taking back to their organisations"],
-  "so_what": "The programme in two sentences. If a board member asks 'what did you learn at Cambridge?', this is the answer."
+  "executive_summary": "3-4 paragraphs. The story of the programme so far based on what participants actually wrote.",
+  "top_insights": ["The most important ideas from the posts, ranked by impact. Each one sentence, specific, actionable."],
+  "themes": [{"title": "...", "description": "Major theme from the actual posts, 2-3 sentences"}],
+  "evolution": "How has the group's thinking evolved based on their posts?",
+  "unresolved": ["Questions or tensions that remain unresolved in the discussions"],
+  "so_what": "The programme in two sentences based on what participants have shared.",
+  "narrative": "3-5 paragraphs telling the story of the programme based on real posts and comments."
 }
 
 Return ONLY valid JSON.`;
@@ -235,7 +345,7 @@ Return ONLY valid JSON.`;
   const raw = await callClaude(systemPrompt, "Generate the programme digest now.");
   const content: SummaryContent = JSON.parse(raw);
 
-  // Use a raw upsert for programme scope (unique index on constant 1)
+  // Cache the result
   const { data: existing } = await getServiceClient()
     .from("ai_summaries")
     .select("id")
@@ -262,5 +372,10 @@ Return ONLY valid JSON.`;
     });
   }
 
-  return content;
+  return {
+    summary: content,
+    postCount: allPosts.length,
+    commentCount: allComments.length,
+    sessionCount,
+  };
 }

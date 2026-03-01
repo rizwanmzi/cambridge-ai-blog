@@ -25,7 +25,7 @@ export async function POST() {
   }
 
   try {
-    const summary = await generateProgrammeDigest();
+    const { summary, postCount, commentCount, sessionCount } = await generateProgrammeDigest();
 
     // Leaderboard: top 5 contributors
     const { data: posts } = await getServiceClient()
@@ -91,6 +91,9 @@ export async function POST() {
 
     return NextResponse.json({
       summary,
+      postCount,
+      commentCount,
+      sessionCount,
       leaderboard: {
         topContributors,
         mostDiscussedPost,

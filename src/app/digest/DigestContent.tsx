@@ -18,6 +18,9 @@ export default function DigestContent() {
   const { profile } = useAuth();
   const [summary, setSummary] = useState<SummaryContent | null>(null);
   const [leaderboard, setLeaderboard] = useState<Leaderboard | null>(null);
+  const [postCount, setPostCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
+  const [sessionCount, setSessionCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [regenerating, setRegenerating] = useState(false);
@@ -37,6 +40,9 @@ export default function DigestContent() {
       if (!res.ok) throw new Error(data.error || "Failed to load");
       setSummary(data.summary);
       setLeaderboard(data.leaderboard);
+      setPostCount(data.postCount ?? 0);
+      setCommentCount(data.commentCount ?? 0);
+      setSessionCount(data.sessionCount ?? 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -56,6 +62,14 @@ export default function DigestContent() {
       <p className="text-sm text-txt-tertiary">
         {error} &mdash;{" "}
         <button onClick={() => loadDigest()} className="text-white hover:underline">try again</button>
+      </p>
+    );
+  }
+
+  if (postCount === 0 && !summary?.narrative && !summary?.so_what) {
+    return (
+      <p className="text-sm text-txt-tertiary py-8 text-center">
+        No posts yet. The digest will be generated once participants start sharing insights.
       </p>
     );
   }
@@ -117,6 +131,12 @@ export default function DigestContent() {
             </div>
           )}
         </div>
+      )}
+
+      {postCount > 0 && (
+        <p className="text-[12px] text-txt-tertiary">
+          Generated from {postCount} {postCount === 1 ? "post" : "posts"} and {commentCount} {commentCount === 1 ? "comment" : "comments"} across {sessionCount} {sessionCount === 1 ? "session" : "sessions"}
+        </p>
       )}
 
       <div className="flex justify-end no-print">
