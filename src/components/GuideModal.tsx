@@ -31,7 +31,6 @@ export default function GuideModal({ open, onClose }: GuideModalProps) {
             <li>Choose a post type: Live Insight, Formal Notes, Key Takeaway, or Reflection</li>
             <li>Comment on others&rsquo; posts to join the conversation</li>
             <li>Use the AI Summary tab to see AI-generated session highlights</li>
-            <li>Use Digest for daily and programme-wide AI analysis</li>
             <li>Use Ask to chat with the AI about programme content</li>
           </ol>
         </div>

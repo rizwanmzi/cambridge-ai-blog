@@ -31,7 +31,6 @@ export default function NavBar() {
             <div className="hidden md:flex items-center gap-6">
               <Link href="/" className={linkClass("/")}>Blog</Link>
               <Link href="/resources" className={linkClass("/resources")}>Resources</Link>
-              <Link href="/digest" className={linkClass("/digest")}>Digest</Link>
               <Link href="/ask" className={linkClass("/ask")}>Ask</Link>
               <button
                 onClick={() => setCatchMeUpOpen(true)}
