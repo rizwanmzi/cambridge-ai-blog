@@ -29,7 +29,6 @@ export default function NavBar() {
           {!loading && user && (
             <div className="hidden md:flex items-center gap-6">
               <Link href="/" className={linkClass("/")}>Blog</Link>
-              <Link href="/about" className={linkClass("/about")}>About</Link>
               <Link href="/resources" className={linkClass("/resources")}>Resources</Link>
               <Link href="/digest" className={linkClass("/digest")}>Digest</Link>
               <Link href="/ask" className={linkClass("/ask")}>Ask</Link>
@@ -42,6 +41,7 @@ export default function NavBar() {
               >
                 Catch Me Up
               </button>
+              <Link href="/about" className={linkClass("/about")}>About</Link>
               <button
                 onClick={() => signOut()}
                 className="text-[13px] text-[rgba(255,255,255,0.5)] hover:text-[rgba(255,255,255,0.9)] transition-colors"
