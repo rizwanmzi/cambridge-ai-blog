@@ -49,21 +49,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sbCookies.map((c) => c.substring(0, 60))
     );
 
-    async function fetchProfile(userId: string) {
-      for (let attempt = 0; attempt < 2; attempt++) {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .single();
-        console.log("[AuthProvider] fetchProfile attempt", attempt, { data: !!data, error: error?.message });
-        if (data && !error) {
-          if (mounted) setProfile(data);
-          return;
+    async function fetchProfile(userId: string, accessToken: string) {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=*`,
+          {
+            headers: {
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        const rows = await res.json();
+        console.log("[AuthProvider] fetchProfile:", { rows: rows?.length, status: res.status });
+        if (mounted && rows?.length > 0) {
+          setProfile(rows[0]);
         }
-        if (attempt === 0) await new Promise((r) => setTimeout(r, 1000));
+      } catch (err) {
+        console.warn("[AuthProvider] fetchProfile error:", err);
+        if (mounted) setProfile(null);
       }
-      if (mounted) setProfile(null);
     }
 
     async function handleSession(session: Session | null, source: string) {
@@ -82,8 +87,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log(`[AuthProvider] CALLING setUser, user:`, !!currentUser);
       setUser(currentUser);
 
-      if (currentUser) {
-        await fetchProfile(currentUser.id);
+      if (currentUser && session?.access_token) {
+        await fetchProfile(currentUser.id, session.access_token);
       } else {
         setProfile(null);
       }
