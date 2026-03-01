@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import RoleBadge from "@/components/RoleBadge";
 import SessionComments from "./SessionComments";
+import SessionTabs from "./SessionTabs";
 
 interface PostWithProfile {
   id: number;
@@ -111,68 +112,75 @@ export default async function SessionPage({
         )}
       </header>
 
-      {/* Posts section */}
+      {/* Posts + AI Summary tabs */}
       <section className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-navy-900">
-            Posts{" "}
-            {posts && posts.length > 0 && (
-              <span className="text-navy-400 font-normal">
-                ({posts.length})
-              </span>
-            )}
-          </h2>
-          <WritePostButton sessionId={session.id} />
-        </div>
-
-        {posts && posts.length > 0 ? (
-          <div className="space-y-4">
-            {(posts as PostWithProfile[]).map((post) => (
-              <Link
-                key={post.id}
-                href={`/post/${post.id}`}
-                className="block group"
-              >
-                <article className="border border-navy-100 rounded-lg p-5 hover:border-navy-300 hover:shadow-sm transition-all">
-                  <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <span
-                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                        categoryColors[post.category] ||
-                        "bg-navy-100 text-navy-700"
-                      }`}
-                    >
-                      {post.category}
+        <SessionTabs
+          sessionId={session.id}
+          postsContent={
+            <>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-navy-900">
+                  Posts{" "}
+                  {posts && posts.length > 0 && (
+                    <span className="text-navy-400 font-normal">
+                      ({posts.length})
                     </span>
-                    <time className="text-sm text-navy-400">
-                      {new Date(post.created_at).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </time>
-                    {post.profiles && (
-                      <span className="flex items-center gap-1.5 text-sm text-navy-500">
-                        <span>{post.profiles.username}</span>
-                        <RoleBadge role={post.profiles.role} />
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-lg font-medium text-navy-900 group-hover:text-navy-600 transition-colors mb-1">
-                    {post.title}
-                  </h3>
-                  <p className="text-navy-500 text-sm leading-relaxed">
-                    {post.body.replace(/[#*_`>\-\[\]()]/g, "").slice(0, 150)}
-                    {post.body.length > 150 ? "..." : ""}
-                  </p>
-                </article>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-10 border-2 border-dashed border-navy-200 rounded-lg">
-            <p className="text-navy-400">No posts yet for this session.</p>
-          </div>
-        )}
+                  )}
+                </h2>
+                <WritePostButton sessionId={session.id} />
+              </div>
+
+              {posts && posts.length > 0 ? (
+                <div className="space-y-4">
+                  {(posts as PostWithProfile[]).map((post) => (
+                    <Link
+                      key={post.id}
+                      href={`/post/${post.id}`}
+                      className="block group"
+                    >
+                      <article className="border border-navy-100 rounded-lg p-5 hover:border-navy-300 hover:shadow-sm transition-all">
+                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                          <span
+                            className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                              categoryColors[post.category] ||
+                              "bg-navy-100 text-navy-700"
+                            }`}
+                          >
+                            {post.category}
+                          </span>
+                          <time className="text-sm text-navy-400">
+                            {new Date(post.created_at).toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </time>
+                          {post.profiles && (
+                            <span className="flex items-center gap-1.5 text-sm text-navy-500">
+                              <span>{post.profiles.username}</span>
+                              <RoleBadge role={post.profiles.role} />
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-medium text-navy-900 group-hover:text-navy-600 transition-colors mb-1">
+                          {post.title}
+                        </h3>
+                        <p className="text-navy-500 text-sm leading-relaxed">
+                          {post.body.replace(/[#*_`>\-\[\]()]/g, "").slice(0, 150)}
+                          {post.body.length > 150 ? "..." : ""}
+                        </p>
+                      </article>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 border-2 border-dashed border-navy-200 rounded-lg">
+                  <p className="text-navy-400">No posts yet for this session.</p>
+                </div>
+              )}
+            </>
+          }
+        />
       </section>
 
       {/* Session comments */}

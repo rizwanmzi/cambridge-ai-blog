@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getServiceClient } from "@/lib/supabase-service";
+import { markSummariesStale } from "@/lib/ai-helpers";
 
 function getSupabase() {
   const cookieStore = cookies();
@@ -64,6 +66,31 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Best-effort: mark AI summaries stale
+  try {
+    let resolvedSessionId = session_id;
+    if (!resolvedSessionId && post_id) {
+      const { data: post } = await getServiceClient()
+        .from("posts")
+        .select("session_id")
+        .eq("id", post_id)
+        .single();
+      resolvedSessionId = post?.session_id;
+    }
+    if (resolvedSessionId) {
+      const { data: sess } = await getServiceClient()
+        .from("sessions")
+        .select("day_number")
+        .eq("id", resolvedSessionId)
+        .single();
+      if (sess) {
+        await markSummariesStale(getServiceClient(), resolvedSessionId, sess.day_number);
+      }
+    }
+  } catch {
+    // Non-critical
   }
 
   return NextResponse.json(data, { status: 201 });

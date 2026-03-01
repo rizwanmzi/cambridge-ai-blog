@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
+import ActivityPulse from "@/components/ActivityPulse";
+import DaySummaryAccordion from "@/components/DaySummaryAccordion";
 
 interface Session {
   id: number;
@@ -113,9 +115,12 @@ export default async function Home() {
                               {formatTime(session.end_time)}
                             </span>
                             {session.post_count > 0 && (
-                              <span className="text-xs font-medium bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full">
-                                {session.post_count}{" "}
-                                {session.post_count === 1 ? "post" : "posts"}
+                              <span className="flex items-center gap-1.5">
+                                <span className="text-xs font-medium bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full">
+                                  {session.post_count}{" "}
+                                  {session.post_count === 1 ? "post" : "posts"}
+                                </span>
+                                <ActivityPulse postCount={session.post_count} />
                               </span>
                             )}
                           </div>
@@ -144,6 +149,7 @@ export default async function Home() {
                   </Link>
                 ))}
               </div>
+              <DaySummaryAccordion dayNumber={Number(day)} />
             </section>
           ))}
       </div>
