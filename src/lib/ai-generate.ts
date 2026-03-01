@@ -50,30 +50,50 @@ export async function generateSessionSummary(
     )
     .join("\n");
 
+  const contentBlock = [
+    postsText && `Posts:\n${postsText}`,
+    commentsText && `Session Discussion:\n${commentsText}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n") || "No content yet.";
+
   const systemPrompt = `${TONE_INSTRUCTION}
 
-You are summarising a single session from the Cambridge AI Leadership Programme.
-Return ONLY valid JSON matching this structure (no markdown, no explanation):
+You're summarising a session from the programme. Below are all the posts and comments written by attendees about this session.
+
+Session: "${session?.title ?? "Unknown"}" (Day ${session?.day_number ?? "?"}, ${session?.faculty || "faculty not specified"})
+
+Content from attendees:
+${contentBlock}
+
+Generate a structured summary as JSON with these exact fields:
+
 {
-  "themes": [{"title": "...", "description": "..."}],
-  "quotes": [{"text": "...", "author": "...", "role": "..."}],
-  "open_questions": ["..."],
-  "tensions": [{"description": "..."}],
-  "action_items": ["..."],
-  "real_world": [{"description": "..."}],
-  "so_what": "One-paragraph takeaway",
-  "narrative": "A 2-3 paragraph narrative summary telling the story of this session"
-}`;
+  "themes": [
+    {"title": "Short theme name", "description": "2-3 sentences. Be specific — what was the actual argument or insight? Reference who said it if known."}
+  ],
+  "quotes": [
+    {"text": "Exact or near-exact quote from a post/comment", "author": "username", "role": "their role"}
+  ],
+  "open_questions": ["Questions that were raised but not resolved. Frame them as the room would have asked them — conversational, not academic."],
+  "tensions": [
+    {"description": "Where people disagreed or where the discussion revealed a genuine dilemma. Be specific."}
+  ],
+  "action_items": ["Practical implications — what should these leaders actually do differently based on this session?"],
+  "real_world": [
+    {"description": "Specific connections attendees made to their own industries, companies, or decisions they face."}
+  ],
+  "so_what": "The single most important thing from this session in 2 sentences. If someone only reads this, they should get the point.",
+  "narrative": "3-5 paragraphs telling the story of this session's discussion. Start with the moment that mattered most, not a chronological recap. What surprised people? Where did minds change? What's the thing everyone will still be talking about at dinner? Write it like you're telling a smart friend over a drink."
+}
 
-  const userPrompt = `Session: "${session?.title ?? "Unknown"}"
-Faculty: ${session?.faculty ?? "N/A"}
-Description: ${session?.description ?? "N/A"}
+Return 3-4 themes, 2-3 quotes (only if genuine quotes exist in the content — don't fabricate), 2-4 open questions, 1-3 tensions, 2-4 action items, 1-3 real-world connections.
 
-Posts:
-${postsText || "No posts yet."}
+If there's very little content (1-2 short posts), scale down proportionally — a single post doesn't need 4 themes. Be honest: "Early days — only one post so far, but here's what stood out."
 
-Session Discussion:
-${commentsText || "No comments yet."}`;
+Return ONLY valid JSON, no markdown fences.`;
+
+  const userPrompt = "Generate the session summary now.";
 
   const raw = await callClaude(systemPrompt, userPrompt);
   const content: SummaryContent = JSON.parse(raw);
@@ -123,30 +143,33 @@ export async function generateDaySummary(
     sessionSummaries.push({ title: s.title, faculty: s.faculty, summary });
   }
 
-  const sessionsText = sessionSummaries
+  const sessionSummariesBlock = sessionSummaries
     .map(
       (s) =>
-        `Session: "${s.title}" (${s.faculty ?? "N/A"})\nThemes: ${s.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${s.summary.so_what}\nNarrative: ${s.summary.narrative}`
+        `Session: "${s.title}" (${s.faculty ?? "N/A"})\nThemes: ${s.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${s.summary.so_what}\nNarrative: ${s.summary.narrative}\nOpen Questions: ${s.summary.open_questions.join("; ")}`
     )
     .join("\n\n---\n\n");
 
   const systemPrompt = `${TONE_INSTRUCTION}
 
-You are synthesising a full day of the Cambridge AI Leadership Programme.
-You have session summaries below. Weave them into a coherent day-level summary.
-Return ONLY valid JSON matching this structure:
-{
-  "themes": [{"title": "...", "description": "..."}],
-  "quotes": [{"text": "...", "author": "...", "role": "..."}],
-  "open_questions": ["..."],
-  "tensions": [{"description": "..."}],
-  "action_items": ["..."],
-  "real_world": [{"description": "..."}],
-  "so_what": "One-paragraph day takeaway",
-  "narrative": "A 2-3 paragraph narrative of the day's learning arc"
-}`;
+You're writing the daily digest for Day ${dayNumber} of the programme. Below are the AI-generated summaries for each session that day.
 
-  const raw = await callClaude(systemPrompt, `Day ${dayNumber} Sessions:\n\n${sessionsText || "No sessions."}`);
+${sessionSummariesBlock || "No sessions."}
+
+Write a day-level synthesis that captures the arc of the day — not just a list of what happened in each session. What threads connected? What built on what? Where did the day surprise people?
+
+Return JSON:
+{
+  "themes": [{"title": "...", "description": "Cross-cutting theme across sessions, 2-3 sentences"}],
+  "narrative": "4-6 paragraphs. Tell the story of the day. Start with the dominant mood or breakthrough. Weave the sessions together — show how the morning's discussion set up the afternoon's debate. End with what people are buzzing about heading into dinner.",
+  "so_what": "The day in one sentence.",
+  "open_questions": ["The questions the group is carrying into tomorrow"],
+  "surprise": "The one thing nobody expected from today"
+}
+
+Return ONLY valid JSON.`;
+
+  const raw = await callClaude(systemPrompt, "Generate the day summary now.");
   const content: SummaryContent = JSON.parse(raw);
 
   await getServiceClient().from("ai_summaries").upsert(
@@ -182,30 +205,34 @@ export async function generateProgrammeDigest(): Promise<SummaryContent> {
     daySummaries.push({ day: d, summary });
   }
 
-  const daysText = daySummaries
+  const daySummariesBlock = daySummaries
     .map(
       (d) =>
-        `Day ${d.day}:\nThemes: ${d.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${d.summary.so_what}\nNarrative: ${d.summary.narrative}`
+        `Day ${d.day}:\nThemes: ${d.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${d.summary.so_what}\nNarrative: ${d.summary.narrative}\nSurprise: ${d.summary.surprise || "N/A"}`
     )
     .join("\n\n---\n\n");
 
   const systemPrompt = `${TONE_INSTRUCTION}
 
-You are creating the definitive programme digest for the entire Cambridge AI Leadership Programme.
-Synthesise the day summaries into a comprehensive programme-level overview.
-Return ONLY valid JSON matching this structure:
-{
-  "themes": [{"title": "...", "description": "..."}],
-  "quotes": [{"text": "...", "author": "...", "role": "..."}],
-  "open_questions": ["..."],
-  "tensions": [{"description": "..."}],
-  "action_items": ["..."],
-  "real_world": [{"description": "..."}],
-  "so_what": "The definitive programme takeaway",
-  "narrative": "A 3-4 paragraph narrative of the entire programme's learning journey"
-}`;
+You're writing the programme-wide digest for the Cambridge AI Leadership Programme. Below are the day-level summaries for the entire week.
 
-  const raw = await callClaude(systemPrompt, `Programme Day Summaries:\n\n${daysText}`);
+${daySummariesBlock}
+
+Write a comprehensive programme synthesis.
+
+Return JSON:
+{
+  "executive_summary": "3-4 paragraphs. The story of the week. What did this group of leaders discover about AI that they didn't know on Day 0? How did the thinking evolve from Monday's ML foundations to Friday's futures workshop? What consensus emerged, and what remained unresolved?",
+  "top_insights": ["The 10 most important ideas from the week, ranked by impact. Each one sentence, specific, actionable."],
+  "themes": [{"title": "...", "description": "Major theme that ran through the week, 2-3 sentences"}],
+  "evolution": "How did the group's understanding of AI change over the week? What did they believe on Monday that they questioned by Friday?",
+  "unresolved": ["The big questions this cohort is taking back to their organisations"],
+  "so_what": "The programme in two sentences. If a board member asks 'what did you learn at Cambridge?', this is the answer."
+}
+
+Return ONLY valid JSON.`;
+
+  const raw = await callClaude(systemPrompt, "Generate the programme digest now.");
   const content: SummaryContent = JSON.parse(raw);
 
   // Use a raw upsert for programme scope (unique index on constant 1)

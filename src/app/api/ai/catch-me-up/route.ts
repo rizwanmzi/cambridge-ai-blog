@@ -43,31 +43,37 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const daysText = missedDays
+    const missedDayNumbers = missedDays.map((d) => d.day).join(", ");
+    const nextDay = missedDays[missedDays.length - 1].day + 1;
+
+    const summariesBlock = missedDays
       .map(
         (d) =>
-          `Day ${d.day}:\nThemes: ${d.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${d.summary.so_what}\nNarrative: ${d.summary.narrative}\nOpen Questions: ${d.summary.open_questions.join("; ")}`
+          `Day ${d.day}:\nThemes: ${d.summary.themes.map((t) => t.title).join(", ")}\nSo What: ${d.summary.so_what}\nNarrative: ${d.summary.narrative}\nOpen Questions: ${d.summary.open_questions.join("; ")}\nSurprise: ${d.summary.surprise || "N/A"}`
       )
       .join("\n\n---\n\n");
 
     const systemPrompt = `${TONE_INSTRUCTION}
 
-You are giving a personalised catch-up briefing. The participant missed some days.
-Tone: "Right, so here's what you missed..."
-Be warm, specific, and make them feel like they're being brought into the loop by a friend.
+Someone missed Days ${missedDayNumbers} of the programme and needs catching up fast. Below are the day summaries for what they missed.
+
+${summariesBlock}
+
+Write a catch-up briefing. Start with: "Right, so here's what you missed..."
+
+Be direct, warm, and prioritise what actually matters. Don't list every session — focus on the moments, debates, and insights they need to know about to not feel lost when they walk into the next session.
+
+Structure it as flowing paragraphs, not bullet points. End with: "The big question going into Day ${nextDay > 5 ? "the next phase" : nextDay} is..." to set them up.
+
+Keep it under 500 words unless they missed 3+ days.
+
 Return ONLY valid JSON:
 {
-  "themes": [{"title": "...", "description": "..."}],
-  "quotes": [{"text": "...", "author": "...", "role": "..."}],
-  "open_questions": ["..."],
-  "tensions": [{"description": "..."}],
-  "action_items": ["..."],
-  "real_world": [{"description": "..."}],
-  "so_what": "Your personalised catch-up takeaway",
-  "narrative": "A friendly 2-3 paragraph briefing starting with 'Right, so here\\'s what you missed...'"
+  "narrative": "The catch-up briefing as described above",
+  "so_what": "One-sentence summary of what they missed"
 }`;
 
-    const raw = await callClaude(systemPrompt, `Days missed:\n\n${daysText}`);
+    const raw = await callClaude(systemPrompt, "Generate the catch-up briefing now.");
     const briefing = JSON.parse(raw);
 
     return NextResponse.json({ briefing });
