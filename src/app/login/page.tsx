@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import Link from "next/link";
 
@@ -9,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const supabase = createSupabaseBrowser();
 
   async function handleLogin(e: React.FormEvent) {
@@ -16,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
@@ -27,18 +29,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Debug: log what signIn returned and cookie state
-    console.log("[Login] signIn succeeded, session:", !!data.session);
-    console.log(
-      "[Login] sb-* cookies after signIn:",
-      document.cookie
-        .split(";")
-        .filter((c) => c.trim().startsWith("sb-"))
-        .map((c) => c.trim().substring(0, 60))
-    );
-
-    // Hard redirect so middleware sees the fresh cookies
-    window.location.href = "/";
+    router.push("/");
   }
 
   return (

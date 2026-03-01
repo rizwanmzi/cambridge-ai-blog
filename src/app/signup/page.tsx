@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import Link from "next/link";
 
@@ -11,6 +12,7 @@ export default function SignupPage() {
   const [accessCode, setAccessCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const supabase = createSupabaseBrowser();
 
   async function handleSignup(e: React.FormEvent) {
@@ -66,22 +68,12 @@ export default function SignupPage() {
 
       if (signInError) {
         // If sign-in fails (e.g. email confirmation required), redirect to login
-        window.location.href = "/login";
+        router.push("/login");
         return;
       }
 
-      // Debug: verify cookies were written
-      console.log("[Signup] signIn succeeded");
-      console.log(
-        "[Signup] sb-* cookies:",
-        document.cookie
-          .split(";")
-          .filter((c) => c.trim().startsWith("sb-"))
-          .map((c) => c.trim().substring(0, 60))
-      );
-
-      // Step 4: Hard redirect to ensure middleware picks up the new cookies
-      window.location.href = "/";
+      // Step 4: Navigate to home
+      router.push("/");
     } catch {
       setError("Something went wrong. Please try again.");
       setLoading(false);
