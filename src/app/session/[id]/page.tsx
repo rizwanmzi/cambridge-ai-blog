@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import RoleBadge from "@/components/RoleBadge";
@@ -31,6 +31,8 @@ export default async function SessionPage({
 }: {
   params: { id: string };
 }) {
+  const supabase = createSupabaseServer();
+
   const { data: session, error } = await supabase
     .from("sessions")
     .select("*")

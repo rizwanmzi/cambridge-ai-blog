@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase-server";
 
 interface Session {
   id: number;
@@ -30,6 +30,8 @@ function formatTime(t: string) {
 export const revalidate = 0;
 
 export default async function Home() {
+  const supabase = createSupabaseServer();
+
   // Fetch sessions
   const { data: sessions, error } = await supabase
     .from("sessions")

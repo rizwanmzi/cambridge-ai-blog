@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import PostContent from "./PostContent";
@@ -19,6 +19,8 @@ export default async function PostPage({
 }: {
   params: { id: string };
 }) {
+  const supabase = createSupabaseServer();
+
   const { data: post, error } = await supabase
     .from("posts")
     .select("*, profiles(username, role), sessions(id, title, day_number)")

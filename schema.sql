@@ -156,72 +156,72 @@ create trigger on_auth_user_created
 
 -- Day 0 — Sunday 1 March
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date, is_social)
-values (0, 'Drinks Reception', null, '17:00', '17:30', '2025-03-01', true);
+values (0, 'Drinks Reception', null, '17:00', '17:30', '2026-03-01', true);
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (0, 'Programme Introduction and Classifier Game', 'Vess Popov & Prof. David Stillwell', '17:30', '19:00', '2025-03-01');
+values (0, 'Programme Introduction and Classifier Game', 'Vess Popov & Prof. David Stillwell', '17:30', '19:00', '2026-03-01');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date, location, is_social)
-values (0, 'Welcome Dinner', null, '19:00', '21:00', '2025-03-01', 'SSC Dining Room', true);
+values (0, 'Welcome Dinner', null, '19:00', '21:00', '2026-03-01', 'SSC Dining Room', true);
 
 -- Day 1 — Monday 2 March
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (1, 'Machine Learning', 'Prof. David Stillwell', '09:00', '12:30', '2025-03-02');
+values (1, 'Machine Learning', 'Prof. David Stillwell', '09:00', '12:30', '2026-03-02');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (1, 'Basement to Boardrooms: Cloud Computing and AI Foundations', 'Praveen Bissonauth & Manjeet Garcha', '13:30', '15:00', '2025-03-02');
+values (1, 'Basement to Boardrooms: Cloud Computing and AI Foundations', 'Praveen Bissonauth & Manjeet Garcha', '13:30', '15:00', '2026-03-02');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (1, 'Decentralised Machine Learning', 'Prof Amanda Prorok', '15:30', '17:00', '2025-03-02');
+values (1, 'Decentralised Machine Learning', 'Prof Amanda Prorok', '15:30', '17:00', '2026-03-02');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date, is_social)
-values (1, 'Walking Tour finishing at The Eagle Pub', 'SeeCambridgeDifferently', '17:00', '18:30', '2025-03-02', true);
+values (1, 'Walking Tour finishing at The Eagle Pub', 'SeeCambridgeDifferently', '17:00', '18:30', '2026-03-02', true);
 
 -- Day 2 — Tuesday 3 March
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (2, 'Generative AI', 'Prof. David Stillwell', '09:00', '12:30', '2025-03-03');
+values (2, 'Generative AI', 'Prof. David Stillwell', '09:00', '12:30', '2026-03-03');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (2, 'Practical AI Workshop', 'Dr Mark Bloomfield', '13:30', '17:00', '2025-03-03');
+values (2, 'Practical AI Workshop', 'Dr Mark Bloomfield', '13:30', '17:00', '2026-03-03');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (2, 'Professional Reflections', 'Vess Popov & Prof. David Stillwell', '17:00', '17:30', '2025-03-03');
+values (2, 'Professional Reflections', 'Vess Popov & Prof. David Stillwell', '17:00', '17:30', '2026-03-03');
 
 -- Day 3 — Wednesday 4 March
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (3, 'Agentic AI', 'Michael Birdsall', '09:00', '12:30', '2025-03-04');
+values (3, 'Agentic AI', 'Michael Birdsall', '09:00', '12:30', '2026-03-04');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (3, 'Dawn Supercomputer Visit & Talks', null, '13:30', '17:00', '2025-03-04');
+values (3, 'Dawn Supercomputer Visit & Talks', null, '13:30', '17:00', '2026-03-04');
 
 -- Day 4 — Thursday 5 March
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (4, 'Legal & Governance', 'Vess Popov', '09:00', '12:30', '2025-03-05');
+values (4, 'Legal & Governance', 'Vess Popov', '09:00', '12:30', '2026-03-05');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (4, 'Cambridge Analytica', 'Prof. David Stillwell', '13:30', '14:30', '2025-03-05');
+values (4, 'Cambridge Analytica', 'Prof. David Stillwell', '13:30', '14:30', '2026-03-05');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (4, 'Professional Reflections', 'Vess Popov & Prof. David Stillwell', '15:00', '15:30', '2025-03-05');
+values (4, 'Professional Reflections', 'Vess Popov & Prof. David Stillwell', '15:00', '15:30', '2026-03-05');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date, location)
-values (4, 'Philosophy and AI', 'Dr Claire Benn', '17:00', '18:30', '2025-03-05', 'Downing College');
+values (4, 'Philosophy and AI', 'Dr Claire Benn', '17:00', '18:30', '2026-03-05', 'Downing College');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date, location, is_social)
-values (4, 'Drinks Reception and Gala Dinner', null, '18:30', '21:30', '2025-03-05', 'Downing College', true);
+values (4, 'Drinks Reception and Gala Dinner', null, '18:30', '21:30', '2026-03-05', 'Downing College', true);
 
 -- Day 5 — Friday 6 March
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (5, 'The Future Will Be Synthesised: Truth Trust and Transparency in the Generative Age', 'Henry Ajder', '09:00', '10:30', '2025-03-06');
+values (5, 'The Future Will Be Synthesised: Truth Trust and Transparency in the Generative Age', 'Henry Ajder', '09:00', '10:30', '2026-03-06');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (5, 'Imaging AI Futures (Part 1)', 'Prof. David Stillwell', '11:00', '12:30', '2025-03-06');
+values (5, 'Imaging AI Futures (Part 1)', 'Prof. David Stillwell', '11:00', '12:30', '2026-03-06');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (5, 'Imagining AI Futures (Part 2)', 'Vess Popov', '13:30', '15:00', '2025-03-06');
+values (5, 'Imagining AI Futures (Part 2)', 'Vess Popov', '13:30', '15:00', '2026-03-06');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (5, 'Week Wrap-up', 'Vess Popov & Prof. David Stillwell', '15:00', '16:00', '2025-03-06');
+values (5, 'Week Wrap-up', 'Vess Popov & Prof. David Stillwell', '15:00', '16:00', '2026-03-06');
 
 insert into sessions (day_number, title, faculty, start_time, end_time, session_date)
-values (5, 'Module 2 Intro', 'Prof Shaz Ansari', '16:00', '16:30', '2025-03-06');
+values (5, 'Module 2 Intro', 'Prof Shaz Ansari', '16:00', '16:30', '2026-03-06');
