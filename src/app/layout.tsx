@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-white text-navy-900 min-h-screen flex flex-col">
+      <body className="bg-dark-bg text-txt-primary min-h-screen flex flex-col">
         <AuthProvider>
           <NavBar />
 
@@ -26,8 +26,8 @@ export default function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="border-t border-navy-100 bg-navy-50">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 text-center text-sm text-navy-500">
+          <footer className="border-t border-dark-border">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 text-center text-sm text-txt-secondary">
               <p>
                 &copy; {new Date().getFullYear()} Cambridge AI Leadership
                 Programme

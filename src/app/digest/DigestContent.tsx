@@ -54,7 +54,7 @@ export default function DigestContent() {
 
   if (error) {
     return (
-      <div className="text-sm text-red-600 bg-red-50 rounded-lg p-4">
+      <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-4">
         {error}
       </div>
     );
@@ -73,10 +73,10 @@ export default function DigestContent() {
 
       {/* Leaderboard */}
       {leaderboard && (
-        <div className="bg-white rounded-xl border border-navy-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-navy-100">
-            <h2 className="text-lg font-semibold text-navy-900 flex items-center gap-2">
-              <SparkleIcon className="w-4 h-4 text-blue-500" />
+        <div className="bg-dark-surface rounded-xl border border-dark-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-dark-border">
+            <h2 className="text-lg font-heading font-semibold text-txt-primary flex items-center gap-2">
+              <SparkleIcon className="w-4 h-4 text-accent" />
               Programme Leaderboard
             </h2>
           </div>
@@ -84,14 +84,14 @@ export default function DigestContent() {
             {/* Top Contributors */}
             {leaderboard.topContributors.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold text-navy-700 mb-3">Top 5 Contributors</h3>
+                <h3 className="text-sm font-semibold text-txt-primary mb-3">Top 5 Contributors</h3>
                 <div className="space-y-2">
                   {leaderboard.topContributors.map((c, i) => (
                     <div key={c.username} className="flex items-center gap-3">
-                      <span className="text-lg font-bold text-navy-300 w-6">{i + 1}</span>
-                      <span className="text-sm font-medium text-navy-800">{c.username}</span>
+                      <span className="text-lg font-bold text-txt-secondary/40 w-6">{i + 1}</span>
+                      <span className="text-sm font-medium text-txt-primary">{c.username}</span>
                       <RoleBadge role={c.role} />
-                      <span className="text-xs text-navy-400 ml-auto">
+                      <span className="text-xs text-txt-secondary ml-auto">
                         {c.count} {c.count === 1 ? "contribution" : "contributions"}
                       </span>
                     </div>
@@ -103,14 +103,14 @@ export default function DigestContent() {
             {/* Most Discussed Post */}
             {leaderboard.mostDiscussedPost && (
               <div>
-                <h3 className="text-sm font-semibold text-navy-700 mb-2">Most Discussed Post</h3>
+                <h3 className="text-sm font-semibold text-txt-primary mb-2">Most Discussed Post</h3>
                 <Link
                   href={`/post/${leaderboard.mostDiscussedPost.id}`}
-                  className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                  className="text-sm text-accent hover:text-accent-hover hover:underline"
                 >
                   {leaderboard.mostDiscussedPost.title}
                 </Link>
-                <span className="text-xs text-navy-400 ml-2">
+                <span className="text-xs text-txt-secondary ml-2">
                   ({leaderboard.mostDiscussedPost.comment_count} comments)
                 </span>
               </div>
@@ -119,8 +119,8 @@ export default function DigestContent() {
             {/* Question of the Week */}
             {leaderboard.questionOfTheWeek && (
               <div>
-                <h3 className="text-sm font-semibold text-navy-700 mb-2">Question of the Week</h3>
-                <p className="text-sm text-navy-600 italic">&ldquo;{leaderboard.questionOfTheWeek}&rdquo;</p>
+                <h3 className="text-sm font-semibold text-txt-primary mb-2">Question of the Week</h3>
+                <p className="text-sm text-txt-secondary italic">&ldquo;{leaderboard.questionOfTheWeek}&rdquo;</p>
               </div>
             )}
           </div>
@@ -128,10 +128,10 @@ export default function DigestContent() {
       )}
 
       {/* Print button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end no-print">
         <button
           onClick={() => window.print()}
-          className="text-sm text-navy-500 hover:text-navy-700 font-medium flex items-center gap-1.5 transition-colors"
+          className="text-sm text-txt-secondary hover:text-txt-primary font-medium flex items-center gap-1.5 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />

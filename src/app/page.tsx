@@ -34,14 +34,12 @@ export const revalidate = 0;
 export default async function Home() {
   const supabase = createSupabaseServer();
 
-  // Fetch sessions
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select("*")
     .order("day_number")
     .order("start_time");
 
-  // Fetch post counts per session
   const { data: postCounts } = await supabase
     .from("posts")
     .select("session_id");
@@ -56,17 +54,16 @@ export default async function Home() {
   if (error || !sessions) {
     return (
       <div className="text-center py-16">
-        <h1 className="text-2xl font-bold text-navy-900 mb-4">
+        <h1 className="font-heading text-2xl font-bold text-txt-primary mb-4">
           Cambridge AI Leadership Programme
         </h1>
-        <p className="text-navy-500">
+        <p className="text-txt-secondary">
           Unable to load programme. Please check your Supabase configuration.
         </p>
       </div>
     );
   }
 
-  // Group by day
   const days: Record<number, Session[]> = {};
   for (const s of sessions) {
     const session: Session = { ...s, post_count: countMap[s.id] || 0 };
@@ -77,10 +74,10 @@ export default async function Home() {
   return (
     <div>
       <div className="mb-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-txt-primary mb-3">
           Programme Agenda
         </h1>
-        <p className="text-navy-500 text-lg">
+        <p className="text-txt-secondary text-lg">
           Cambridge AI Leadership Programme — Live Learning Blog
         </p>
       </div>
@@ -90,7 +87,7 @@ export default async function Home() {
           .sort(([a], [b]) => Number(a) - Number(b))
           .map(([day, daySessions]) => (
             <section key={day}>
-              <h2 className="text-lg font-semibold text-navy-900 mb-4 pb-2 border-b border-navy-100">
+              <h2 className="font-heading text-lg font-semibold text-txt-primary mb-4 pb-2 border-b border-dark-border">
                 {dayLabels[Number(day)] || `Day ${day}`}
               </h2>
               <div className="space-y-3">
@@ -101,22 +98,22 @@ export default async function Home() {
                     className="block group"
                   >
                     <div
-                      className={`border rounded-lg p-4 transition-all ${
+                      className={`rounded-xl p-4 transition-all ${
                         session.is_social
-                          ? "border-navy-100 bg-navy-50/50 hover:border-navy-200"
-                          : "border-navy-100 hover:border-navy-300 hover:shadow-sm"
+                          ? "border border-dashed border-dark-border bg-dark-surface/50 hover:border-txt-secondary/30"
+                          : "border border-dark-border bg-dark-surface hover:border-accent/30 hover:bg-dark-hover hover:-translate-y-0.5"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-1">
-                            <span className="text-sm text-navy-400 font-mono shrink-0">
+                            <span className="text-sm text-txt-secondary font-mono shrink-0">
                               {formatTime(session.start_time)}–
                               {formatTime(session.end_time)}
                             </span>
                             {session.post_count > 0 && (
                               <span className="flex items-center gap-1.5">
-                                <span className="text-xs font-medium bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-medium bg-accent/10 text-accent px-2 py-0.5 rounded-full">
                                   {session.post_count}{" "}
                                   {session.post_count === 1 ? "post" : "posts"}
                                 </span>
@@ -125,21 +122,21 @@ export default async function Home() {
                             )}
                           </div>
                           <h3
-                            className={`font-medium group-hover:text-navy-600 transition-colors ${
+                            className={`font-medium transition-colors ${
                               session.is_social
-                                ? "text-navy-500 italic"
-                                : "text-navy-900"
+                                ? "text-txt-secondary italic"
+                                : "text-txt-primary group-hover:text-accent"
                             }`}
                           >
                             {session.title}
                           </h3>
                           {session.faculty && (
-                            <p className="text-sm text-navy-400 mt-0.5">
+                            <p className="text-sm text-txt-secondary mt-0.5">
                               {session.faculty}
                             </p>
                           )}
                           {session.location && (
-                            <p className="text-xs text-navy-300 mt-0.5">
+                            <p className="text-xs text-txt-secondary/60 mt-0.5">
                               {session.location}
                             </p>
                           )}

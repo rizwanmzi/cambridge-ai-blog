@@ -6,7 +6,7 @@ export default function NewPostPage() {
     <Suspense
       fallback={
         <div className="text-center py-16">
-          <p className="text-navy-400">Loading...</p>
+          <p className="text-txt-secondary">Loading...</p>
         </div>
       }
     >

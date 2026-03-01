@@ -42,7 +42,7 @@ export default function DaySummaryAccordion({ dayNumber }: { dayNumber: number }
     <div className="mt-4">
       <button
         onClick={handleToggle}
-        className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+        className="flex items-center gap-2 text-sm text-accent hover:text-accent-hover font-medium transition-colors"
       >
         <SparkleIcon className="w-3.5 h-3.5" />
         <span>AI Day Summary</span>
@@ -60,7 +60,7 @@ export default function DaySummaryAccordion({ dayNumber }: { dayNumber: number }
         <div className="mt-3">
           {loading && <AILoadingState />}
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 rounded-lg p-3">
+            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
               {error}
             </div>
           )}

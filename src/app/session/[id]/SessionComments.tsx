@@ -64,7 +64,7 @@ export default function SessionComments({
 
   return (
     <section>
-      <h2 className="text-xl font-semibold text-navy-900 mb-6">
+      <h2 className="text-xl font-semibold text-txt-primary mb-6">
         Session Discussion{" "}
         {comments.length > 0 && `(${comments.length})`}
       </h2>
@@ -72,15 +72,15 @@ export default function SessionComments({
       {comments.length > 0 ? (
         <div className="space-y-4 mb-8">
           {comments.map((comment) => (
-            <div key={comment.id} className="bg-navy-50 rounded-lg p-4">
+            <div key={comment.id} className="bg-dark-surface rounded-xl p-4 border border-dark-border">
               <div className="flex items-center gap-2 mb-2">
-                <span className="font-medium text-navy-800 text-sm">
+                <span className="font-medium text-txt-primary text-sm">
                   {comment.profiles?.username ?? "Unknown"}
                 </span>
                 {comment.profiles && (
                   <RoleBadge role={comment.profiles.role} />
                 )}
-                <span className="text-navy-300 text-xs">
+                <span className="text-txt-secondary/60 text-xs">
                   {new Date(comment.created_at).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
@@ -88,21 +88,21 @@ export default function SessionComments({
                   })}
                 </span>
               </div>
-              <p className="text-navy-700 text-sm leading-relaxed">
+              <p className="text-txt-secondary text-sm leading-relaxed">
                 {comment.body}
               </p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-navy-400 text-sm mb-8">
+        <p className="text-txt-secondary text-sm mb-8">
           No discussion yet. Be the first to comment.
         </p>
       )}
 
       {user ? (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <h3 className="text-sm font-medium text-navy-700">
+          <h3 className="text-sm font-medium text-txt-secondary">
             Add to the discussion
           </h3>
           <textarea
@@ -111,19 +111,19 @@ export default function SessionComments({
             onChange={(e) => setBody(e.target.value)}
             required
             rows={3}
-            className="w-full px-4 py-2.5 border border-navy-200 rounded-lg text-sm text-navy-900 placeholder-navy-300 focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent resize-y"
+            className="w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y"
           />
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
-            className="bg-navy-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "Posting..." : "Post Comment"}
           </button>
         </form>
       ) : (
-        <p className="text-navy-400 text-sm">Sign in to join the discussion.</p>
+        <p className="text-txt-secondary text-sm">Sign in to join the discussion.</p>
       )}
     </section>
   );

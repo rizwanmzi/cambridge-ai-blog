@@ -1,7 +1,7 @@
 export const roleBadgeColors: Record<string, string> = {
-  Admin: "bg-amber-100 text-amber-800 border-amber-300",
-  Attendee: "bg-blue-100 text-blue-800 border-blue-300",
-  Observer: "bg-gray-100 text-gray-600 border-gray-300",
+  Admin: "bg-amber-500/20 text-amber-400 border-amber-500/40",
+  Attendee: "bg-blue-500/20 text-blue-400 border-blue-500/40",
+  Observer: "bg-slate-500/20 text-slate-400 border-slate-500/40",
 };
 
 export function canPost(role: string | undefined): boolean {

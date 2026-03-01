@@ -2,52 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* === Base === */
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #0a0f1c;
+  color: #f1f5f9;
 }
 
-/* Markdown content styling */
+/* === Selection === */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: #f1f5f9;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0f1c;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* === Focus ring === */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* === Transitions === */
+a, button, input, textarea, select {
+  transition: all 150ms ease;
+}
+
+/* === AI Glow cards === */
+.ai-card {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+  animation: ai-glow-pulse 2s ease-in-out infinite;
+}
+
+.ai-card-loading {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+  animation: ai-glow-loading 1.2s ease-in-out infinite;
+}
+
+@keyframes ai-glow-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
+  50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); }
+}
+
+@keyframes ai-glow-loading {
+  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
+  50% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.5); }
+}
+
+/* === Markdown content (dark mode) === */
 .prose h1 {
-  @apply text-2xl font-bold mt-8 mb-4 text-navy-900;
+  @apply text-2xl font-bold mt-8 mb-4 text-txt-primary;
 }
 .prose h2 {
-  @apply text-xl font-semibold mt-6 mb-3 text-navy-900;
+  @apply text-xl font-semibold mt-6 mb-3 text-txt-primary;
 }
 .prose h3 {
-  @apply text-lg font-semibold mt-5 mb-2 text-navy-900;
+  @apply text-lg font-semibold mt-5 mb-2 text-txt-primary;
 }
 .prose p {
-  @apply mb-4 leading-relaxed text-navy-800;
+  @apply mb-4 leading-relaxed text-txt-secondary;
 }
 .prose ul {
-  @apply list-disc pl-6 mb-4 space-y-1 text-navy-800;
+  @apply list-disc pl-6 mb-4 space-y-1 text-txt-secondary;
 }
 .prose ol {
-  @apply list-decimal pl-6 mb-4 space-y-1 text-navy-800;
+  @apply list-decimal pl-6 mb-4 space-y-1 text-txt-secondary;
 }
 .prose blockquote {
-  @apply border-l-4 border-navy-300 pl-4 italic my-4 text-navy-600;
+  @apply border-l-4 border-accent pl-4 italic my-4 text-txt-secondary;
 }
 .prose code {
-  @apply bg-navy-100 text-navy-800 px-1.5 py-0.5 rounded text-sm;
+  @apply bg-dark-hover text-accent-hover px-1.5 py-0.5 rounded text-sm;
 }
 .prose pre {
-  @apply bg-navy-900 text-navy-100 p-4 rounded-lg overflow-x-auto my-4;
+  @apply bg-dark-bg text-txt-primary p-4 rounded-lg overflow-x-auto my-4 border border-dark-border;
 }
 .prose pre code {
   @apply bg-transparent text-inherit p-0;
 }
 .prose a {
-  @apply text-navy-500 underline hover:text-navy-700;
+  @apply text-accent underline hover:text-accent-hover;
 }
 .prose strong {
-  @apply font-semibold text-navy-900;
+  @apply font-semibold text-txt-primary;
 }
 .prose hr {
-  @apply my-8 border-navy-200;
+  @apply my-8 border-dark-border;
+}
+
+/* === Print styles === */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
 }

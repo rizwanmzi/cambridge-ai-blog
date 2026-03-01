@@ -31,7 +31,6 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
     }
     setError(null);
     try {
-      // If regenerating, mark stale first
       if (forceRegenerate) {
         await fetch("/api/ai/session-summary", {
           method: "POST",
@@ -66,13 +65,13 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
   return (
     <div>
       {/* Tab buttons */}
-      <div className="flex border-b border-navy-100 mb-6">
+      <div className="flex border-b border-dark-border mb-6">
         <button
           onClick={() => handleTabSwitch("posts")}
           className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "posts"
-              ? "border-navy-900 text-navy-900"
-              : "border-transparent text-navy-400 hover:text-navy-600"
+              ? "border-txt-primary text-txt-primary"
+              : "border-transparent text-txt-secondary hover:text-txt-primary"
           }`}
         >
           Posts
@@ -81,8 +80,8 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
           onClick={() => handleTabSwitch("ai")}
           className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
             activeTab === "ai"
-              ? "border-blue-600 text-blue-700"
-              : "border-transparent text-navy-400 hover:text-navy-600"
+              ? "border-accent text-accent"
+              : "border-transparent text-txt-secondary hover:text-accent"
           }`}
         >
           <SparkleIcon className="w-3.5 h-3.5" />
@@ -97,7 +96,7 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
         <div>
           {loading && <AILoadingState />}
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 rounded-lg p-3">
+            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
               {error}
             </div>
           )}

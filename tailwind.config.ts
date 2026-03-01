@@ -9,6 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        dark: {
+          bg: "#0a0f1c",
+          surface: "#111827",
+          hover: "#1e293b",
+          border: "#1e293b",
+        },
+        accent: {
+          DEFAULT: "#3b82f6",
+          hover: "#60a5fa",
+          glow: "rgba(59, 130, 246, 0.15)",
+        },
+        txt: {
+          primary: "#f1f5f9",
+          secondary: "#94a3b8",
+        },
+        // Keep navy for backwards compat / any missed references
         navy: {
           50: "#f0f3f9",
           100: "#d9e0ed",
@@ -24,7 +40,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ["Georgia", "Cambria", "Times New Roman", "serif"],
+        heading: ['"Playfair Display"', "Georgia", "serif"],
         sans: [
           "Inter",
           "-apple-system",
@@ -32,17 +48,27 @@ const config: Config = {
           "Segoe UI",
           "sans-serif",
         ],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
       },
-      typography: {
-        DEFAULT: {
-          css: {
-            maxWidth: "none",
-            color: "#1a2740",
-            h1: { color: "#0f1b2d" },
-            h2: { color: "#0f1b2d" },
-            h3: { color: "#0f1b2d" },
-            strong: { color: "#0f1b2d" },
-            a: { color: "#4a6a9b", textDecoration: "underline" },
+      animation: {
+        "ai-glow": "ai-glow-pulse 2s ease-in-out infinite",
+        "ai-glow-loading": "ai-glow-loading 1.2s ease-in-out infinite",
+      },
+      keyframes: {
+        "ai-glow-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 15px rgba(59, 130, 246, 0.15)",
+          },
+          "50%": {
+            boxShadow: "0 0 25px rgba(59, 130, 246, 0.3)",
+          },
+        },
+        "ai-glow-loading": {
+          "0%, 100%": {
+            boxShadow: "0 0 15px rgba(59, 130, 246, 0.2)",
+          },
+          "50%": {
+            boxShadow: "0 0 35px rgba(59, 130, 246, 0.5)",
           },
         },
       },

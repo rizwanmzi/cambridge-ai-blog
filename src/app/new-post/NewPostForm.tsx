@@ -53,7 +53,7 @@ export default function NewPostForm() {
   if (loading) {
     return (
       <div className="text-center py-16">
-        <p className="text-navy-400">Loading...</p>
+        <p className="text-txt-secondary">Loading...</p>
       </div>
     );
   }
@@ -61,10 +61,10 @@ export default function NewPostForm() {
   if (!profile || !canPost(profile.role)) {
     return (
       <div className="text-center py-16">
-        <h1 className="text-2xl font-bold text-navy-900 mb-4">
+        <h1 className="font-heading text-2xl font-bold text-txt-primary mb-4">
           Access Denied
         </h1>
-        <p className="text-navy-500">
+        <p className="text-txt-secondary">
           Only Admins and Attendees can create posts.
         </p>
       </div>
@@ -110,31 +110,23 @@ export default function NewPostForm() {
     }
   }
 
+  const inputClasses = "w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+  const selectClasses = "w-full px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-navy-900 mb-1">New Post</h1>
-      <p className="text-navy-400 text-sm mb-8">
+      <h1 className="font-heading text-2xl font-bold text-txt-primary mb-1">New Post</h1>
+      <p className="text-txt-secondary text-sm mb-8">
         Write in Markdown. Publish from anywhere.
       </p>
 
       <form onSubmit={handlePublish} className="space-y-5">
         <div>
-          <label
-            htmlFor="session"
-            className="block text-sm font-medium text-navy-700 mb-1.5"
-          >
+          <label htmlFor="session" className="block text-sm font-medium text-txt-secondary mb-1.5">
             Session
           </label>
-          <select
-            id="session"
-            value={sessionId}
-            onChange={(e) => setSessionId(e.target.value)}
-            required
-            className="w-full px-4 py-2.5 border border-navy-200 rounded-lg text-navy-900 bg-white focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent"
-          >
-            <option value="" disabled>
-              Select a session...
-            </option>
+          <select id="session" value={sessionId} onChange={(e) => setSessionId(e.target.value)} required className={selectClasses}>
+            <option value="" disabled>Select a session...</option>
             {sessions.map((s) => (
               <option key={s.id} value={s.id}>
                 Day {s.day_number}: {s.title}
@@ -144,53 +136,27 @@ export default function NewPostForm() {
         </div>
 
         <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-navy-700 mb-1.5"
-          >
+          <label htmlFor="title" className="block text-sm font-medium text-txt-secondary mb-1.5">
             Title
           </label>
-          <input
-            id="title"
-            type="text"
-            placeholder="Post title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full px-4 py-2.5 border border-navy-200 rounded-lg text-navy-900 placeholder-navy-300 focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent"
-          />
+          <input id="title" type="text" placeholder="Post title" value={title} onChange={(e) => setTitle(e.target.value)} required className={inputClasses} />
         </div>
 
         <div>
-          <label
-            htmlFor="category"
-            className="block text-sm font-medium text-navy-700 mb-1.5"
-          >
+          <label htmlFor="category" className="block text-sm font-medium text-txt-secondary mb-1.5">
             Category
           </label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-4 py-2.5 border border-navy-200 rounded-lg text-navy-900 bg-white focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent"
-          >
+          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} className={selectClasses}>
             {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
+              <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
         </div>
 
         <div>
-          <label
-            htmlFor="body"
-            className="block text-sm font-medium text-navy-700 mb-1.5"
-          >
+          <label htmlFor="body" className="block text-sm font-medium text-txt-secondary mb-1.5">
             Body{" "}
-            <span className="font-normal text-navy-400">
-              (Markdown supported)
-            </span>
+            <span className="font-normal text-txt-secondary/60">(Markdown supported)</span>
           </label>
           <textarea
             id="body"
@@ -199,16 +165,16 @@ export default function NewPostForm() {
             onChange={(e) => setBody(e.target.value)}
             required
             rows={12}
-            className="w-full px-4 py-2.5 border border-navy-200 rounded-lg text-navy-900 placeholder-navy-300 focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent resize-y font-mono text-sm leading-relaxed"
+            className={`${inputClasses} resize-y font-mono text-sm leading-relaxed`}
           />
         </div>
 
         {message && (
           <div
-            className={`p-3 rounded-lg text-sm ${
+            className={`p-3 rounded-lg text-sm border ${
               message.type === "success"
-                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                : "bg-red-50 text-red-800 border border-red-200"
+                ? "bg-green-500/10 text-green-400 border-green-500/20"
+                : "bg-red-500/10 text-red-400 border-red-500/20"
             }`}
           >
             {message.text}
@@ -218,7 +184,7 @@ export default function NewPostForm() {
         <button
           type="submit"
           disabled={publishing}
-          className="w-full sm:w-auto bg-navy-800 text-white px-8 py-3 rounded-lg font-medium hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
+          className="w-full sm:w-auto bg-accent text-white px-8 py-3 rounded-lg font-medium hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base"
         >
           {publishing ? "Publishing..." : "Publish Post"}
         </button>

@@ -6,10 +6,10 @@ export default function AskPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 mb-3">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold text-txt-primary mb-3">
           Ask the Programme
         </h1>
-        <p className="text-navy-500 text-lg">
+        <p className="text-txt-secondary text-lg">
           Ask questions about anything discussed during the programme
         </p>
       </div>

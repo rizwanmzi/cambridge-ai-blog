@@ -23,14 +23,14 @@ export default function AISummaryCard({
   const [narrativeExpanded, setNarrativeExpanded] = useState(false);
 
   return (
-    <div className="bg-gradient-to-br from-blue-50/50 to-slate-50 rounded-xl border border-blue-100 overflow-hidden">
+    <div className="ai-card bg-dark-surface rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-blue-100 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-dark-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <SparkleIcon className="w-4 h-4 text-blue-500" />
-          <span className="text-xs font-medium text-blue-600">AI-generated summary</span>
+          <SparkleIcon className="w-4 h-4 text-accent" />
+          <span className="text-xs font-mono font-medium text-accent/80">AI-generated summary</span>
           {generatedAt && (
-            <span className="text-xs text-navy-400 ml-2">
+            <span className="text-xs font-mono text-txt-secondary/60 ml-2">
               {new Date(generatedAt).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "short",
@@ -44,7 +44,7 @@ export default function AISummaryCard({
           <button
             onClick={onRegenerate}
             disabled={regenerating}
-            className="text-xs text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
+            className="text-xs text-accent hover:text-accent-hover font-medium disabled:opacity-50"
           >
             {regenerating ? "Regenerating..." : "Regenerate"}
           </button>
@@ -55,14 +55,14 @@ export default function AISummaryCard({
         {/* Themes */}
         {summary.themes.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-navy-700 mb-3 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
               <span>🎯</span> Key Themes
             </h3>
             <div className="flex flex-wrap gap-2">
               {summary.themes.map((theme, i) => (
                 <span
                   key={i}
-                  className="group relative inline-flex items-center bg-blue-100/80 text-blue-800 text-xs font-medium px-3 py-1.5 rounded-full cursor-default"
+                  className="inline-flex items-center bg-accent/10 text-accent text-xs font-medium px-3 py-1.5 rounded-full border border-accent/20 cursor-default"
                   title={theme.description}
                 >
                   {theme.title}
@@ -75,17 +75,17 @@ export default function AISummaryCard({
         {/* Quotes */}
         {summary.quotes.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-navy-700 mb-3 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
               <span>💬</span> Notable Quotes
             </h3>
             <div className="space-y-3">
               {summary.quotes.map((quote, i) => (
                 <blockquote
                   key={i}
-                  className="border-l-3 border-blue-300 pl-4 py-1"
+                  className="border-l-2 border-accent/40 pl-4 py-1"
                 >
-                  <p className="text-sm text-navy-700 italic">&ldquo;{quote.text}&rdquo;</p>
-                  <footer className="mt-1 flex items-center gap-1.5 text-xs text-navy-500">
+                  <p className="text-sm text-txt-secondary italic">&ldquo;{quote.text}&rdquo;</p>
+                  <footer className="mt-1 flex items-center gap-1.5 text-xs text-txt-secondary/60">
                     <span>— {quote.author}</span>
                     <RoleBadge role={quote.role} />
                   </footer>
@@ -98,13 +98,13 @@ export default function AISummaryCard({
         {/* Open Questions */}
         {summary.open_questions.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-navy-700 mb-3 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
               <span>❓</span> Open Questions
             </h3>
             <ul className="space-y-2">
               {summary.open_questions.map((q, i) => (
-                <li key={i} className="text-sm text-navy-600 flex items-start gap-2">
-                  <span className="text-navy-400 mt-0.5 shrink-0">•</span>
+                <li key={i} className="text-sm text-txt-secondary flex items-start gap-2">
+                  <span className="text-txt-secondary/40 mt-0.5 shrink-0">•</span>
                   <span>{q}</span>
                 </li>
               ))}
@@ -115,13 +115,13 @@ export default function AISummaryCard({
         {/* Tensions */}
         {summary.tensions.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-navy-700 mb-3 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
               <span>⚡</span> Tensions
             </h3>
             <ul className="space-y-2">
               {summary.tensions.map((t, i) => (
-                <li key={i} className="text-sm text-navy-600 flex items-start gap-2">
-                  <span className="text-amber-500 mt-0.5 shrink-0">↔</span>
+                <li key={i} className="text-sm text-txt-secondary flex items-start gap-2">
+                  <span className="text-amber-400 mt-0.5 shrink-0">↔</span>
                   <span>{t.description}</span>
                 </li>
               ))}
@@ -132,13 +132,13 @@ export default function AISummaryCard({
         {/* Real-World Connections */}
         {summary.real_world.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold text-navy-700 mb-3 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-txt-primary mb-3 flex items-center gap-1.5">
               <span>🔗</span> Real-World Connections
             </h3>
             <ul className="space-y-2">
               {summary.real_world.map((r, i) => (
-                <li key={i} className="text-sm text-navy-600 flex items-start gap-2">
-                  <span className="text-emerald-500 mt-0.5 shrink-0">→</span>
+                <li key={i} className="text-sm text-txt-secondary flex items-start gap-2">
+                  <span className="text-green-400 mt-0.5 shrink-0">→</span>
                   <span>{r.description}</span>
                 </li>
               ))}
@@ -148,11 +148,11 @@ export default function AISummaryCard({
 
         {/* So What */}
         {summary.so_what && (
-          <section className="bg-blue-100/50 rounded-lg p-4 border border-blue-200/50">
-            <h3 className="text-sm font-semibold text-navy-700 mb-2 flex items-center gap-1.5">
+          <section className="bg-accent/5 rounded-lg p-4 border border-accent/10">
+            <h3 className="text-sm font-semibold text-txt-primary mb-2 flex items-center gap-1.5">
               <span>✅</span> So What?
             </h3>
-            <p className="text-sm text-navy-700 leading-relaxed">{summary.so_what}</p>
+            <p className="text-sm text-txt-secondary leading-relaxed">{summary.so_what}</p>
           </section>
         )}
 
@@ -161,7 +161,7 @@ export default function AISummaryCard({
           <section>
             <button
               onClick={() => setNarrativeExpanded(!narrativeExpanded)}
-              className="text-sm font-semibold text-navy-700 flex items-center gap-1.5 hover:text-navy-900 transition-colors"
+              className="text-sm font-semibold text-txt-primary flex items-center gap-1.5 hover:text-accent transition-colors"
             >
               <span>📖</span> Full Narrative
               <svg
@@ -174,7 +174,7 @@ export default function AISummaryCard({
               </svg>
             </button>
             {narrativeExpanded && (
-              <div className="mt-3 text-sm text-navy-600 leading-relaxed whitespace-pre-line">
+              <div className="mt-3 text-sm text-txt-secondary leading-relaxed whitespace-pre-line">
                 {summary.narrative}
               </div>
             )}

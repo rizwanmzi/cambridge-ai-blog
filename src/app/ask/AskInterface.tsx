@@ -84,8 +84,8 @@ export default function AskInterface() {
       <div className="flex-1 space-y-4 mb-6">
         {messages.length === 0 && (
           <div className="text-center py-12">
-            <SparkleIcon className="w-10 h-10 text-blue-300 mx-auto mb-4" />
-            <p className="text-navy-500 mb-6">
+            <SparkleIcon className="w-10 h-10 text-accent/30 mx-auto mb-4" />
+            <p className="text-txt-secondary mb-6">
               Ask me anything about the programme. I&apos;ll answer based on what participants posted.
             </p>
             <div className="flex flex-wrap justify-center gap-2">
@@ -93,7 +93,7 @@ export default function AskInterface() {
                 <button
                   key={q}
                   onClick={() => handleSubmit(q)}
-                  className="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors border border-blue-200"
+                  className="text-sm bg-transparent text-accent px-4 py-2 rounded-full border border-accent/30 hover:border-accent hover:bg-accent/5 transition-all"
                 >
                   {q}
                 </button>
@@ -110,30 +110,30 @@ export default function AskInterface() {
             <div
               className={`max-w-[80%] rounded-xl px-4 py-3 ${
                 msg.role === "user"
-                  ? "bg-navy-900 text-white"
-                  : "bg-gradient-to-br from-blue-50/50 to-slate-50 border border-blue-100"
+                  ? "bg-dark-hover text-txt-primary border border-dark-border"
+                  : "ai-card bg-dark-surface"
               }`}
             >
               {msg.role === "assistant" && (
                 <div className="flex items-center gap-1.5 mb-2">
-                  <SparkleIcon className="w-3.5 h-3.5 text-blue-500" />
-                  <span className="text-xs font-medium text-blue-600">AI</span>
+                  <SparkleIcon className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-xs font-mono font-medium text-accent/80">AI</span>
                 </div>
               )}
               <p className="text-sm leading-relaxed whitespace-pre-line">{msg.content}</p>
               {msg.sources && msg.sources.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-blue-100">
-                  <p className="text-xs font-medium text-navy-500 mb-1.5">Sources:</p>
+                <div className="mt-3 pt-3 border-t border-dark-border">
+                  <p className="text-xs font-medium text-txt-secondary/60 mb-1.5">Sources:</p>
                   <div className="space-y-1">
                     {msg.sources.map((src, j) => (
                       <div key={j} className="flex items-center gap-1.5">
                         <Link
                           href={`/post/${src.post_id}`}
-                          className="text-xs text-blue-600 hover:underline"
+                          className="text-xs text-accent hover:text-accent-hover hover:underline"
                         >
                           {src.title}
                         </Link>
-                        <span className="text-xs text-navy-400">
+                        <span className="text-xs text-txt-secondary/40">
                           in {src.session_title}
                         </span>
                       </div>
@@ -147,10 +147,10 @@ export default function AskInterface() {
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-gradient-to-br from-blue-50/50 to-slate-50 border border-blue-100 rounded-xl px-4 py-3">
+            <div className="ai-card-loading bg-dark-surface rounded-xl px-4 py-3">
               <div className="flex items-center gap-2">
-                <SparkleIcon className="w-3.5 h-3.5 text-blue-500 animate-pulse" />
-                <span className="text-sm text-blue-600 animate-pulse">Thinking...</span>
+                <SparkleIcon className="w-3.5 h-3.5 text-accent animate-pulse" />
+                <span className="text-sm font-mono text-accent animate-pulse">Thinking...</span>
               </div>
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function AskInterface() {
           e.preventDefault();
           handleSubmit(input);
         }}
-        className="sticky bottom-0 bg-white pt-4 border-t border-navy-100"
+        className="sticky bottom-0 bg-dark-bg pt-4 border-t border-dark-border"
       >
         <div className="flex gap-3">
           <input
@@ -173,13 +173,13 @@ export default function AskInterface() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask a question about the programme..."
-            className="flex-1 border border-navy-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-sm text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="bg-navy-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-navy-800 transition-colors disabled:opacity-50"
+            className="bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50"
           >
             Ask
           </button>

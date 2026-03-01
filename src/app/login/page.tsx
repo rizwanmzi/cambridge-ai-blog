@@ -33,20 +33,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-dark-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">Welcome back</h1>
-          <p className="text-navy-400 text-sm">
+          <h1 className="font-heading text-3xl font-bold text-txt-primary mb-2">Welcome back</h1>
+          <p className="text-txt-secondary text-sm">
             Cambridge AI Leadership Programme
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="bg-dark-surface rounded-xl border border-dark-border p-6 space-y-4 shadow-[0_0_30px_rgba(59,130,246,0.08)]">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-navy-300 mb-1.5"
+              className="block text-sm font-medium text-txt-secondary mb-1.5"
             >
               Email
             </label>
@@ -58,14 +58,14 @@ export default function LoginPage() {
               required
               autoFocus
               placeholder="you@example.com"
-              className="w-full px-4 py-3 bg-navy-900 border border-navy-700 rounded-lg text-white placeholder-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-400 focus:border-transparent"
+              className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-navy-300 mb-1.5"
+              className="block text-sm font-medium text-txt-secondary mb-1.5"
             >
               Password
             </label>
@@ -76,7 +76,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Your password"
-              className="w-full px-4 py-3 bg-navy-900 border border-navy-700 rounded-lg text-white placeholder-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-400 focus:border-transparent"
+              className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg text-txt-primary placeholder-txt-secondary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             />
           </div>
 
@@ -87,15 +87,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-white text-navy-900 py-3 rounded-lg font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-accent text-white py-3 rounded-lg font-medium hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
-        <p className="text-center text-sm text-navy-400 mt-6">
+        <p className="text-center text-sm text-txt-secondary mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-white hover:underline">
+          <Link href="/signup" className="text-accent hover:text-accent-hover hover:underline">
             Sign up
           </Link>
         </p>

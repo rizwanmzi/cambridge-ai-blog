@@ -6,10 +6,10 @@ import CommentSection from "./CommentSection";
 import RoleBadge from "@/components/RoleBadge";
 
 const categoryColors: Record<string, string> = {
-  "Live Insight": "bg-blue-100 text-blue-800",
-  "Formal Notes": "bg-navy-100 text-navy-700",
-  "Key Takeaway": "bg-amber-100 text-amber-800",
-  Reflection: "bg-emerald-100 text-emerald-800",
+  "Live Insight": "bg-green-500/20 text-green-400 border-green-500/40",
+  "Formal Notes": "bg-blue-500/20 text-blue-400 border-blue-500/40",
+  "Key Takeaway": "bg-amber-500/20 text-amber-400 border-amber-500/40",
+  Reflection: "bg-purple-500/20 text-purple-400 border-purple-500/40",
 };
 
 export const revalidate = 0;
@@ -41,7 +41,7 @@ export default async function PostPage({
     <div>
       <Link
         href={post.sessions ? `/session/${post.sessions.id}` : "/"}
-        className="inline-flex items-center text-sm text-navy-400 hover:text-navy-600 transition-colors mb-8"
+        className="inline-flex items-center text-sm text-txt-secondary hover:text-accent transition-colors mb-8"
       >
         <svg
           className="w-4 h-4 mr-1"
@@ -61,17 +61,17 @@ export default async function PostPage({
           : "Back to agenda"}
       </Link>
 
-      <article>
+      <article className="max-w-3xl">
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <span
-              className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                categoryColors[post.category] || "bg-navy-100 text-navy-700"
+              className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
+                categoryColors[post.category] || "bg-dark-hover text-txt-secondary border-dark-border"
               }`}
             >
               {post.category}
             </span>
-            <time className="text-sm text-navy-400">
+            <time className="text-sm text-txt-secondary">
               {new Date(post.created_at).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "long",
@@ -79,21 +79,21 @@ export default async function PostPage({
               })}
             </time>
             {post.profiles && (
-              <span className="flex items-center gap-1.5 text-sm text-navy-500">
+              <span className="flex items-center gap-1.5 text-sm text-txt-secondary">
                 <span>{post.profiles.username}</span>
                 <RoleBadge role={post.profiles.role} />
               </span>
             )}
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-navy-900 leading-tight">
+          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-txt-primary leading-tight">
             {post.title}
           </h1>
           {post.sessions && (
-            <p className="text-sm text-navy-400 mt-3">
+            <p className="text-sm text-txt-secondary mt-3">
               Session:{" "}
               <Link
                 href={`/session/${post.sessions.id}`}
-                className="text-navy-500 hover:underline"
+                className="text-accent hover:text-accent-hover hover:underline"
               >
                 {post.sessions.title}
               </Link>
@@ -106,7 +106,7 @@ export default async function PostPage({
         </div>
       </article>
 
-      <hr className="border-navy-100 mb-8" />
+      <hr className="border-dark-border mb-8" />
 
       <CommentSection postId={post.id} initialComments={comments || []} />
     </div>
