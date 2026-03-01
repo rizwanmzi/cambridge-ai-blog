@@ -61,24 +61,24 @@ function CommentItem({
 
   return (
     <div
-      className="border-l-2 border-[rgba(255,255,255,0.06)] pl-3 py-2"
+      className="border-l-2 border-[rgba(255,255,255,0.06)] pl-3 py-2.5 hover:border-[rgba(255,255,255,0.12)] transition-all duration-200"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-1">
-        <span>{comment.profiles?.username ?? "Unknown"}</span>
+        <span className="text-[rgba(255,255,255,0.6)]">{comment.profiles?.username ?? "Unknown"}</span>
         {comment.profiles && <RoleBadge role={comment.profiles.role} />}
         <span>&middot;</span>
         <TimeAgo date={comment.created_at} />
         {canEdit && hovered && !editing && (
           <span className="ml-auto flex gap-2">
-            <button onClick={() => setEditing(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary">Edit</button>
+            <button onClick={() => setEditing(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200">Edit</button>
             {!showDelete ? (
-              <button onClick={() => setShowDelete(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary">Delete</button>
+              <button onClick={() => setShowDelete(true)} className="text-[12px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200">Delete</button>
             ) : (
               <>
-                <button onClick={handleDelete} disabled={deleting} className="text-[12px] text-txt-tertiary hover:text-white">{deleting ? "..." : "Confirm"}</button>
-                <button onClick={() => setShowDelete(false)} className="text-[12px] text-txt-tertiary">Cancel</button>
+                <button onClick={handleDelete} disabled={deleting} className="text-[12px] text-txt-tertiary hover:text-white transition-colors duration-200">{deleting ? "..." : "Confirm"}</button>
+                <button onClick={() => setShowDelete(false)} className="text-[12px] text-txt-tertiary transition-colors duration-200">Cancel</button>
               </>
             )}
           </span>
@@ -92,15 +92,15 @@ function CommentItem({
             value={editBody}
             onChange={(e) => setEditBody(e.target.value)}
             rows={3}
-            className="w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y"
+            className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.2)] focus:ring-1 focus:ring-[rgba(255,255,255,0.08)] resize-y transition-all duration-200"
           />
           <div className="flex gap-2">
-            <button onClick={handleSave} disabled={saving} className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1 rounded-md disabled:opacity-40">{saving ? "Saving..." : "Save"}</button>
-            <button onClick={() => { setEditing(false); setEditBody(comment.body); }} className="text-[13px] text-txt-tertiary px-3 py-1">Cancel</button>
+            <button onClick={handleSave} disabled={saving} className="text-[13px] text-white bg-emerald-500/90 hover:bg-emerald-500 px-3 py-1 rounded-lg disabled:opacity-40 transition-all duration-200">{saving ? "Saving..." : "Save"}</button>
+            <button onClick={() => { setEditing(false); setEditBody(comment.body); }} className="text-[13px] text-txt-tertiary px-3 py-1 hover:text-txt-secondary transition-colors duration-200">Cancel</button>
           </div>
         </div>
       ) : (
-        <p className="text-sm text-[rgba(255,255,255,0.7)] leading-relaxed">{comment.body}</p>
+        <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">{comment.body}</p>
       )}
     </div>
   );
@@ -151,22 +151,24 @@ export default function SessionComments({
 
   return (
     <section>
-      <h2 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-4">
-        Comments {comments.length > 0 && `(${comments.length})`}
+      <h2 className="text-[11px] uppercase tracking-widest text-[rgba(255,255,255,0.3)] font-medium mb-4">
+        Comments {comments.length > 0 && <span className="text-[rgba(255,255,255,0.2)]">({comments.length})</span>}
       </h2>
 
       {comments.length > 0 ? (
-        <div className="space-y-1 mb-6">
+        <div className="space-y-0.5 mb-5">
           {comments.map((c) => (
             <CommentItem key={c.id} comment={c} userId={user?.id} isAdmin={isAdmin} onUpdate={handleUpdate} onDelete={handleDelete} />
           ))}
         </div>
       ) : (
-        <p className="text-sm text-txt-tertiary mb-6">No comments yet.</p>
+        <p className="text-center text-[13px] text-[rgba(255,255,255,0.25)] py-6 mb-4">
+          No comments yet. Start the conversation.
+        </p>
       )}
 
       {user && (
-        <form onSubmit={handleSubmit} className="flex gap-2 items-start">
+        <form onSubmit={handleSubmit} className="flex gap-2 items-center">
           <input
             id="new-session-comment"
             name="new-session-comment"
@@ -175,16 +177,16 @@ export default function SessionComments({
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
-            className="flex-1 bg-transparent border-b border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.25)] py-2 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none"
+            className="flex-1 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-2 text-sm text-txt-primary placeholder-[rgba(255,255,255,0.3)] focus:outline-none focus:border-[rgba(255,255,255,0.15)] focus:ring-1 focus:ring-[rgba(255,255,255,0.06)] transition-all duration-200"
           />
           <button
             type="submit"
             disabled={submitting || !body.trim()}
-            className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1.5 rounded-md hover:bg-[rgba(255,255,255,0.15)] disabled:opacity-40 shrink-0"
+            className="text-[13px] text-white bg-emerald-500/90 hover:bg-emerald-500 px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-40 shrink-0 font-medium"
           >
             {submitting ? "..." : "Post"}
           </button>
-          {error && <p className="text-sm text-txt-tertiary">{error}</p>}
+          {error && <p className="text-sm text-txt-tertiary ml-1">{error}</p>}
         </form>
       )}
     </section>

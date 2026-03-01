@@ -23,6 +23,13 @@ const categoryClass: Record<string, string> = {
   Reflection: "cat-reflection",
 };
 
+const categoryPillClass: Record<string, string> = {
+  "Live Insight": "cat-pill-live-insight",
+  "Formal Notes": "cat-pill-formal-notes",
+  "Key Takeaway": "cat-pill-key-takeaway",
+  Reflection: "cat-pill-reflection",
+};
+
 function formatTime(t: string) {
   return t.slice(0, 5);
 }
@@ -63,15 +70,18 @@ export default async function SessionPage({
 
   return (
     <div className="max-w-[720px] mx-auto">
+      {/* Back link with hover arrow animation */}
       <Link
         href="/"
-        className="inline-flex items-center text-[13px] text-txt-tertiary hover:text-txt-secondary transition-colors mb-6"
+        className="group inline-flex items-center text-[13px] text-txt-tertiary hover:text-txt-secondary transition-all duration-200 mb-6"
       >
-        &larr; <span className="hidden sm:inline ml-1">Programme Agenda</span>
+        <span className="inline-block transition-transform duration-200 group-hover:-translate-x-0.5">&larr;</span>
+        <span className="hidden sm:inline ml-1.5">Programme Agenda</span>
       </Link>
 
-      <header className="mb-6">
-        <h1 className="text-2xl sm:text-2xl font-semibold text-white leading-tight">
+      {/* Session header */}
+      <header className="mb-6 pb-6 border-b border-[rgba(255,255,255,0.06)]">
+        <h1 className="text-2xl font-semibold text-white leading-tight">
           {session.title}
         </h1>
         <p className="text-[13px] text-txt-tertiary mt-2">
@@ -84,34 +94,47 @@ export default async function SessionPage({
         )}
       </header>
 
+      {/* Post composer */}
       <QuickPostBar sessionId={session.id} />
 
-      <section className="mb-10">
+      {/* Posts + AI tabs in a card */}
+      <section className="mb-8 bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
         <SessionTabs
           sessionId={session.id}
           postsContent={
             <>
               {posts && posts.length > 0 ? (
-                <div>
+                <div className="divide-y divide-[rgba(255,255,255,0.04)]">
                   {(posts as PostWithProfile[]).map((post) => (
                     <Link
                       key={post.id}
                       href={`/post/${post.id}`}
-                      className="block py-3 border-b border-dark-border hover:bg-dark-hover transition-colors -mx-2 px-2 rounded-sm group"
+                      className={`block px-4 py-3.5 hover:bg-[rgba(255,255,255,0.03)] transition-all duration-200 group border-l-2 ${
+                        categoryClass[post.category]
+                          ? `border-l-current`
+                          : "border-l-transparent"
+                      }`}
+                      style={{
+                        borderLeftColor:
+                          post.category === "Live Insight" ? "rgba(74,222,128,0.4)" :
+                          post.category === "Formal Notes" ? "rgba(96,165,250,0.4)" :
+                          post.category === "Key Takeaway" ? "rgba(251,191,36,0.4)" :
+                          post.category === "Reflection" ? "rgba(192,132,252,0.4)" :
+                          "transparent"
+                      }}
                     >
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm text-[rgba(255,255,255,0.85)] group-hover:text-white truncate">
+                      <div className="flex items-center gap-2.5 mb-1">
+                        <span className="text-sm text-[rgba(255,255,255,0.85)] group-hover:text-white transition-colors duration-200 truncate flex-1">
                           {post.title}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[13px] text-txt-tertiary">
-                        <span className={`${categoryClass[post.category] || "text-txt-tertiary"}`}>
-                          ✦ {post.category}
+                        <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${categoryPillClass[post.category] || "text-txt-tertiary bg-[rgba(255,255,255,0.05)]"}`}>
+                          {post.category}
                         </span>
-                        <span>&middot;</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[12px] text-txt-tertiary">
                         {post.profiles && (
                           <>
-                            <span className="text-txt-tertiary">{post.profiles.username}</span>
+                            <span>{post.profiles.username}</span>
                             <RoleBadge role={post.profiles.role} />
                             <span>&middot;</span>
                           </>
@@ -122,16 +145,18 @@ export default async function SessionPage({
                   ))}
                 </div>
               ) : (
-                <p className="text-center py-10 text-txt-tertiary text-sm">
-                  No posts yet. Be the first to share an insight.
-                </p>
+                <div className="text-center py-12">
+                  <p className="text-txt-tertiary text-sm">No posts yet.</p>
+                  <p className="text-txt-tertiary/60 text-[13px] mt-1">Be the first to share an insight.</p>
+                </div>
               )}
             </>
           }
         />
       </section>
 
-      <div className="border-t border-dark-border pt-6">
+      {/* Comments in a card */}
+      <div className="bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 sm:p-5">
         <SessionComments
           sessionId={session.id}
           initialComments={comments || []}

@@ -58,37 +58,50 @@ export default function SessionTabs({ sessionId, postsContent }: SessionTabsProp
 
   return (
     <div>
-      <div className="flex border-b border-dark-border mb-4">
+      {/* Tab bar */}
+      <div className="flex border-b border-[rgba(255,255,255,0.06)] px-4">
         <button
           onClick={() => handleTabSwitch("posts")}
-          className={`px-3 py-2.5 text-[13px] border-b-2 transition-colors ${
+          className={`relative px-3 py-3 text-[13px] font-medium transition-all duration-200 ${
             activeTab === "posts"
-              ? "border-white text-white"
-              : "border-transparent text-txt-tertiary hover:text-txt-secondary"
+              ? "text-white"
+              : "text-txt-tertiary hover:text-txt-secondary"
           }`}
         >
           Posts
+          {activeTab === "posts" && (
+            <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-emerald-400 rounded-full" />
+          )}
         </button>
         <button
           onClick={() => handleTabSwitch("ai")}
-          className={`px-3 py-2.5 text-[13px] border-b-2 transition-colors ${
+          className={`relative px-3 py-3 text-[13px] font-medium transition-all duration-200 ${
             activeTab === "ai"
-              ? "border-white text-white"
-              : "border-transparent text-txt-tertiary hover:text-txt-secondary"
+              ? "text-violet-300"
+              : "text-txt-tertiary hover:text-txt-secondary"
           }`}
         >
-          AI Summary
+          <span className="flex items-center gap-1">
+            <span className="text-[11px]">✦</span> AI Summary
+          </span>
+          {activeTab === "ai" && (
+            <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.5)]" />
+          )}
         </button>
       </div>
 
+      {/* Tab content */}
       {activeTab === "posts" && postsContent}
 
       {activeTab === "ai" && (
-        <div>
+        <div className="p-4">
           {loading && <AILoadingState />}
           {error && (
             <p className="text-sm text-txt-tertiary py-6">
-              Couldn&apos;t generate summary — <button onClick={() => loadSummary()} className="underline hover:text-txt-secondary">try again</button>
+              Couldn&apos;t generate summary &mdash;{" "}
+              <button onClick={() => loadSummary()} className="underline hover:text-txt-secondary transition-colors duration-200">
+                try again
+              </button>
             </p>
           )}
           {summary && !loading && (

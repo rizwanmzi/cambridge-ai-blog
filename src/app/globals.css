@@ -126,11 +126,25 @@ a, button, input, textarea, select {
 .prose strong { @apply font-semibold text-white; }
 .prose hr { @apply my-8 border-dark-border; }
 
-/* Category colours */
+/* Category colours — text */
 .cat-live-insight { color: #4ade80; }
 .cat-formal-notes { color: #60a5fa; }
 .cat-key-takeaway { color: #fbbf24; }
 .cat-reflection { color: #c084fc; }
+
+/* Category pills — background + text */
+.cat-pill-live-insight { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+.cat-pill-formal-notes { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+.cat-pill-key-takeaway { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+.cat-pill-reflection { background: rgba(192,132,252,0.1); color: #c084fc; border: 1px solid rgba(192,132,252,0.2); }
+
+/* AI glow */
+.ai-glow {
+  box-shadow: 0 0 15px rgba(139,92,246,0.15), 0 0 3px rgba(139,92,246,0.1);
+}
+.ai-glow-active {
+  box-shadow: 0 0 20px rgba(139,92,246,0.25), 0 0 6px rgba(139,92,246,0.15);
+}
 
 /* Print styles */
 @media print {
