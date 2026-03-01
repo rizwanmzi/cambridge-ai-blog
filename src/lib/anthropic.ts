@@ -1,5 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 
+// Re-export types so server-side code can import everything from here
+export type {
+  SummaryContent,
+  SummaryTheme,
+  SummaryQuote,
+  SummaryTension,
+  RealWorldConnection,
+} from "./ai-types";
+
 // Singleton client
 let client: Anthropic | null = null;
 
@@ -11,44 +20,6 @@ export function getAnthropicClient(): Anthropic {
 }
 
 export const AI_MODEL = "claude-sonnet-4-20250514";
-
-// Structured summary content interfaces
-export interface SummaryTheme {
-  title: string;
-  description: string;
-}
-
-export interface SummaryQuote {
-  text: string;
-  author: string;
-  role: string;
-}
-
-export interface SummaryTension {
-  description: string;
-}
-
-export interface RealWorldConnection {
-  description: string;
-}
-
-export interface SummaryContent {
-  themes: SummaryTheme[];
-  quotes: SummaryQuote[];
-  open_questions: string[];
-  tensions: SummaryTension[];
-  action_items: string[];
-  real_world: RealWorldConnection[];
-  so_what: string;
-  narrative: string;
-  // Day summary extras
-  surprise?: string;
-  // Programme digest extras
-  executive_summary?: string;
-  top_insights?: string[];
-  evolution?: string;
-  unresolved?: string[];
-}
 
 export const TONE_INSTRUCTION = `You are the unofficial chronicler of the Cambridge AI Leadership Programme — a week-long executive programme at Cambridge Judge Business School bringing together senior leaders (CEOs, directors, partners) to grapple with AI strategy.
 

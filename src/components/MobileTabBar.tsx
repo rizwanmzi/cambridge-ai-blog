@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { canPost } from "@/lib/roles";
+import CatchMeUpModal from "./CatchMeUpModal";
 
 export default function MobileTabBar() {
   const { user, profile, loading, signOut } = useAuth();
@@ -86,16 +87,10 @@ export default function MobileTabBar() {
         </>
       )}
 
-      {/* Catch me up modal triggered from More sheet */}
+      {/* Catch me up modal */}
       {catchMeUpOpen && (
-        <CatchMeUpInline open={catchMeUpOpen} onClose={() => setCatchMeUpOpen(false)} />
+        <CatchMeUpModal open={catchMeUpOpen} onClose={() => setCatchMeUpOpen(false)} />
       )}
     </>
   );
-}
-
-// Inline import to avoid circular dependency
-import CatchMeUpModal from "./CatchMeUpModal";
-function CatchMeUpInline({ open, onClose }: { open: boolean; onClose: () => void }) {
-  return <CatchMeUpModal open={open} onClose={onClose} />;
 }

@@ -4,7 +4,7 @@ import { useState, ReactNode } from "react";
 import AISummaryCard from "@/components/AISummaryCard";
 import AILoadingState from "@/components/AILoadingState";
 import { useAuth } from "@/lib/auth-context";
-import type { SummaryContent } from "@/lib/anthropic";
+import type { SummaryContent } from "@/lib/ai-types";
 
 interface SessionTabsProps {
   sessionId: number;

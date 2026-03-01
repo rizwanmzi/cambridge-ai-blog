@@ -3,7 +3,7 @@
 import { useState } from "react";
 import AISummaryCard from "./AISummaryCard";
 import AILoadingState from "./AILoadingState";
-import type { SummaryContent } from "@/lib/anthropic";
+import type { SummaryContent } from "@/lib/ai-types";
 
 interface CatchMeUpModalProps {
   open: boolean;

@@ -6,7 +6,7 @@ import AILoadingState from "@/components/AILoadingState";
 import RoleBadge from "@/components/RoleBadge";
 import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
-import type { SummaryContent } from "@/lib/anthropic";
+import type { SummaryContent } from "@/lib/ai-types";
 
 interface Leaderboard {
   topContributors: { username: string; role: string; count: number }[];
