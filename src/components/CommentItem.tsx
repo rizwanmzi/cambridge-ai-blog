@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import RoleBadge from "@/components/RoleBadge";
 import TimeAgo from "@/components/TimeAgo";
+import ExpandableText from "@/components/ExpandableText";
 import type { CommentNode } from "@/lib/comment-types";
 
 interface CommentItemProps {
@@ -183,12 +186,22 @@ export default function CommentItem({
               </button>
             </div>
           </div>
+        ) : comment.body.length > 300 ? (
+          <ExpandableText
+            text={comment.body}
+            limit={300}
+            className={`text-sm leading-relaxed ${
+              isSession ? "text-[rgba(255,255,255,0.65)]" : "text-[rgba(255,255,255,0.7)]"
+            }`}
+          />
         ) : (
-          <p className={`text-sm leading-relaxed ${
+          <div className={`text-sm leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-headings:my-1 ${
             isSession ? "text-[rgba(255,255,255,0.65)]" : "text-[rgba(255,255,255,0.7)]"
           }`}>
-            {comment.body}
-          </p>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {comment.body}
+            </ReactMarkdown>
+          </div>
         )}
 
         {/* Like + Reply actions */}

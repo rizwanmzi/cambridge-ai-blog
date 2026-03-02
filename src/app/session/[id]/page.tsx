@@ -5,6 +5,7 @@ import RoleBadge from "@/components/RoleBadge";
 import SessionComments from "./SessionComments";
 import SessionTabs from "./SessionTabs";
 import QuickPostBar from "@/components/QuickPostBar";
+import ComposerFAB from "@/components/ComposerFAB";
 import TimeAgo from "@/components/TimeAgo";
 
 interface PostWithProfile {
@@ -117,6 +118,7 @@ export default async function SessionPage({
 
       {/* Post composer */}
       <QuickPostBar sessionId={session.id} />
+      <ComposerFAB />
 
       {/* Posts + AI tabs in a card */}
       <section className="mb-8 bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
