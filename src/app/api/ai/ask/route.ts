@@ -93,25 +93,53 @@ ${postsContext || "No posts yet."}`;
     messages.push({ role: "user", content: question });
 
     const anthropic = getAnthropicClient();
-    const response = await anthropic.messages.create({
-      model: AI_MODEL,
-      max_tokens: 4096,
-      system: systemPrompt,
-      messages,
-    });
+
+    // 25-second timeout for the Claude call
+    const timeoutMs = 25_000;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    let response;
+    try {
+      response = await anthropic.messages.create(
+        {
+          model: AI_MODEL,
+          max_tokens: 1024,
+          system: systemPrompt,
+          messages,
+        },
+        { signal: controller.signal }
+      );
+    } catch (err: unknown) {
+      clearTimeout(timer);
+      if (err instanceof Error && err.name === "AbortError") {
+        return NextResponse.json(
+          { error: "The AI is taking too long. Try a simpler question." },
+          { status: 504 }
+        );
+      }
+      throw err;
+    }
+    clearTimeout(timer);
 
     if (!response.content || response.content.length === 0) {
-      return NextResponse.json({ error: "AI returned empty response" }, { status: 502 });
+      return NextResponse.json({ answer: "I couldn't generate a response. Please try again.", sources: [] });
     }
 
     const text = response.content[0].type === "text" ? response.content[0].text : "";
     const cleaned = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+
     let parsed;
     try {
       parsed = JSON.parse(cleaned);
     } catch {
-      console.error("Failed to parse ask response JSON, cleaned:", cleaned);
-      return NextResponse.json({ error: "AI returned invalid response" }, { status: 502 });
+      // Claude returned non-JSON — return raw text as the answer
+      return NextResponse.json({ answer: cleaned || text, sources: [] });
+    }
+
+    // Validate the answer field
+    if (!parsed.answer || typeof parsed.answer !== "string" || !parsed.answer.trim()) {
+      return NextResponse.json({ answer: "I couldn't generate a response. Please try again.", sources: parsed.sources || [] });
     }
 
     return NextResponse.json(parsed);

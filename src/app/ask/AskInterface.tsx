@@ -10,7 +10,7 @@ interface Source {
 }
 
 interface Message {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "error";
   content: string;
   sources?: Source[];
 }
@@ -41,10 +41,12 @@ export default function AskInterface() {
     setLoading(true);
 
     try {
-      const conversationHistory = messages.map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+      const conversationHistory = messages
+        .filter((m) => m.role !== "error")
+        .map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        }));
 
       const res = await fetch("/api/ai/ask", {
         method: "POST",
@@ -56,11 +58,25 @@ export default function AskInterface() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to get answer");
+
+      if (!res.ok) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "error",
+            content: data.error || "Something went wrong. Please try again.",
+          },
+        ]);
+        return;
+      }
+
+      const answer = data.answer && typeof data.answer === "string" && data.answer.trim()
+        ? data.answer
+        : "I couldn't find relevant information. Try rephrasing your question.";
 
       const assistantMessage: Message = {
         role: "assistant",
-        content: data.answer,
+        content: answer,
         sources: data.sources,
       };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -68,8 +84,8 @@ export default function AskInterface() {
       setMessages((prev) => [
         ...prev,
         {
-          role: "assistant",
-          content: "Sorry, I couldn't process that question. Please try again.",
+          role: "error",
+          content: "Could not reach the server. Check your connection and try again.",
         },
       ]);
     } finally {
@@ -107,6 +123,10 @@ export default function AskInterface() {
             {msg.role === "user" ? (
               <div className="max-w-[80%] bg-[rgba(255,255,255,0.08)] rounded-md px-3 py-2">
                 <p className="text-sm text-txt-primary leading-relaxed">{msg.content}</p>
+              </div>
+            ) : msg.role === "error" ? (
+              <div className="max-w-[85%] border-l-2 border-red-500/50 pl-3 py-1 bg-red-500/5 rounded-r-md">
+                <p className="text-sm text-red-300/80 leading-relaxed">{msg.content}</p>
               </div>
             ) : (
               <div className="max-w-[85%] border-l-2 border-ai-indigo pl-3 py-1">
@@ -146,6 +166,7 @@ export default function AskInterface() {
             <div className="border-l-2 border-ai-indigo pl-3 py-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-[11px] font-medium text-txt-tertiary">✦ AI</span>
+                <span className="text-[11px] text-txt-tertiary">Thinking</span>
                 <span className="dot-pulse" />
               </div>
             </div>

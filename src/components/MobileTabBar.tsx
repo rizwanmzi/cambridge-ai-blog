@@ -4,14 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import CatchMeUpModal from "./CatchMeUpModal";
 import GuideModal from "./GuideModal";
 
 export default function MobileTabBar() {
   const { user, loading, signOut } = useAuth();
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
-  const [catchMeUpOpen, setCatchMeUpOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
 
   // Don't show on login/signup/landing
@@ -55,12 +53,6 @@ export default function MobileTabBar() {
                 Resources
               </Link>
               <button
-                onClick={() => { setMoreOpen(false); setCatchMeUpOpen(true); }}
-                className="block w-full text-left py-3 text-sm text-[rgba(255,255,255,0.7)] hover:text-white transition-colors"
-              >
-                Catch Me Up
-              </button>
-              <button
                 onClick={() => { setMoreOpen(false); setGuideOpen(true); }}
                 className="block w-full text-left py-3 text-sm text-[rgba(255,255,255,0.7)] hover:text-white transition-colors"
               >
@@ -85,10 +77,6 @@ export default function MobileTabBar() {
         </>
       )}
 
-      {/* Catch me up modal */}
-      {catchMeUpOpen && (
-        <CatchMeUpModal open={catchMeUpOpen} onClose={() => setCatchMeUpOpen(false)} />
-      )}
       <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} />
     </>
   );

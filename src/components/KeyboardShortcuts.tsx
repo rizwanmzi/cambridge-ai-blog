@@ -3,11 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface KeyboardShortcutsProps {
-  onOpenCatchMeUp: () => void;
-}
-
-export default function KeyboardShortcuts({ onOpenCatchMeUp }: KeyboardShortcutsProps) {
+export default function KeyboardShortcuts() {
   const router = useRouter();
   const [showHelp, setShowHelp] = useState(false);
 
@@ -39,7 +35,7 @@ export default function KeyboardShortcuts({ onOpenCatchMeUp }: KeyboardShortcuts
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [router, onOpenCatchMeUp]);
+  }, [router]);
 
   return (
     <>
