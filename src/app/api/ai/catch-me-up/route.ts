@@ -74,7 +74,13 @@ Return ONLY valid JSON:
 }`;
 
     const raw = await callClaude(systemPrompt, "Generate the catch-up briefing now.");
-    const briefing = JSON.parse(raw);
+    let briefing;
+    try {
+      briefing = JSON.parse(raw);
+    } catch {
+      console.error("Failed to parse catch-up briefing JSON, raw:", raw);
+      return NextResponse.json({ error: "AI returned invalid response" }, { status: 502 });
+    }
 
     return NextResponse.json({ briefing });
   } catch (err) {

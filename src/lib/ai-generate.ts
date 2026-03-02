@@ -96,7 +96,13 @@ Return ONLY valid JSON, no markdown fences.`;
   const userPrompt = "Generate the session summary now.";
 
   const raw = await callClaude(systemPrompt, userPrompt);
-  const content: SummaryContent = JSON.parse(raw);
+  let content: SummaryContent;
+  try {
+    content = JSON.parse(raw);
+  } catch {
+    console.error("Failed to parse session summary JSON, raw:", raw);
+    throw new Error("AI returned invalid JSON for session summary");
+  }
 
   // Upsert cache
   await getServiceClient().from("ai_summaries").upsert(
@@ -170,7 +176,13 @@ Return JSON:
 Return ONLY valid JSON.`;
 
   const raw = await callClaude(systemPrompt, "Generate the day summary now.");
-  const content: SummaryContent = JSON.parse(raw);
+  let content: SummaryContent;
+  try {
+    content = JSON.parse(raw);
+  } catch {
+    console.error("Failed to parse day summary JSON, raw:", raw);
+    throw new Error("AI returned invalid JSON for day summary");
+  }
 
   await getServiceClient().from("ai_summaries").upsert(
     {

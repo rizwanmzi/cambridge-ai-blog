@@ -100,9 +100,19 @@ ${postsContext || "No posts yet."}`;
       messages,
     });
 
+    if (!response.content || response.content.length === 0) {
+      return NextResponse.json({ error: "AI returned empty response" }, { status: 502 });
+    }
+
     const text = response.content[0].type === "text" ? response.content[0].text : "";
     const cleaned = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
-    const parsed = JSON.parse(cleaned);
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      console.error("Failed to parse ask response JSON, cleaned:", cleaned);
+      return NextResponse.json({ error: "AI returned invalid response" }, { status: 502 });
+    }
 
     return NextResponse.json(parsed);
   } catch (err) {
