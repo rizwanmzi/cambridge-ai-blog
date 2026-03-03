@@ -152,23 +152,23 @@ export default function GenerateSummaryButton({ dayNumber }: { dayNumber: number
       ]);
 
       const blob = await pdf(
-        DailySummaryPDF({
-          dayNumber,
-          dayName: dayNames[dayNumber] || `Day ${dayNumber}`,
-          date: dayDates[dayNumber] || "",
-          executiveNarrative: data.executive_narrative,
-          crossCuttingThemes: data.cross_cutting_themes || [],
-          openQuestions: data.open_questions || [],
-          sessionHighlights: data.session_highlights || [],
-          sessions: sessionsForPdf,
-          generatedAt: new Date().toLocaleString("en-GB", {
+        <DailySummaryPDF
+          dayNumber={dayNumber}
+          dayName={dayNames[dayNumber] || `Day ${dayNumber}`}
+          date={dayDates[dayNumber] || ""}
+          executiveNarrative={data.executive_narrative}
+          crossCuttingThemes={data.cross_cutting_themes || []}
+          openQuestions={data.open_questions || []}
+          sessionHighlights={data.session_highlights || []}
+          sessions={sessionsForPdf}
+          generatedAt={new Date().toLocaleString("en-GB", {
             day: "numeric",
             month: "short",
             year: "numeric",
             hour: "2-digit",
             minute: "2-digit",
-          }),
-        })
+          })}
+        />
       ).toBlob();
 
       // Trigger download

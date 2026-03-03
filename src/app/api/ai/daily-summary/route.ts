@@ -34,23 +34,26 @@ export async function POST(request: NextRequest) {
   try {
     const anthropic = getAnthropicClient();
 
-    const systemPrompt = `You are an AI analyst for the Cambridge AI Leadership Programme — a week-long executive programme at Cambridge Judge Business School.
+    // Truncate context to keep Claude call fast under Vercel 10s limit
+    const truncatedContext = posts_context.length > 6000
+      ? posts_context.slice(0, 6000) + "\n\n[...truncated for brevity]"
+      : posts_context;
 
-Synthesise the following posts and discussions from Day ${day_number} (${day_name || ""}) into an executive daily summary.
+    const systemPrompt = `You are an AI analyst for the Cambridge AI Leadership Programme at Cambridge Judge Business School.
 
-Sessions today: ${(session_titles || []).join(", ")}
+Summarise Day ${day_number} (${day_name || ""}) concisely. Sessions: ${(session_titles || []).join(", ")}
 
 Return ONLY valid JSON:
 {
-  "executive_narrative": "2-3 flowing paragraphs summarising the day's discussions, insights, and debates. Be specific — name people, reference actual arguments. Write for senior executives who want substance, not fluff. British English.",
-  "cross_cutting_themes": ["3-5 themes that connected across sessions"],
-  "open_questions": ["2-3 questions that emerged but weren't resolved"],
-  "session_highlights": [{"session_title": "Session Name", "key_points": ["2-3 key points from this session"]}]
+  "executive_narrative": "1-2 short paragraphs. Be specific — name people, reference arguments. British English.",
+  "cross_cutting_themes": ["2-4 themes across sessions"],
+  "open_questions": ["1-2 unresolved questions"],
+  "session_highlights": [{"session_title": "Name", "key_points": ["1-2 points per session"]}]
 }
 
-Only reference content that exists in the data. Do NOT invent content.`;
+Only reference content in the data. Do NOT invent. Be concise.`;
 
-    const timeoutMs = 25_000;
+    const timeoutMs = 9_000;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -59,9 +62,9 @@ Only reference content that exists in the data. Do NOT invent content.`;
       response = await anthropic.messages.create(
         {
           model: AI_MODEL,
-          max_tokens: 2048,
+          max_tokens: 1024,
           system: systemPrompt,
-          messages: [{ role: "user", content: posts_context }],
+          messages: [{ role: "user", content: truncatedContext }],
         },
         { signal: controller.signal }
       );
