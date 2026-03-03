@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import GenerateSummaryButton from "./GenerateSummaryButton";
 
 interface Session {
   id: number;
@@ -75,9 +76,12 @@ export default function ProgrammeTimeline({ sessions }: { sessions: Session[] })
         .sort(([a], [b]) => Number(a) - Number(b))
         .map(([day, daySessions]) => (
           <section key={day}>
-            <h2 className="text-[12px] uppercase tracking-wider text-[rgba(255,255,255,0.4)] mt-8 mb-3 first:mt-0">
-              {dayLabels[Number(day)] || `DAY ${day}`}
-            </h2>
+            <div className="flex items-center gap-3 mt-8 mb-3 first:mt-0">
+              <h2 className="text-[12px] uppercase tracking-wider text-[rgba(255,255,255,0.4)]">
+                {dayLabels[Number(day)] || `DAY ${day}`}
+              </h2>
+              <GenerateSummaryButton dayNumber={Number(day)} />
+            </div>
             <div>
               {daySessions.map((session) => {
                 const status = getSessionStatus(session, sessions, now);

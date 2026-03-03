@@ -66,6 +66,12 @@ export default async function SessionPage({
     .eq("session_id", session.id)
     .order("created_at", { ascending: true });
 
+  // Photo count for the Photos tab badge
+  const { count: photoCount } = await supabase
+    .from("session_photos")
+    .select("*", { count: "exact", head: true })
+    .eq("session_id", session.id);
+
   let likedCommentIds = new Set<number>();
   if (user && rawComments && rawComments.length > 0) {
     const commentIds = rawComments.map((c: { id: number }) => c.id);
@@ -124,6 +130,7 @@ export default async function SessionPage({
       <section className="mb-8 bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
         <SessionTabs
           sessionId={session.id}
+          photoCount={photoCount || 0}
           postsContent={
             <>
               {posts && posts.length > 0 ? (
