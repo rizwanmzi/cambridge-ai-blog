@@ -71,11 +71,11 @@ export default function CommentSection({ postId, initialComments }: { postId: nu
 
   return (
     <section>
-      <h2 className="text-[12px] uppercase tracking-wider text-txt-tertiary mb-4">
-        Comments {comments.length > 0 && `(${comments.length})`}
+      <h2 className="text-[11px] uppercase tracking-widest text-[rgba(255,255,255,0.3)] font-medium mb-4">
+        Comments {comments.length > 0 && <span className="text-[rgba(255,255,255,0.2)]">({comments.length})</span>}
       </h2>
       {tree.length > 0 ? (
-        <div className="space-y-1 mb-6">
+        <div className="space-y-0.5 mb-5">
           {tree.map((node) => (
             <CommentItem
               key={node.id}
@@ -92,17 +92,30 @@ export default function CommentSection({ postId, initialComments }: { postId: nu
           ))}
         </div>
       ) : (
-        <p className="text-sm text-txt-tertiary mb-6">No comments yet.</p>
+        <p className="text-center text-[13px] text-[rgba(255,255,255,0.25)] py-6 mb-4">
+          No comments yet. Start the conversation.
+        </p>
       )}
       {user && (
-        <form onSubmit={handleSubmit} className="flex gap-2 items-start">
-          <input id="new-comment" name="new-comment" type="text" placeholder="Add a comment..." value={body} onChange={(e) => setBody(e.target.value)} required
-            className="flex-1 bg-transparent border-b border-dark-border focus:border-[rgba(255,255,255,0.25)] py-2 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none" />
-          <button type="submit" disabled={submitting || !body.trim()}
-            className="text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1.5 rounded-md hover:bg-[rgba(255,255,255,0.15)] disabled:opacity-40 shrink-0">
+        <form onSubmit={handleSubmit} className="flex gap-2 items-center">
+          <input
+            id="new-comment"
+            name="new-comment"
+            type="text"
+            placeholder="Add a comment..."
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            required
+            className="flex-1 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-xl px-3 py-2 text-sm text-txt-primary placeholder-[rgba(255,255,255,0.25)] focus:outline-none focus:border-[rgba(255,255,255,0.15)] focus:ring-1 focus:ring-[rgba(255,255,255,0.06)] transition-all duration-200"
+          />
+          <button
+            type="submit"
+            disabled={submitting || !body.trim()}
+            className="text-[13px] text-white bg-emerald-500/90 hover:bg-emerald-500 px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-40 shrink-0 font-medium"
+          >
             {submitting ? "..." : "Post"}
           </button>
-          {error && <p className="text-sm text-txt-tertiary ml-2">{error}</p>}
+          {error && <p className="text-sm text-rose-400/70 ml-1">{error}</p>}
         </form>
       )}
     </section>

@@ -7,11 +7,25 @@ import RoleBadge from "@/components/RoleBadge";
 import PostActions from "@/components/PostActions";
 import TimeAgo from "@/components/TimeAgo";
 
-const categoryClass: Record<string, string> = {
-  "Live Insight": "cat-live-insight",
-  "Formal Notes": "cat-formal-notes",
-  "Key Takeaway": "cat-key-takeaway",
-  Reflection: "cat-reflection",
+const categoryPillClass: Record<string, string> = {
+  "Live Insight": "cat-pill-live-insight",
+  "Formal Notes": "cat-pill-formal-notes",
+  "Key Takeaway": "cat-pill-key-takeaway",
+  Reflection: "cat-pill-reflection",
+};
+
+const categoryBorderColor: Record<string, string> = {
+  "Live Insight": "rgba(74,222,128,0.5)",
+  "Formal Notes": "rgba(96,165,250,0.5)",
+  "Key Takeaway": "rgba(251,191,36,0.5)",
+  Reflection: "rgba(192,132,252,0.5)",
+};
+
+const categoryGlowColor: Record<string, string> = {
+  "Live Insight": "rgba(74,222,128,0.06)",
+  "Formal Notes": "rgba(96,165,250,0.06)",
+  "Key Takeaway": "rgba(251,191,36,0.06)",
+  Reflection: "rgba(192,132,252,0.06)",
 };
 
 export const revalidate = 0;
@@ -57,49 +71,72 @@ export default async function PostPage({
     user_has_liked: likedCommentIds.has(c.id),
   }));
 
+  const borderColor = categoryBorderColor[post.category] || "transparent";
+  const glowColor = categoryGlowColor[post.category] || "transparent";
+
   return (
     <div className="max-w-[720px] mx-auto">
-      <Link
-        href={post.sessions ? `/session/${post.sessions.id}` : "/"}
-        className="inline-flex items-center text-[13px] text-txt-tertiary hover:text-txt-secondary transition-colors mb-6"
+      {/* Sticky back nav */}
+      <div className="sticky top-0 z-30 -mx-4 px-4 pt-3 pb-3 bg-dark-bg/80 backdrop-blur-xl border-b border-[rgba(255,255,255,0.04)]">
+        <div className="flex items-center gap-3">
+          <Link
+            href={post.sessions ? `/session/${post.sessions.id}` : "/"}
+            className="group flex items-center justify-center w-8 h-8 rounded-full bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] transition-all duration-200 shrink-0"
+          >
+            <svg className="w-4 h-4 text-txt-tertiary group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <span className="text-[13px] text-txt-tertiary truncate">
+            {post.sessions ? post.sessions.title : "Programme Agenda"}
+          </span>
+        </div>
+      </div>
+
+      {/* Post article in glass panel */}
+      <article
+        className="glass-panel mt-6 mb-8 overflow-hidden border-l-[3px]"
+        style={{
+          borderLeftColor: borderColor,
+          boxShadow: `inset 4px 0 16px ${glowColor}`,
+        }}
       >
-        &larr; <span className="ml-1">{post.sessions ? post.sessions.title : "Programme Agenda"}</span>
-      </Link>
+        <div className="p-5 sm:p-6">
+          <header className="mb-5">
+            <div className="flex items-center gap-2.5 text-[13px] text-txt-tertiary mb-3 flex-wrap">
+              <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full ${categoryPillClass[post.category] || "text-txt-tertiary bg-[rgba(255,255,255,0.05)]"}`}>
+                {post.category}
+              </span>
+              <span className="text-[rgba(255,255,255,0.15)]">&middot;</span>
+              <TimeAgo date={post.created_at} />
+              {post.profiles && (
+                <>
+                  <span className="text-[rgba(255,255,255,0.15)]">&middot;</span>
+                  <span>{post.profiles.username}</span>
+                  <RoleBadge role={post.profiles.role} />
+                </>
+              )}
+            </div>
+            <h1 className="text-2xl font-semibold text-white leading-tight">
+              {post.title}
+            </h1>
+          </header>
 
-      <article>
-        <header className="mb-6">
-          <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-3 flex-wrap">
-            <span className={categoryClass[post.category] || "text-txt-tertiary"}>
-              ✦ {post.category}
-            </span>
-            <span>&middot;</span>
-            <TimeAgo date={post.created_at} />
-            {post.profiles && (
-              <>
-                <span>&middot;</span>
-                <span>{post.profiles.username}</span>
-                <RoleBadge role={post.profiles.role} />
-              </>
-            )}
+          <PostActions
+            postId={post.id}
+            authorId={post.author_id}
+            initialTitle={post.title}
+            initialBody={post.body}
+          />
+
+          <div className="prose max-w-none">
+            <PostContent content={post.body} />
           </div>
-          <h1 className="text-2xl font-semibold text-white leading-tight">
-            {post.title}
-          </h1>
-        </header>
-
-        <PostActions
-          postId={post.id}
-          authorId={post.author_id}
-          initialTitle={post.title}
-          initialBody={post.body}
-        />
-
-        <div className="prose max-w-none mb-10">
-          <PostContent content={post.body} />
         </div>
       </article>
 
-      <div className="border-t border-dark-border pt-6">
+      {/* Comments section in glass panel */}
+      <div className="glass-panel p-4 sm:p-5 mb-8">
         <CommentSection postId={post.id} initialComments={comments || []} />
       </div>
     </div>

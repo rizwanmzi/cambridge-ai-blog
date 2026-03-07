@@ -41,6 +41,7 @@ export default function CommentItem({
 
   const canEdit = userId === comment.user_id || isAdmin;
   const isSession = variant === "session";
+  const isReply = depth > 0;
 
   async function handleSave() {
     setSaving(true);
@@ -97,36 +98,37 @@ export default function CommentItem({
   }
 
   return (
-    <div>
+    <div className={isReply ? "relative" : ""}>
       <div
-        className={
-          isSession
-            ? "border-l-2 border-[rgba(255,255,255,0.06)] pl-3 py-2.5 hover:border-[rgba(255,255,255,0.12)] transition-all duration-200"
-            : "border-l-2 border-[rgba(255,255,255,0.06)] pl-3 py-2"
-        }
+        className={`rounded-lg px-3 py-2.5 transition-all duration-200 ${
+          hovered ? "bg-[rgba(255,255,255,0.02)]" : ""
+        }`}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
         {/* Header */}
-        <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-1">
-          <span className={isSession ? "text-[rgba(255,255,255,0.6)]" : undefined}>
+        <div className="flex items-center gap-2 text-[13px] text-txt-tertiary mb-1.5">
+          <div className="w-5 h-5 rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center text-[10px] text-txt-tertiary shrink-0">
+            {(comment.profiles?.username ?? "?")[0].toUpperCase()}
+          </div>
+          <span className="text-[rgba(255,255,255,0.6)] font-medium text-[12px]">
             {comment.profiles?.username ?? "Unknown"}
           </span>
           {comment.profiles && <RoleBadge role={comment.profiles.role} />}
-          <span>&middot;</span>
+          <span className="text-[rgba(255,255,255,0.12)]">&middot;</span>
           <TimeAgo date={comment.created_at} />
           {canEdit && hovered && !editing && (
             <span className="ml-auto flex gap-2">
               <button
                 onClick={() => setEditing(true)}
-                className={`text-[12px] text-txt-tertiary hover:text-txt-secondary${isSession ? " transition-colors duration-200" : ""}`}
+                className="text-[11px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200"
               >
                 Edit
               </button>
               {!showDelete ? (
                 <button
                   onClick={() => setShowDelete(true)}
-                  className={`text-[12px] text-txt-tertiary hover:text-txt-secondary${isSession ? " transition-colors duration-200" : ""}`}
+                  className="text-[11px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200"
                 >
                   Delete
                 </button>
@@ -135,13 +137,13 @@ export default function CommentItem({
                   <button
                     onClick={handleDelete}
                     disabled={deleting}
-                    className={`text-[12px] text-txt-tertiary hover:text-white${isSession ? " transition-colors duration-200" : ""}`}
+                    className="text-[11px] text-rose-400/70 hover:text-rose-400 transition-colors duration-200"
                   >
                     {deleting ? "..." : "Confirm"}
                   </button>
                   <button
                     onClick={() => setShowDelete(false)}
-                    className={`text-[12px] text-txt-tertiary${isSession ? " transition-colors duration-200" : ""}`}
+                    className="text-[11px] text-txt-tertiary transition-colors duration-200"
                   >
                     Cancel
                   </button>
@@ -153,64 +155,56 @@ export default function CommentItem({
 
         {/* Body or edit form */}
         {editing ? (
-          <div className="space-y-2">
+          <div className="space-y-2 ml-7">
             <textarea
               id={`edit-comment-${comment.id}`}
               name={`edit-comment-${comment.id}`}
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
               rows={3}
-              className={
-                isSession
-                  ? "w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-lg px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.2)] focus:ring-1 focus:ring-[rgba(255,255,255,0.08)] resize-y transition-all duration-200"
-                  : "w-full bg-transparent border border-[rgba(255,255,255,0.1)] rounded-md px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.25)] resize-y"
-              }
+              className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-xl px-3 py-2 text-sm text-txt-primary focus:outline-none focus:border-[rgba(255,255,255,0.2)] focus:ring-1 focus:ring-[rgba(255,255,255,0.08)] resize-y transition-all duration-200"
             />
             <div className="flex gap-2">
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className={
-                  isSession
-                    ? "text-[13px] text-white bg-emerald-500/90 hover:bg-emerald-500 px-3 py-1 rounded-lg disabled:opacity-40 transition-all duration-200"
-                    : "text-[13px] text-white bg-[rgba(255,255,255,0.1)] px-3 py-1 rounded-md disabled:opacity-40"
-                }
+                className="text-[12px] text-white bg-emerald-500/90 hover:bg-emerald-500 px-3 py-1.5 rounded-lg disabled:opacity-40 transition-all duration-200 font-medium"
               >
-                {saving ? (isSession ? "Saving..." : "...") : "Save"}
+                {saving ? "Saving..." : "Save"}
               </button>
               <button
                 onClick={() => { setEditing(false); setEditBody(comment.body); }}
-                className={`text-[13px] text-txt-tertiary px-3 py-1${isSession ? " hover:text-txt-secondary transition-colors duration-200" : ""}`}
+                className="text-[12px] text-txt-tertiary hover:text-txt-secondary px-3 py-1.5 transition-colors duration-200"
               >
                 Cancel
               </button>
             </div>
           </div>
-        ) : comment.body.length > 300 ? (
-          <ExpandableText
-            text={comment.body}
-            limit={300}
-            className={`text-sm leading-relaxed ${
-              isSession ? "text-[rgba(255,255,255,0.65)]" : "text-[rgba(255,255,255,0.7)]"
-            }`}
-          />
         ) : (
-          <div className={`text-sm leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-headings:my-1 ${
-            isSession ? "text-[rgba(255,255,255,0.65)]" : "text-[rgba(255,255,255,0.7)]"
-          }`}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {comment.body}
-            </ReactMarkdown>
+          <div className="ml-7">
+            {comment.body.length > 300 ? (
+              <ExpandableText
+                text={comment.body}
+                limit={300}
+                className="text-sm leading-relaxed text-[rgba(255,255,255,0.65)]"
+              />
+            ) : (
+              <div className="text-sm leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-headings:my-1 text-[rgba(255,255,255,0.65)]">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {comment.body}
+                </ReactMarkdown>
+              </div>
+            )}
           </div>
         )}
 
         {/* Like + Reply actions */}
         {!editing && (
-          <div className="flex items-center gap-4 mt-1.5">
+          <div className="flex items-center gap-3 mt-1.5 ml-7">
             <button
               onClick={handleLike}
               disabled={!userId}
-              className={`flex items-center gap-1 text-[13px] transition-colors duration-200 ${
+              className={`flex items-center gap-1 text-[12px] transition-colors duration-200 ${
                 liked
                   ? "text-emerald-400"
                   : "text-zinc-500 hover:text-emerald-400"
@@ -225,7 +219,7 @@ export default function CommentItem({
             {userId && (
               <button
                 onClick={() => setReplying(!replying)}
-                className="text-zinc-500 hover:text-zinc-300 text-[13px] transition-colors duration-200"
+                className="text-zinc-500 hover:text-zinc-300 text-[12px] transition-colors duration-200"
               >
                 Reply
               </button>
@@ -235,34 +229,26 @@ export default function CommentItem({
 
         {/* Inline reply form */}
         {replying && (
-          <form onSubmit={handleReplySubmit} className="flex gap-2 items-center mt-2">
+          <form onSubmit={handleReplySubmit} className="flex gap-2 items-center mt-2.5 ml-7">
             <input
               type="text"
               placeholder="Write a reply..."
               value={replyBody}
               onChange={(e) => setReplyBody(e.target.value)}
-              className={
-                isSession
-                  ? "flex-1 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-1.5 text-sm text-txt-primary placeholder-[rgba(255,255,255,0.3)] focus:outline-none focus:border-[rgba(255,255,255,0.15)] focus:ring-1 focus:ring-[rgba(255,255,255,0.06)] transition-all duration-200"
-                  : "flex-1 bg-transparent border-b border-dark-border py-1.5 text-sm text-txt-primary placeholder-txt-tertiary focus:outline-none focus:border-[rgba(255,255,255,0.25)]"
-              }
+              className="flex-1 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] rounded-xl px-3 py-1.5 text-sm text-txt-primary placeholder-[rgba(255,255,255,0.25)] focus:outline-none focus:border-[rgba(255,255,255,0.15)] focus:ring-1 focus:ring-[rgba(255,255,255,0.06)] transition-all duration-200"
               autoFocus
             />
             <button
               type="submit"
               disabled={replySubmitting || !replyBody.trim()}
-              className={`text-[13px] px-3 py-1 rounded-md disabled:opacity-40 shrink-0 ${
-                isSession
-                  ? "text-white bg-emerald-500/90 hover:bg-emerald-500 rounded-lg"
-                  : "text-white bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)]"
-              }`}
+              className="text-[12px] px-3 py-1.5 rounded-lg disabled:opacity-40 shrink-0 text-white bg-emerald-500/90 hover:bg-emerald-500 font-medium transition-all duration-200"
             >
               {replySubmitting ? "..." : "Reply"}
             </button>
             <button
               type="button"
               onClick={() => { setReplying(false); setReplyBody(""); }}
-              className="text-[13px] text-txt-tertiary"
+              className="text-[12px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200"
             >
               Cancel
             </button>
@@ -270,22 +256,27 @@ export default function CommentItem({
         )}
       </div>
 
-      {/* Render replies */}
+      {/* Render replies with threading line */}
       {comment.replies.length > 0 && (
-        <div className="ml-6 pl-4 border-l-2 border-zinc-800">
+        <div className="ml-7 pl-4 relative">
+          {/* Vertical connecting line */}
+          <div className="absolute left-0 top-0 bottom-2 w-px bg-[rgba(255,255,255,0.08)]" />
           {comment.replies.map((reply) => (
-            <CommentItem
-              key={reply.id}
-              comment={reply}
-              userId={userId}
-              isAdmin={isAdmin}
-              depth={depth + 1}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-              onLikeToggle={onLikeToggle}
-              onReply={onReply}
-              variant={variant}
-            />
+            <div key={reply.id} className="relative">
+              {/* Horizontal branch connector */}
+              <div className="absolute left-0 top-5 w-3 h-px bg-[rgba(255,255,255,0.08)]" style={{ marginLeft: "-16px" }} />
+              <CommentItem
+                comment={reply}
+                userId={userId}
+                isAdmin={isAdmin}
+                depth={depth + 1}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                onLikeToggle={onLikeToggle}
+                onReply={onReply}
+                variant={variant}
+              />
+            </div>
           ))}
         </div>
       )}

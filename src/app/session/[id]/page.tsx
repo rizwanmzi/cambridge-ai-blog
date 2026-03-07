@@ -17,11 +17,18 @@ interface PostWithProfile {
   profiles: { username: string; role: string } | null;
 }
 
-const categoryClass: Record<string, string> = {
-  "Live Insight": "cat-live-insight",
-  "Formal Notes": "cat-formal-notes",
-  "Key Takeaway": "cat-key-takeaway",
-  Reflection: "cat-reflection",
+const categoryBorderColor: Record<string, string> = {
+  "Live Insight": "rgba(74,222,128,0.5)",
+  "Formal Notes": "rgba(96,165,250,0.5)",
+  "Key Takeaway": "rgba(251,191,36,0.5)",
+  Reflection: "rgba(192,132,252,0.5)",
+};
+
+const categoryGlowColor: Record<string, string> = {
+  "Live Insight": "rgba(74,222,128,0.08)",
+  "Formal Notes": "rgba(96,165,250,0.08)",
+  "Key Takeaway": "rgba(251,191,36,0.08)",
+  Reflection: "rgba(192,132,252,0.08)",
 };
 
 const categoryPillClass: Record<string, string> = {
@@ -97,28 +104,45 @@ export default async function SessionPage({
   };
 
   return (
-    <div className="max-w-[720px] mx-auto">
-      {/* Back link with hover arrow animation */}
-      <Link
-        href="/"
-        className="group inline-flex items-center text-[13px] text-txt-tertiary hover:text-txt-secondary transition-all duration-200 mb-6"
-      >
-        <span className="inline-block transition-transform duration-200 group-hover:-translate-x-0.5">&larr;</span>
-        <span className="hidden sm:inline ml-1.5">Programme Agenda</span>
-      </Link>
+    <div className="max-w-[720px] mx-auto relative">
+      {/* Sticky session header */}
+      <div className="sticky top-0 z-30 -mx-4 px-4 pt-3 pb-3 bg-dark-bg/80 backdrop-blur-xl border-b border-[rgba(255,255,255,0.04)]">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="group flex items-center justify-center w-8 h-8 rounded-full bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] transition-all duration-200 shrink-0"
+          >
+            <svg className="w-4 h-4 text-txt-tertiary group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-[15px] font-semibold text-white truncate leading-tight">
+              {session.title}
+            </h1>
+            <p className="text-[11px] text-txt-tertiary mt-0.5">
+              {formatTime(session.start_time)}&ndash;{formatTime(session.end_time)}
+              {session.faculty && <> &middot; {session.faculty}</>}
+            </p>
+          </div>
+        </div>
+      </div>
 
-      {/* Session header */}
-      <header className="mb-6 pb-6 border-b border-[rgba(255,255,255,0.06)]">
-        <h1 className="text-2xl font-semibold text-white leading-tight">
+      {/* Session hero area */}
+      <header className="mt-6 mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[11px] font-medium text-emerald-400/70 bg-emerald-400/10 px-2.5 py-1 rounded-full border border-emerald-400/15">
+            Day {session.day_number}
+          </span>
+          <span className="text-[12px] text-txt-tertiary">
+            {dayLabels[session.day_number]}
+          </span>
+        </div>
+        <h2 className="text-2xl font-semibold text-white leading-tight mb-2">
           {session.title}
-        </h1>
-        <p className="text-[13px] text-txt-tertiary mt-2">
-          Day {session.day_number} &middot; {dayLabels[session.day_number]}
-          {" "}&middot; {formatTime(session.start_time)}–{formatTime(session.end_time)}
-          {session.faculty && <> &middot; {session.faculty}</>}
-        </p>
+        </h2>
         {session.description && (
-          <p className="text-sm text-txt-secondary mt-3">{session.description}</p>
+          <p className="text-sm text-txt-secondary leading-relaxed">{session.description}</p>
         )}
       </header>
 
@@ -126,35 +150,32 @@ export default async function SessionPage({
       <QuickPostBar sessionId={session.id} />
       <ComposerFAB />
 
-      {/* Posts + AI tabs in a card */}
-      <section className="mb-8 bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
+      {/* Posts + AI + Photos tabs in glass card */}
+      <section className="mb-8 glass-panel overflow-hidden">
         <SessionTabs
           sessionId={session.id}
           photoCount={photoCount || 0}
           postsContent={
             <>
               {posts && posts.length > 0 ? (
-                <div className="divide-y divide-[rgba(255,255,255,0.04)]">
-                  {(posts as PostWithProfile[]).map((post) => (
+                <div className="animate-fade-up">
+                  {(posts as PostWithProfile[]).map((post, idx) => (
                     <Link
                       key={post.id}
                       href={`/post/${post.id}`}
-                      className={`block px-4 py-3.5 hover:bg-[rgba(255,255,255,0.03)] transition-all duration-200 group border-l-2 ${
-                        categoryClass[post.category]
-                          ? `border-l-current`
-                          : "border-l-transparent"
-                      }`}
+                      className="block px-4 py-3.5 hover:bg-[rgba(255,255,255,0.03)] transition-all duration-200 group border-l-[3px]"
                       style={{
-                        borderLeftColor:
-                          post.category === "Live Insight" ? "rgba(74,222,128,0.4)" :
-                          post.category === "Formal Notes" ? "rgba(96,165,250,0.4)" :
-                          post.category === "Key Takeaway" ? "rgba(251,191,36,0.4)" :
-                          post.category === "Reflection" ? "rgba(192,132,252,0.4)" :
-                          "transparent"
+                        borderLeftColor: categoryBorderColor[post.category] || "transparent",
+                        boxShadow: categoryGlowColor[post.category]
+                          ? `inset 4px 0 12px ${categoryGlowColor[post.category]}`
+                          : "none",
+                        borderBottom: idx < (posts as PostWithProfile[]).length - 1
+                          ? "1px solid rgba(255,255,255,0.04)"
+                          : "none",
                       }}
                     >
                       <div className="flex items-center gap-2.5 mb-1">
-                        <span className="text-sm text-[rgba(255,255,255,0.85)] group-hover:text-white transition-colors duration-200 truncate flex-1">
+                        <span className="text-sm text-[rgba(255,255,255,0.85)] group-hover:text-white transition-colors duration-200 truncate flex-1 font-medium">
                           {post.title}
                         </span>
                         <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${categoryPillClass[post.category] || "text-txt-tertiary bg-[rgba(255,255,255,0.05)]"}`}>
@@ -166,7 +187,7 @@ export default async function SessionPage({
                           <>
                             <span>{post.profiles.username}</span>
                             <RoleBadge role={post.profiles.role} />
-                            <span>&middot;</span>
+                            <span className="text-[rgba(255,255,255,0.15)]">&middot;</span>
                           </>
                         )}
                         <TimeAgo date={post.created_at} />
@@ -175,9 +196,14 @@ export default async function SessionPage({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
+                <div className="text-center py-16 animate-fade-up">
+                  <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-[rgba(255,255,255,0.04)] flex items-center justify-center">
+                    <svg className="w-5 h-5 text-txt-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </div>
                   <p className="text-txt-tertiary text-sm">No posts yet.</p>
-                  <p className="text-txt-tertiary/60 text-[13px] mt-1">Be the first to share an insight.</p>
+                  <p className="text-txt-tertiary/50 text-[13px] mt-1">Be the first to share an insight.</p>
                 </div>
               )}
             </>
@@ -185,8 +211,8 @@ export default async function SessionPage({
         />
       </section>
 
-      {/* Comments in a card */}
-      <div className="bg-[rgba(255,255,255,0.025)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 sm:p-5">
+      {/* Comments in a glass card */}
+      <div className="glass-panel p-4 sm:p-5 mb-8">
         <SessionComments
           sessionId={session.id}
           initialComments={comments || []}

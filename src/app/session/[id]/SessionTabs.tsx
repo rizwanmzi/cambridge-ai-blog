@@ -60,75 +60,70 @@ export default function SessionTabs({ sessionId, postsContent, photoCount }: Ses
 
   return (
     <div>
-      {/* Tab bar */}
-      <div className="flex border-b border-[rgba(255,255,255,0.06)] px-4">
-        <button
-          onClick={() => handleTabSwitch("posts")}
-          className={`relative px-3 py-3 text-[13px] font-medium transition-all duration-200 ${
-            activeTab === "posts"
-              ? "text-white"
-              : "text-txt-tertiary hover:text-txt-secondary"
-          }`}
-        >
-          Posts
-          {activeTab === "posts" && (
-            <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-emerald-400 rounded-full" />
-          )}
-        </button>
-        <button
-          onClick={() => handleTabSwitch("ai")}
-          className={`relative px-3 py-3 text-[13px] font-medium transition-all duration-200 ${
-            activeTab === "ai"
-              ? "text-violet-300"
-              : "text-txt-tertiary hover:text-txt-secondary"
-          }`}
-        >
-          <span className="flex items-center gap-1">
-            <span className="text-[11px]">✦</span> AI Summary
-          </span>
-          {activeTab === "ai" && (
-            <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.5)]" />
-          )}
-        </button>
-        <button
-          onClick={() => handleTabSwitch("photos")}
-          className={`relative px-3 py-3 text-[13px] font-medium transition-all duration-200 ${
-            activeTab === "photos"
-              ? "text-white"
-              : "text-txt-tertiary hover:text-txt-secondary"
-          }`}
-        >
-          <span className="flex items-center gap-1.5">
+      {/* Pill-shaped tab toggle */}
+      <div className="p-3">
+        <div className="inline-flex items-center bg-[rgba(255,255,255,0.04)] rounded-full p-1 gap-0.5">
+          <button
+            onClick={() => handleTabSwitch("posts")}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 ${
+              activeTab === "posts"
+                ? "bg-[rgba(255,255,255,0.1)] text-white shadow-sm"
+                : "text-txt-tertiary hover:text-txt-secondary"
+            }`}
+          >
+            Posts
+          </button>
+          <button
+            onClick={() => handleTabSwitch("ai")}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 ${
+              activeTab === "ai"
+                ? "bg-violet-500/15 text-violet-300 shadow-sm shadow-violet-500/10"
+                : "text-txt-tertiary hover:text-txt-secondary"
+            }`}
+          >
+            <span className="text-[10px]">&#10022;</span> AI Summary
+          </button>
+          <button
+            onClick={() => handleTabSwitch("photos")}
+            className={`px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 ${
+              activeTab === "photos"
+                ? "bg-[rgba(255,255,255,0.1)] text-white shadow-sm"
+                : "text-txt-tertiary hover:text-txt-secondary"
+            }`}
+          >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             Photos
             {photoCount > 0 && (
-              <span className="text-[10px] bg-[rgba(255,255,255,0.1)] text-txt-tertiary px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] bg-[rgba(255,255,255,0.1)] text-txt-tertiary px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                 {photoCount}
               </span>
             )}
-          </span>
-          {activeTab === "photos" && (
-            <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-emerald-400 rounded-full" />
-          )}
-        </button>
+          </button>
+        </div>
       </div>
 
       {/* Tab content */}
-      {activeTab === "posts" && postsContent}
+      {activeTab === "posts" && (
+        <div className="animate-fade-up">
+          {postsContent}
+        </div>
+      )}
 
       {activeTab === "ai" && (
-        <div className="p-4">
+        <div className="p-4 animate-fade-up">
           {loading && <AILoadingState />}
           {error && (
-            <p className="text-sm text-txt-tertiary py-6">
-              Couldn&apos;t generate summary &mdash;{" "}
-              <button onClick={() => loadSummary()} className="underline hover:text-txt-secondary transition-colors duration-200">
-                try again
-              </button>
-            </p>
+            <div className="text-center py-10">
+              <p className="text-sm text-txt-tertiary">
+                Couldn&apos;t generate summary &mdash;{" "}
+                <button onClick={() => loadSummary()} className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors duration-200">
+                  try again
+                </button>
+              </p>
+            </div>
           )}
           {summary && !loading && (
             <AISummaryCard
@@ -142,7 +137,9 @@ export default function SessionTabs({ sessionId, postsContent, photoCount }: Ses
       )}
 
       {activeTab === "photos" && (
-        <PhotoGallery sessionId={sessionId} initialPhotoCount={photoCount} />
+        <div className="animate-fade-up">
+          <PhotoGallery sessionId={sessionId} initialPhotoCount={photoCount} />
+        </div>
       )}
     </div>
   );
