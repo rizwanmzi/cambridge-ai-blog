@@ -40,7 +40,6 @@ export default function CommentItem({
   const [liking, setLiking] = useState(false);
 
   const canEdit = userId === comment.user_id || isAdmin;
-  const isSession = variant === "session";
   const isReply = depth > 0;
 
   async function handleSave() {
