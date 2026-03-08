@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import AudioPlayer from "@/components/AudioPlayer";
 
 export const metadata: Metadata = {
   title: "Cambridge AI Leadership Programme — Cohort 2",
@@ -46,6 +47,7 @@ export default async function RootLayout({
           <DashboardLayout sessions={sessionList}>
             {children}
           </DashboardLayout>
+          <AudioPlayer />
         </AuthProvider>
       </body>
     </html>
