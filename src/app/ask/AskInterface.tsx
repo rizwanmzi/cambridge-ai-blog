@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Source {
   post_id: number;
@@ -136,9 +138,11 @@ export default function AskInterface() {
                   <span className="text-violet-400 text-[10px]">&#10022;</span>
                   <span className="text-[11px] font-medium text-violet-300/70">AI</span>
                 </div>
-                <p className="text-sm text-[rgba(255,255,255,0.75)] leading-relaxed whitespace-pre-line">
-                  {msg.content}
-                </p>
+                <div className="text-sm text-[rgba(255,255,255,0.75)] leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-2 prose-headings:text-white prose-headings:font-semibold prose-strong:text-white prose-ul:my-2 prose-li:my-0.5 prose-a:text-violet-300 prose-blockquote:border-violet-500/30 prose-blockquote:text-[rgba(255,255,255,0.6)]">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {msg.content.replace(/\\n/g, "\n").replace(/\\"/g, '"')}
+                  </ReactMarkdown>
+                </div>
                 {msg.sources && msg.sources.length > 0 && (
                   <div className="mt-3 pt-2.5 border-t border-violet-500/10">
                     <p className="text-[10px] uppercase tracking-widest text-[rgba(255,255,255,0.25)] font-medium mb-2">Sources</p>
