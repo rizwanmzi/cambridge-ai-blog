@@ -456,13 +456,11 @@ export default function CenterPanel({
               No AI summary generated yet for this session.
             </p>
             <button
-              onClick={() =>
-                selectedSessionId && fetchSummary(selectedSessionId, true)
-              }
-              disabled={summaryLoading}
+              onClick={handleRegenerate}
+              disabled={regenerating}
               className="text-sm font-medium text-violet-300 bg-violet-500/10 hover:bg-violet-500/15 border border-violet-500/20 px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-40"
             >
-              Generate Summary
+              {regenerating ? "Generating..." : "Generate Summary"}
             </button>
           </div>
         ) : (

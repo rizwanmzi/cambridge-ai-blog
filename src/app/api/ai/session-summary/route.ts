@@ -49,13 +49,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // No cached summary at all — generate fresh
-    const summary = await generateSessionSummary(session_id);
-    return NextResponse.json({
-      summary,
-      generated_at: new Date().toISOString(),
-      is_stale: false,
-    });
+    // No cached summary — return null (admin must generate explicitly)
+    return NextResponse.json({ summary: null });
   } catch (err) {
     console.error("Session summary error:", err);
     return NextResponse.json({ error: "Failed to generate summary" }, { status: 500 });
