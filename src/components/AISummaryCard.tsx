@@ -200,13 +200,18 @@ export default function AISummaryCard({
           {showRegenerate && (
             <button
               onClick={onRegenerate}
-              disabled={regenerating}
-              className="text-[11px] text-violet-400/60 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/15 border border-violet-500/15 px-3 py-1.5 rounded-lg disabled:opacity-40 transition-all duration-200 flex items-center gap-1.5"
+              disabled={regenerating || !isStale}
+              className={`text-[11px] border px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                isStale
+                  ? "text-violet-400/60 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/15 border-violet-500/15"
+                  : "text-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.02)] border-[rgba(255,255,255,0.06)] cursor-not-allowed"
+              } disabled:opacity-40`}
+              title={isStale ? "New content added — click to regenerate" : "Summary is up to date"}
             >
               <svg className={`w-3 h-3 ${regenerating ? "animate-spin" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              {regenerating ? "Regenerating..." : "Regenerate"}
+              {regenerating ? "Regenerating..." : isStale ? "Regenerate" : "Up to date"}
             </button>
           )}
         </div>
