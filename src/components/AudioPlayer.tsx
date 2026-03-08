@@ -114,13 +114,13 @@ export default function AudioPlayer() {
       {/* Floating player */}
       <div className={`fixed z-50 transition-all duration-300 ${
         minimized
-          ? "bottom-4 right-4"
-          : "bottom-4 left-1/2 -translate-x-1/2 w-[360px] max-w-[calc(100vw-2rem)]"
+          ? "bottom-20 md:bottom-4 right-4"
+          : "bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 w-[360px] max-w-[calc(100vw-2rem)]"
       }`}>
         {minimized ? (
           <button
             onClick={() => setMinimized(false)}
-            className="w-10 h-10 rounded-full bg-copper-500/20 border border-copper-500/30 backdrop-blur-xl flex items-center justify-center hover:bg-copper-500/30 transition-all duration-200 shadow-lg shadow-copper-500/10"
+            className="w-11 h-11 rounded-full bg-copper-500/20 border border-copper-500/30 backdrop-blur-xl flex items-center justify-center hover:bg-copper-500/30 transition-all duration-200 shadow-lg shadow-copper-500/10"
           >
             <svg className="w-4 h-4 text-copper-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
@@ -132,7 +132,7 @@ export default function AudioPlayer() {
               {/* Skip Prev */}
               <button
                 onClick={skipPrev}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[rgba(255,255,255,0.35)] hover:text-copper-400 transition-colors shrink-0"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-[rgba(255,255,255,0.35)] hover:text-copper-400 transition-colors shrink-0"
               >
                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
@@ -159,7 +159,7 @@ export default function AudioPlayer() {
               {/* Skip Next */}
               <button
                 onClick={skipNext}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[rgba(255,255,255,0.35)] hover:text-copper-400 transition-colors shrink-0"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-[rgba(255,255,255,0.35)] hover:text-copper-400 transition-colors shrink-0"
               >
                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
@@ -195,7 +195,7 @@ export default function AudioPlayer() {
               {/* Minimize */}
               <button
                 onClick={() => setMinimized(true)}
-                className="w-6 h-6 rounded flex items-center justify-center text-[rgba(255,255,255,0.25)] hover:text-[rgba(255,255,255,0.5)] transition-colors shrink-0"
+                className="w-8 h-8 rounded flex items-center justify-center text-[rgba(255,255,255,0.25)] hover:text-[rgba(255,255,255,0.5)] transition-colors shrink-0"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

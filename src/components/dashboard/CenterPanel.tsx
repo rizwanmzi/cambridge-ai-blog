@@ -36,7 +36,7 @@ interface CachedSummary {
 /* ------------------------------------------------------------------ */
 function LoadingSkeleton() {
   return (
-    <div className="p-6 space-y-8 animate-pulse">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8 animate-pulse">
       {/* Session header skeleton */}
       <div className="space-y-3">
         <div className="h-5 w-20 rounded-full bg-[rgba(255,255,255,0.06)]" />
@@ -127,7 +127,7 @@ function WelcomeState() {
       <p className="text-[15px] text-[rgba(255,255,255,0.5)] mb-8">
         Cohort 2 — Live Learning AI Blog
       </p>
-      <p className="text-sm text-[rgba(255,255,255,0.3)] flex items-center gap-2">
+      <p className="text-sm text-[rgba(255,255,255,0.45)] flex items-center gap-2">
         <svg
           className="w-4 h-4"
           fill="none"
@@ -157,7 +157,7 @@ function PhotosStrip({ photos }: { photos: SessionPhoto[] }) {
 
   return (
     <section>
-      <h3 className="text-[11px] uppercase tracking-widest text-[rgba(255,255,255,0.3)] font-medium mb-3 flex items-center gap-2">
+      <h3 className="text-[11px] uppercase tracking-widest text-[rgba(255,255,255,0.45)] font-medium mb-3 flex items-center gap-2">
         <svg
           className="w-3.5 h-3.5 text-[rgba(255,255,255,0.25)]"
           fill="none"
@@ -172,11 +172,12 @@ function PhotosStrip({ photos }: { photos: SessionPhoto[] }) {
           />
         </svg>
         Photos
-        <span className="text-[10px] text-[rgba(255,255,255,0.2)] font-normal">
+        <span className="text-[10px] text-[rgba(255,255,255,0.4)] font-normal">
           ({photos.length})
         </span>
       </h3>
 
+      <div className="relative">
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10">
         {photos.map((photo) => {
           const {
@@ -208,6 +209,10 @@ function PhotosStrip({ photos }: { photos: SessionPhoto[] }) {
             </div>
           );
         })}
+      </div>
+      {photos.length > 3 && (
+        <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#0A0A0A] to-transparent pointer-events-none" />
+      )}
       </div>
     </section>
   );
@@ -368,7 +373,7 @@ export default function CenterPanel({
   const timeRange = `${session.start_time.slice(0, 5)}–${session.end_time.slice(0, 5)}`;
 
   return (
-    <div className="p-6 space-y-8 overflow-y-auto h-full">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8 overflow-y-auto h-full">
       {/* ── 1. Session Header ────────────────────────────────────── */}
       <header className="space-y-2">
         <div className="flex items-center gap-3">
@@ -382,7 +387,7 @@ export default function CenterPanel({
           )}
         </div>
 
-        <h1 className="text-2xl font-semibold text-white leading-tight">
+        <h1 className="text-xl md:text-2xl font-semibold text-white leading-tight">
           {session.title}
         </h1>
 
@@ -490,7 +495,7 @@ export default function CenterPanel({
             <p className="text-sm text-[rgba(255,255,255,0.35)]">
               No posts yet for this session.
             </p>
-            <p className="text-[13px] text-[rgba(255,255,255,0.2)] mt-1">
+            <p className="text-[13px] text-[rgba(255,255,255,0.4)] mt-1">
               Be the first to share an insight.
             </p>
           </div>

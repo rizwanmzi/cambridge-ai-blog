@@ -198,7 +198,7 @@ export default function NewPostForm() {
       </form>
 
       {/* Mobile sticky */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/95 backdrop-blur border-t border-[rgba(255,255,255,0.06)] p-4">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-dark-bg/95 backdrop-blur border-t border-[rgba(255,255,255,0.06)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={() => {

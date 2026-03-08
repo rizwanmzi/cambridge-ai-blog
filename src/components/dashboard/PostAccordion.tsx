@@ -191,7 +191,7 @@ export default function PostAccordion({
       {isExpanded && (
         <div className="px-4 pb-4 pt-1">
           {/* Full markdown body */}
-          <div className="prose prose-invert prose-sm max-w-none mb-6 pl-7">
+          <div className="prose prose-invert prose-sm max-w-none mb-6 pl-7 overflow-x-auto">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {post.body}
             </ReactMarkdown>

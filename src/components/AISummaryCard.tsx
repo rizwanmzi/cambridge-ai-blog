@@ -169,7 +169,7 @@ export default function AISummaryCard({
   return (
     <div className="rounded-2xl overflow-hidden border border-copper-500/10 ai-brief-glow">
       {/* ── Gradient header bar ── */}
-      <div className="relative bg-gradient-to-r from-copper-500/[0.08] via-copper-500/[0.06] to-copper-500/[0.08] px-5 py-4">
+      <div className="relative bg-gradient-to-r from-copper-500/[0.08] via-copper-500/[0.06] to-copper-500/[0.08] px-4 py-3.5 md:px-5 md:py-4">
         <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)]" />
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -242,7 +242,7 @@ export default function AISummaryCard({
       </div>
 
       {/* ── Body ── */}
-      <div className="bg-copper-500/[0.02] px-5 py-5 space-y-4">
+      <div className="bg-copper-500/[0.02] px-4 py-4 md:px-5 md:py-5 space-y-4">
         {/* ── So What — hero section ── */}
         {summary.so_what && (
           <div className="relative rounded-xl bg-gradient-to-br from-copper-500/[0.08] to-copper-500/[0.05] border border-copper-500/15 p-5 overflow-hidden">

@@ -120,14 +120,14 @@ export default function CommentItem({
             <span className="ml-auto flex gap-2">
               <button
                 onClick={() => setEditing(true)}
-                className="text-[11px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200"
+                className="text-[12px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200 px-1.5 py-1 -my-1"
               >
                 Edit
               </button>
               {!showDelete ? (
                 <button
                   onClick={() => setShowDelete(true)}
-                  className="text-[11px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200"
+                  className="text-[12px] text-txt-tertiary hover:text-txt-secondary transition-colors duration-200 px-1.5 py-1 -my-1"
                 >
                   Delete
                 </button>
@@ -136,13 +136,13 @@ export default function CommentItem({
                   <button
                     onClick={handleDelete}
                     disabled={deleting}
-                    className="text-[11px] text-rose-400/70 hover:text-rose-400 transition-colors duration-200"
+                    className="text-[12px] text-rose-400/70 hover:text-rose-400 transition-colors duration-200 px-1.5 py-1 -my-1"
                   >
                     {deleting ? "..." : "Confirm"}
                   </button>
                   <button
                     onClick={() => setShowDelete(false)}
-                    className="text-[11px] text-txt-tertiary transition-colors duration-200"
+                    className="text-[12px] text-txt-tertiary transition-colors duration-200 px-1.5 py-1 -my-1"
                   >
                     Cancel
                   </button>
@@ -203,7 +203,7 @@ export default function CommentItem({
             <button
               onClick={handleLike}
               disabled={!userId}
-              className={`flex items-center gap-1 text-[12px] transition-colors duration-200 ${
+              className={`flex items-center gap-1 text-[12px] py-1.5 transition-colors duration-200 ${
                 liked
                   ? "text-emerald-400"
                   : "text-zinc-500 hover:text-emerald-400"
@@ -218,7 +218,7 @@ export default function CommentItem({
             {userId && (
               <button
                 onClick={() => setReplying(!replying)}
-                className="text-zinc-500 hover:text-zinc-300 text-[12px] transition-colors duration-200"
+                className="text-zinc-500 hover:text-zinc-300 text-[12px] py-1.5 transition-colors duration-200"
               >
                 Reply
               </button>
