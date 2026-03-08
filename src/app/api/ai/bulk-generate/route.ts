@@ -7,35 +7,43 @@ import { generateSessionSummary } from "@/lib/ai-generate";
 export const maxDuration = 300; // 5 minutes for Vercel
 
 export async function POST(request: NextRequest) {
-  const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll(); },
-        setAll(cookiesToSet) {
-          try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch {}
+  const body = await request.json().catch(() => ({}));
+
+  // Auth: either service key header OR cookie-based admin auth
+  const authHeader = request.headers.get("x-api-key");
+  if (authHeader && authHeader === process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    // Authenticated via service key — proceed
+  } else {
+    // Fall back to cookie-based admin auth
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() { return cookieStore.getAll(); },
+          setAll(cookiesToSet) {
+            try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch {}
+          },
         },
-      },
+      }
+    );
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-  );
-
-  // Auth check — admin only
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-  if (!profile || profile.role !== "Admin") {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (!profile || profile.role !== "Admin") {
+      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    }
   }
 
-  // Get all sessions that have at least one post
+  // Get all sessions
   const { data: sessions } = await getServiceClient()
     .from("sessions")
     .select("id, title")
@@ -57,19 +65,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Optional: only regenerate stale/missing ones
-  const { force } = await request.json().catch(() => ({ force: false }));
-
+  const force = body.force || false;
   const results: { id: number; title: string; status: string }[] = [];
 
   for (const session of sessions) {
-    // Skip sessions with no posts
     if (!sessionsWithPosts.has(session.id)) {
       results.push({ id: session.id, title: session.title, status: "skipped (no posts)" });
       continue;
     }
 
-    // Check if fresh cache exists (skip unless force)
     if (!force) {
       const { data: cached } = await getServiceClient()
         .from("ai_summaries")

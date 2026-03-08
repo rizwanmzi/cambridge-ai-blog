@@ -1,8 +1,8 @@
 export default function AILoadingState() {
   return (
-    <div className="border-l-2 border-violet-500/50 pl-4 py-2 ai-glow rounded-r-lg">
+    <div className="border-l-2 border-copper-500/50 pl-4 py-2 ai-glow rounded-r-lg">
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-[11px] font-medium text-violet-300/80">✦ AI</span>
+        <span className="text-[11px] font-medium text-copper-300/80 ai-pulse">✦ AI</span>
         <span className="dot-pulse" />
       </div>
       <div className="space-y-2.5">

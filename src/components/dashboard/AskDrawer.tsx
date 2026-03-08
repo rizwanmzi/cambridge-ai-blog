@@ -22,8 +22,8 @@ export default function AskDrawer({ open, onClose }: AskDrawerProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-[rgba(255,255,255,0.06)]">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-              <span className="text-violet-400 text-xs">&#10022;</span>
+            <div className="w-7 h-7 rounded-lg bg-copper-500/10 border border-copper-500/20 flex items-center justify-center">
+              <span className="text-copper-400 text-xs ai-pulse">&#10022;</span>
             </div>
             <h2 className="text-sm font-semibold text-white">Ask the Programme</h2>
           </div>

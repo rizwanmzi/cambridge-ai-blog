@@ -77,7 +77,7 @@ export default function SessionTabs({ sessionId, postsContent, photoCount }: Ses
             onClick={() => handleTabSwitch("ai")}
             className={`px-4 py-1.5 text-[13px] font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 ${
               activeTab === "ai"
-                ? "bg-violet-500/15 text-violet-300 shadow-sm shadow-violet-500/10"
+                ? "bg-copper-500/15 text-copper-300 shadow-sm shadow-copper-500/10"
                 : "text-txt-tertiary hover:text-txt-secondary"
             }`}
           >
@@ -119,7 +119,7 @@ export default function SessionTabs({ sessionId, postsContent, photoCount }: Ses
             <div className="text-center py-10">
               <p className="text-sm text-txt-tertiary">
                 Couldn&apos;t generate summary &mdash;{" "}
-                <button onClick={() => loadSummary()} className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors duration-200">
+                <button onClick={() => loadSummary()} className="text-copper-400 hover:text-copper-300 underline underline-offset-2 transition-colors duration-200">
                   try again
                 </button>
               </p>

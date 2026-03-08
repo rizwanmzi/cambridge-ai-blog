@@ -71,6 +71,7 @@ Rules:
 - Be conversational and specific. No waffle.
 - If attendees disagreed on a topic, present both sides.
 - British English.
+- Use markdown headings (## or ###) for section titles, NOT bold (**text**). Use bullet points for lists. Keep formatting clean and readable.
 
 When you reference a post, include its Post ID and Session ID so they can be linked.
 

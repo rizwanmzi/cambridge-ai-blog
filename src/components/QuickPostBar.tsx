@@ -9,7 +9,7 @@ const CATEGORIES = [
   { label: "Live Insight", color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25" },
   { label: "Formal Notes", color: "bg-blue-500/15 text-blue-400 border-blue-500/25" },
   { label: "Key Takeaway", color: "bg-amber-500/15 text-amber-400 border-amber-500/25" },
-  { label: "Reflection", color: "bg-purple-500/15 text-purple-400 border-purple-500/25" },
+  { label: "Reflection", color: "bg-pink-500/15 text-pink-400 border-pink-500/25" },
 ];
 
 export default function QuickPostBar({ sessionId }: { sessionId: number }) {

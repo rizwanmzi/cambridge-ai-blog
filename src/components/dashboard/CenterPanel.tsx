@@ -79,19 +79,19 @@ function LoadingSkeleton() {
 /* ------------------------------------------------------------------ */
 function SummaryShimmer() {
   return (
-    <div className="rounded-2xl border border-violet-500/10 p-5 space-y-4 animate-pulse bg-violet-500/[0.02]">
+    <div className="rounded-2xl border border-copper-500/10 p-5 space-y-4 animate-pulse bg-copper-500/[0.02]">
       <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-lg bg-violet-500/10" />
-        <div className="h-4 w-32 rounded bg-violet-500/10" />
+        <div className="w-7 h-7 rounded-lg bg-copper-500/10" />
+        <div className="h-4 w-32 rounded bg-copper-500/10" />
       </div>
       <div className="space-y-3">
-        <div className="h-4 w-full rounded bg-violet-500/[0.06]" />
-        <div className="h-4 w-5/6 rounded bg-violet-500/[0.06]" />
-        <div className="h-4 w-2/3 rounded bg-violet-500/[0.06]" />
+        <div className="h-4 w-full rounded bg-copper-500/[0.06]" />
+        <div className="h-4 w-5/6 rounded bg-copper-500/[0.06]" />
+        <div className="h-4 w-2/3 rounded bg-copper-500/[0.06]" />
         <div className="flex gap-2 pt-2">
-          <div className="h-6 w-20 rounded-full bg-violet-500/[0.06]" />
-          <div className="h-6 w-24 rounded-full bg-violet-500/[0.06]" />
-          <div className="h-6 w-16 rounded-full bg-violet-500/[0.06]" />
+          <div className="h-6 w-20 rounded-full bg-copper-500/[0.06]" />
+          <div className="h-6 w-24 rounded-full bg-copper-500/[0.06]" />
+          <div className="h-6 w-16 rounded-full bg-copper-500/[0.06]" />
         </div>
       </div>
     </div>
@@ -448,9 +448,9 @@ export default function CenterPanel({
             isStale={summary.isStale}
           />
         ) : isAdmin ? (
-          <div className="rounded-2xl border border-dashed border-violet-500/20 p-6 text-center bg-violet-500/[0.02]">
-            <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mx-auto mb-3">
-              <span className="text-violet-400 text-sm">&#10022;</span>
+          <div className="rounded-2xl border border-dashed border-copper-500/20 p-6 text-center bg-copper-500/[0.02]">
+            <div className="w-10 h-10 rounded-xl bg-copper-500/10 border border-copper-500/20 flex items-center justify-center mx-auto mb-3">
+              <span className="text-copper-400 text-sm">&#10022;</span>
             </div>
             <p className="text-sm text-[rgba(255,255,255,0.5)] mb-3">
               No AI summary generated yet for this session.
@@ -458,7 +458,7 @@ export default function CenterPanel({
             <button
               onClick={handleRegenerate}
               disabled={regenerating}
-              className="text-sm font-medium text-violet-300 bg-violet-500/10 hover:bg-violet-500/15 border border-violet-500/20 px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-40"
+              className="text-sm font-medium text-copper-300 bg-copper-500/10 hover:bg-copper-500/15 border border-copper-500/20 px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-40"
             >
               {regenerating ? "Generating..." : "Generate Summary"}
             </button>

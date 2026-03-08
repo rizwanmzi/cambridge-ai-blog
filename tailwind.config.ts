@@ -20,6 +20,11 @@ const config: Config = {
         ai: {
           indigo: "rgba(99,102,241,0.5)",
         },
+        copper: {
+          300: "#e6a96e",
+          400: "#d4874d",
+          500: "#c06b30",
+        },
         txt: {
           primary: "rgba(255,255,255,0.9)",
           secondary: "rgba(255,255,255,0.5)",

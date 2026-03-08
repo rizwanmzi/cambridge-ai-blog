@@ -193,7 +193,7 @@ export default function GenerateSummaryButton({ dayNumber }: { dayNumber: number
       <button
         onClick={handleGenerate}
         disabled={loading}
-        className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-medium rounded-lg px-3 py-1.5 transition-colors disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 bg-copper-500 hover:bg-copper-400 text-white text-[11px] font-medium rounded-lg px-3 py-1.5 transition-colors disabled:opacity-50"
         title="Generate daily summary PDF"
       >
         {loading ? (

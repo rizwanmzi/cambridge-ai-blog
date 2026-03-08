@@ -87,9 +87,9 @@ export default function AudioPlayer() {
           /* ── Minimized: just a small circle button ── */
           <button
             onClick={() => setMinimized(false)}
-            className="w-10 h-10 rounded-full bg-violet-500/20 border border-violet-500/30 backdrop-blur-xl flex items-center justify-center hover:bg-violet-500/30 transition-all duration-200 shadow-lg shadow-violet-500/10"
+            className="w-10 h-10 rounded-full bg-copper-500/20 border border-copper-500/30 backdrop-blur-xl flex items-center justify-center hover:bg-copper-500/30 transition-all duration-200 shadow-lg shadow-copper-500/10"
           >
-            <svg className="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-copper-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
             </svg>
           </button>
@@ -100,15 +100,15 @@ export default function AudioPlayer() {
               {/* Play/Pause */}
               <button
                 onClick={togglePlay}
-                className="w-9 h-9 rounded-full bg-violet-500/20 border border-violet-500/25 flex items-center justify-center shrink-0 hover:bg-violet-500/30 transition-all duration-200"
+                className="w-9 h-9 rounded-full bg-copper-500/20 border border-copper-500/25 flex items-center justify-center shrink-0 hover:bg-copper-500/30 transition-all duration-200"
               >
                 {playing ? (
-                  <svg className="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-copper-400" fill="currentColor" viewBox="0 0 24 24">
                     <rect x="6" y="4" width="4" height="16" rx="1" />
                     <rect x="14" y="4" width="4" height="16" rx="1" />
                   </svg>
                 ) : (
-                  <svg className="w-4 h-4 text-violet-400 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-copper-400 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 )}
@@ -130,10 +130,10 @@ export default function AudioPlayer() {
                   onClick={handleSeek}
                 >
                   <div
-                    className="h-full rounded-full bg-violet-500/60 group-hover:bg-violet-400/80 transition-colors duration-150 relative"
+                    className="h-full rounded-full bg-copper-500/60 group-hover:bg-copper-400/80 transition-colors duration-150 relative"
                     style={{ width: `${progressPct}%` }}
                   >
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-violet-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-copper-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
               </div>
