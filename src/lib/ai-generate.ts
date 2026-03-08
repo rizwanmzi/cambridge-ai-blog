@@ -128,18 +128,21 @@ Return ONLY valid JSON, no markdown fences.`;
     throw new Error("AI returned invalid JSON for session summary");
   }
 
-  // Upsert cache
-  await getServiceClient().from("ai_summaries").upsert(
-    {
-      session_id: sessionId,
-      day_number: null,
-      scope: "session",
-      content,
-      generated_at: new Date().toISOString(),
-      is_stale: false,
-    },
-    { onConflict: "session_id" }
-  );
+  // Save to cache (delete old, then insert)
+  await getServiceClient()
+    .from("ai_summaries")
+    .delete()
+    .eq("scope", "session")
+    .eq("session_id", sessionId);
+
+  await getServiceClient().from("ai_summaries").insert({
+    session_id: sessionId,
+    day_number: null,
+    scope: "session",
+    content,
+    generated_at: new Date().toISOString(),
+    is_stale: false,
+  });
 
   return content;
 }
@@ -208,17 +211,21 @@ Return ONLY valid JSON.`;
     throw new Error("AI returned invalid JSON for day summary");
   }
 
-  await getServiceClient().from("ai_summaries").upsert(
-    {
-      session_id: null,
-      day_number: dayNumber,
-      scope: "day",
-      content,
-      generated_at: new Date().toISOString(),
-      is_stale: false,
-    },
-    { onConflict: "day_number" }
-  );
+  // Save to cache (delete old, then insert)
+  await getServiceClient()
+    .from("ai_summaries")
+    .delete()
+    .eq("scope", "day")
+    .eq("day_number", dayNumber);
+
+  await getServiceClient().from("ai_summaries").insert({
+    session_id: null,
+    day_number: dayNumber,
+    scope: "day",
+    content,
+    generated_at: new Date().toISOString(),
+    is_stale: false,
+  });
 
   return content;
 }
