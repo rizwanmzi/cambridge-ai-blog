@@ -189,3 +189,39 @@ a, button, input, textarea, select {
   body { background: white !important; color: black !important; }
   .no-print { display: none !important; }
 }
+
+/* Dashboard layout */
+.dashboard-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.06) transparent;
+}
+.dashboard-sidebar::-webkit-scrollbar { width: 4px; }
+.dashboard-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 2px; }
+
+.drawer-backdrop {
+  animation: fadeIn 200ms ease-out;
+}
+.drawer-panel {
+  animation: slideInRight 200ms ease-out;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Sidebar day group */
+.day-group-toggle:hover { background: rgba(255,255,255,0.04); }
+.session-item { transition: all 150ms ease; }
+.session-item:hover { background: rgba(255,255,255,0.04); }
+.session-item.active { background: rgba(255,255,255,0.06); border-left: 2px solid rgb(52,211,153); }
+
+/* Post accordion */
+.accordion-content {
+  overflow: hidden;
+  transition: max-height 300ms ease, opacity 200ms ease;
+}
