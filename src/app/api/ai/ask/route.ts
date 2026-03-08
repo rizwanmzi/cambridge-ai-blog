@@ -3,6 +3,19 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase-service";
 import { getAnthropicClient, AI_MODEL, TONE_INSTRUCTION } from "@/lib/anthropic";
+import fs from "fs";
+import path from "path";
+
+// Load programme notes once at module level
+let programmeNotes = "";
+try {
+  programmeNotes = fs.readFileSync(
+    path.join(process.cwd(), "docs", "programme-notes.txt"),
+    "utf8"
+  );
+} catch {
+  // Notes file not available — continue without it
+}
 
 export async function POST(request: NextRequest) {
   const cookieStore = cookies();
@@ -59,29 +72,32 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `${TONE_INSTRUCTION}
 
-You are the programme's AI assistant. You answer questions using ONLY the content from posts, comments, and session discussions below. You also have knowledge of three pre-readings assigned to the cohort:
-1. "Generative AI Has a Visual Plagiarism Problem" (IEEE Spectrum) — AI models reproducing copyrighted visual styles
-2. "The Complex World of Style, Copyright, and Generative AI" (Creative Commons) — style, copyright law, and AI
-3. "AI 2027" — scenario-based exploration of near-term AI capability development
+You are the AI assistant for the Cambridge AI Leadership Programme. You ONLY answer questions that relate to the programme, its sessions, AI, machine learning, technology strategy, or topics connected to what was covered during the week. If someone asks something completely unrelated (e.g. recipes, sports scores, personal advice unrelated to AI), politely decline and redirect them to ask about the programme.
+
+You have two sources of knowledge:
+1. Participant posts and comments (below) -- cite these by title and author when relevant.
+2. Deep background knowledge of what was covered in each session (themes, debates, exercises, frameworks, examples). Use this naturally as if you were in the room. NEVER reference "notes", "a document", "session notes", or any written source. Speak as someone who attended and absorbed every session.
 
 Rules:
-- Answer from programme content. Cite specific posts by title and author name.
-- If referencing a session, name it: "In the Machine Learning session on Day 1..."
-- If the question wasn't covered in the programme, say so directly, then offer the closest related discussion.
+- Only answer questions related to the programme, AI, or connected topics.
+- When participants wrote about a topic, cite their posts by title and author name.
+- When a topic was covered in a session but no participant wrote about it, reference the session naturally: "In the Machine Learning session on Day 1..." without citing a written source.
+- If attendees disagreed, present both sides.
 - Be conversational and specific. No waffle.
-- If attendees disagreed on a topic, present both sides.
 - British English.
-- Use markdown headings (## or ###) for section titles, NOT bold (**text**). Use bullet points for lists. Keep formatting clean and readable.
+- Never use emojis.
+- Use markdown headings (## or ###) for section titles, not bold. Use bullet points for lists. Keep formatting clean.
+- Do not invent or fabricate quotes. Only quote what appears in participant posts.
 
 When you reference a post, include its Post ID and Session ID so they can be linked.
 
 Return ONLY valid JSON:
 {
-  "answer": "Your detailed answer with citations...",
+  "answer": "Your detailed answer here...",
   "sources": [{"post_id": 123, "title": "Post Title", "session_title": "Session Title"}]
 }
-
-Programme Content:
+${programmeNotes ? `\nProgramme Background Knowledge:\n${programmeNotes}\n` : ""}
+Participant Posts and Comments:
 ${postsContext || "No posts yet."}`;
 
     // Build messages with conversation history
