@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
-const AUDIO_SRC = "/audio/theme.mp3";
+const PLAYLIST = [
+  { src: "/audio/theme.mp3", title: "Off The Curb" },
+  { src: "/audio/artificial-alphabetics.mp3", title: "Artificial Alphabetics" },
+];
 
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -10,39 +13,56 @@ export default function AudioPlayer() {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [minimized, setMinimized] = useState(false);
+  const [trackIndex, setTrackIndex] = useState(0);
+
+  const track = PLAYLIST[trackIndex];
+
+  // Play the current track
+  const playAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+  }, []);
 
   // Autoplay on mount
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     audio.volume = 0.4;
-    audio.loop = true;
+    playAudio();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const playPromise = audio.play();
-    if (playPromise) {
-      playPromise
-        .then(() => setPlaying(true))
-        .catch(() => {
-          // Autoplay blocked by browser — user needs to click
-          setPlaying(false);
-        });
+  // When track changes, load and play
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.load();
+    setProgress(0);
+    setDuration(0);
+    if (playing) {
+      audio.play().then(() => setPlaying(true)).catch(() => {});
     }
-  }, []);
+  }, [trackIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Track progress
+  // Track progress + auto-advance
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const onTimeUpdate = () => setProgress(audio.currentTime);
     const onLoadedMetadata = () => setDuration(audio.duration);
+    const onEnded = () => {
+      // Advance to next track, loop back to first
+      setTrackIndex((prev) => (prev + 1) % PLAYLIST.length);
+    };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("ended", onEnded);
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("ended", onEnded);
     };
   }, []);
 
@@ -54,6 +74,20 @@ export default function AudioPlayer() {
       setPlaying(false);
     } else {
       audio.play().then(() => setPlaying(true)).catch(() => {});
+    }
+  }
+
+  function skipNext() {
+    setTrackIndex((prev) => (prev + 1) % PLAYLIST.length);
+  }
+
+  function skipPrev() {
+    const audio = audioRef.current;
+    // If more than 3s in, restart current track; otherwise go to previous
+    if (audio && audio.currentTime > 3) {
+      audio.currentTime = 0;
+    } else {
+      setTrackIndex((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
     }
   }
 
@@ -75,16 +109,15 @@ export default function AudioPlayer() {
 
   return (
     <>
-      <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
+      <audio ref={audioRef} src={track.src} preload="auto" />
 
       {/* Floating player */}
       <div className={`fixed z-50 transition-all duration-300 ${
         minimized
           ? "bottom-4 right-4"
-          : "bottom-4 left-1/2 -translate-x-1/2 w-[320px] max-w-[calc(100vw-2rem)]"
+          : "bottom-4 left-1/2 -translate-x-1/2 w-[360px] max-w-[calc(100vw-2rem)]"
       }`}>
         {minimized ? (
-          /* ── Minimized: just a small circle button ── */
           <button
             onClick={() => setMinimized(false)}
             className="w-10 h-10 rounded-full bg-copper-500/20 border border-copper-500/30 backdrop-blur-xl flex items-center justify-center hover:bg-copper-500/30 transition-all duration-200 shadow-lg shadow-copper-500/10"
@@ -94,9 +127,18 @@ export default function AudioPlayer() {
             </svg>
           </button>
         ) : (
-          /* ── Expanded player ── */
           <div className="bg-[#111111]/95 backdrop-blur-xl border border-[rgba(255,255,255,0.08)] rounded-2xl p-3 shadow-2xl shadow-black/40">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              {/* Skip Prev */}
+              <button
+                onClick={skipPrev}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[rgba(255,255,255,0.35)] hover:text-copper-400 transition-colors shrink-0"
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                </svg>
+              </button>
+
               {/* Play/Pause */}
               <button
                 onClick={togglePlay}
@@ -114,17 +156,29 @@ export default function AudioPlayer() {
                 )}
               </button>
 
+              {/* Skip Next */}
+              <button
+                onClick={skipNext}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[rgba(255,255,255,0.35)] hover:text-copper-400 transition-colors shrink-0"
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                </svg>
+              </button>
+
               {/* Track info + progress */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[11px] text-[rgba(255,255,255,0.5)] font-medium truncate">
-                    Off The Curb
+                    {track.title}
+                    <span className="text-[9px] text-[rgba(255,255,255,0.2)] ml-1.5">
+                      {trackIndex + 1}/{PLAYLIST.length}
+                    </span>
                   </span>
                   <span className="text-[10px] text-[rgba(255,255,255,0.25)] tabular-nums ml-2 shrink-0">
                     {formatTime(progress)} / {formatTime(duration)}
                   </span>
                 </div>
-                {/* Progress bar */}
                 <div
                   className="h-1 rounded-full bg-[rgba(255,255,255,0.06)] cursor-pointer group"
                   onClick={handleSeek}
