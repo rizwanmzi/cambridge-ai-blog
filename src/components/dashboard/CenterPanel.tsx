@@ -28,6 +28,7 @@ interface SessionPhoto {
 interface CachedSummary {
   summary: SummaryContent;
   generatedAt: string;
+  isStale: boolean;
 }
 
 /* ------------------------------------------------------------------ */
@@ -259,6 +260,7 @@ export default function CenterPanel({
           const cached: CachedSummary = {
             summary: data.summary,
             generatedAt: data.generated_at || new Date().toISOString(),
+            isStale: data.is_stale ?? false,
           };
           summaryCache.current[sessionId] = cached;
           setSummary(cached);
@@ -284,13 +286,14 @@ export default function CenterPanel({
       const res = await fetch("/api/ai/session-summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: selectedSessionId }),
+        body: JSON.stringify({ session_id: selectedSessionId, regenerate: true }),
       });
       const data = await res.json();
       if (data.summary) {
         const cached: CachedSummary = {
           summary: data.summary,
           generatedAt: data.generated_at || new Date().toISOString(),
+          isStale: false,
         };
         summaryCache.current[selectedSessionId] = cached;
         setSummary(cached);
@@ -442,6 +445,7 @@ export default function CenterPanel({
             showRegenerate={isAdmin}
             onRegenerate={handleRegenerate}
             regenerating={regenerating}
+            isStale={summary.isStale}
           />
         ) : isAdmin ? (
           <div className="rounded-2xl border border-dashed border-violet-500/20 p-6 text-center bg-violet-500/[0.02]">

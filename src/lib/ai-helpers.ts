@@ -25,3 +25,16 @@ export async function markSummariesStale(
     .update({ is_stale: true })
     .eq("scope", "programme");
 }
+
+/**
+ * Fire-and-forget: regenerate a session summary in the background.
+ * Uses dynamic import to avoid circular dependencies.
+ * Errors are caught silently — this is best-effort.
+ */
+export function regenerateSummaryInBackground(sessionId: number) {
+  import("./ai-generate").then(({ generateSessionSummary }) => {
+    generateSessionSummary(sessionId).catch((err) => {
+      console.error(`Background summary regeneration failed for session ${sessionId}:`, err);
+    });
+  });
+}

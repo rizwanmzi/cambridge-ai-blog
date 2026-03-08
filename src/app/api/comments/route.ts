@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase-service";
-import { markSummariesStale } from "@/lib/ai-helpers";
+import { markSummariesStale, regenerateSummaryInBackground } from "@/lib/ai-helpers";
 
 function getSupabase() {
   const cookieStore = cookies();
@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
         .single();
       if (sess) {
         await markSummariesStale(getServiceClient(), resolvedSessionId, sess.day_number);
+        regenerateSummaryInBackground(resolvedSessionId);
       }
     }
   } catch {

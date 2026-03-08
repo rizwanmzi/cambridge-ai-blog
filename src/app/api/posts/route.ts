@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getServiceClient } from "@/lib/supabase-service";
-import { markSummariesStale } from "@/lib/ai-helpers";
+import { markSummariesStale, regenerateSummaryInBackground } from "@/lib/ai-helpers";
 import { classifyPost } from "@/lib/ai-classify";
 
 function getSupabase() {
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Best-effort: mark AI summaries stale
+  // Best-effort: mark AI summaries stale and trigger background regeneration
   try {
     const { data: sess } = await getServiceClient()
       .from("sessions")
@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
       .single();
     if (sess) {
       await markSummariesStale(getServiceClient(), session_id, sess.day_number);
+      regenerateSummaryInBackground(session_id);
     }
   } catch {
     // Non-critical — don't block post creation

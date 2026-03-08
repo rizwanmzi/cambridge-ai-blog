@@ -1,10 +1,34 @@
 import { getServiceClient } from "./supabase-service";
 import { callClaude, TONE_INSTRUCTION, SummaryContent } from "./anthropic";
 
+export interface SessionSummaryResult {
+  content: SummaryContent;
+  generated_at: string;
+  is_stale: boolean;
+}
+
+export async function getSessionSummary(
+  sessionId: number
+): Promise<SessionSummaryResult | null> {
+  const { data: cached } = await getServiceClient()
+    .from("ai_summaries")
+    .select("content, generated_at, is_stale")
+    .eq("scope", "session")
+    .eq("session_id", sessionId)
+    .single();
+
+  if (!cached) return null;
+  return {
+    content: cached.content as SummaryContent,
+    generated_at: cached.generated_at,
+    is_stale: cached.is_stale,
+  };
+}
+
 export async function generateSessionSummary(
   sessionId: number
 ): Promise<SummaryContent> {
-  // Check cache
+  // Check fresh cache
   const { data: cached } = await getServiceClient()
     .from("ai_summaries")
     .select("content")

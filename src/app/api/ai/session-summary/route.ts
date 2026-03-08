@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { generateSessionSummary } from "@/lib/ai-generate";
+import { getSessionSummary, generateSessionSummary } from "@/lib/ai-generate";
 
 export async function POST(request: NextRequest) {
   const cookieStore = cookies();
@@ -23,14 +23,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { session_id } = await request.json();
+  const { session_id, regenerate } = await request.json();
   if (!session_id) {
     return NextResponse.json({ error: "session_id is required" }, { status: 400 });
   }
 
   try {
+    // If regenerate requested (admin action), force fresh generation
+    if (regenerate) {
+      const summary = await generateSessionSummary(session_id);
+      return NextResponse.json({
+        summary,
+        generated_at: new Date().toISOString(),
+        is_stale: false,
+      });
+    }
+
+    // Otherwise: return cached summary instantly (even if stale)
+    const cached = await getSessionSummary(session_id);
+    if (cached) {
+      return NextResponse.json({
+        summary: cached.content,
+        generated_at: cached.generated_at,
+        is_stale: cached.is_stale,
+      });
+    }
+
+    // No cached summary at all — generate fresh
     const summary = await generateSessionSummary(session_id);
-    return NextResponse.json({ summary });
+    return NextResponse.json({
+      summary,
+      generated_at: new Date().toISOString(),
+      is_stale: false,
+    });
   } catch (err) {
     console.error("Session summary error:", err);
     return NextResponse.json({ error: "Failed to generate summary" }, { status: 500 });
